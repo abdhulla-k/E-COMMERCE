@@ -1,3 +1,3 @@
 exports.getShop = ( req, res, next ) => {
-    res.render( "home" );
+    res.render( "user/home", { user: false });
 }
