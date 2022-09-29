@@ -35,7 +35,7 @@
         </div>
         <div class="col-lg-4 col-6 text-right">
             <p class="m-0">Customer Service</p>
-            <h5 class="m-0">+012 345 6789</h5>
+            <h5 class="m-0">+91 11111111</h5>
         </div>
     </div>
 </div>
@@ -85,52 +85,61 @@
                         <a href="index.html" class="nav-item nav-link active">Home</a>
                         <a href="shop.html" class="nav-item nav-link">Shop</a>
                         <a href="detail.html" class="nav-item nav-link">Shop Detail</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
-                            <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                <a href="cart.html" class="dropdown-item">Shopping Cart</a>
-                                <a href="checkout.html" class="dropdown-item">Checkout</a>
-                            </div>
-                        </div>
+                        
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
-                        <% if( user === true ) { %>
-                          <a href="contact.html" class="nav-item nav-link">My Account</a>
+
+                        <% if( user === true && admin === false ) { %>
+
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
+                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
+                                    <a href="cart.html" class="dropdown-item">Shopping Cart</a>
+                                    <a href="checkout.html" class="dropdown-item">Checkout</a>
+                                </div>
+                            </div>
+
+                            <a href="contact.html" class="nav-item nav-link">My Account</a>
+
                         <%} else { %>
-                          <div class="d-inline-flex align-items-center">
-                            <div class="btn-group">
-                                <button 
-                                  type="button" 
-                                  class="btn btn-sm btn-light dropdown-toggle" 
-                                  data-toggle="dropdown">
-                                    Authentcate
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item" type="button">Sign in</button>
-                                    <button class="dropdown-item" type="button">Sign up</button>
+
+                            <div class="nav-item dropdown">
+                                <a 
+                                    href="#" 
+                                    class="nav-link dropdown-toggle" 
+                                    data-toggle="dropdown">
+                                        Authenticate 
+                                        <i class="fa fa-angle-down mt-1"></i>
+                                </a>
+                                <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
+                                    <a href="/user/login" class="dropdown-item">Login</a>
+                                    <a href="/user/signup" class="dropdown-item">Signup</a>
                                 </div>
                             </div>
-                          </div>
                         <% } %>
-                        <!-- <div class="d-inline-flex align-items-center">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My Account</button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item" type="button">Sign in</button>
-                                    <button class="dropdown-item" type="button">Sign up</button>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
-                    <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
-                        <a href="" class="btn px-0">
-                            <i class="fas fa-heart text-primary"></i>
-                            <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
-                        </a>
-                        <a href="" class="btn px-0 ml-3">
-                            <i class="fas fa-shopping-cart text-primary"></i>
-                            <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
-                        </a>
-                    </div>
+                    
+                    <% if( user === true && admin === false ) { %>
+                        <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
+                            <a 
+                                href="" 
+                                class="btn px-0">
+                                <i class="fas fa-heart text-primary"></i>
+                                <span 
+                                    class="badge text-secondary border border-secondary rounded-circle" 
+                                    style="padding-bottom: 2px;"
+                                    >0
+                                </span>
+                            </a>
+                            <a href="" class="btn px-0 ml-3">
+                                <i class="fas fa-shopping-cart text-primary"></i>
+                                <span 
+                                    class="badge text-secondary border border-secondary rounded-circle" 
+                                    style="padding-bottom: 2px;"
+                                    >0
+                                </span>
+                            </a>
+                        </div>
+                      <% } %>
                 </div>
             </nav>
         </div>
