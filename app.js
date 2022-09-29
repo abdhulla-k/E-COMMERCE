@@ -2,6 +2,8 @@ const path = require( "path" );
 
 const express = require( "express" );
 
+const mongoose = require( "mongoose" );
+
 const bodyParser = require( "body-parser" );
 
 const app = express();
@@ -23,4 +25,9 @@ const userRoute = require( "./routes/user" );
 app.use( '/', shopRoute );
 app.use( '/user', userRoute );
 
-app.listen( 3000 );
+// connect with mongodb and make app listenable from browser
+mongoose.connect( "mongodb://localhost:27017/bigCart" ).then( data => {
+    app.listen( 3000 );
+}).catch( err => {
+    console.log( err );
+})
