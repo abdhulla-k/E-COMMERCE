@@ -1,3 +1,5 @@
+const User = require( "../models/user" );
+
 exports.getLogin = ( req, res, next ) => {
     res.render( "user/user-login.ejs", { user: false, admin: false });
 }
@@ -10,3 +12,4 @@ exports.postLogin = ( req, res, next ) => {
     console.log( userData );
     res.redirect( '/' );
 }
+
