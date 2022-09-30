@@ -1,3 +1,4 @@
 exports.getShop = ( req, res, next ) => {
-    res.render( "user/home", { user: ""});
+    let userStatus = req.session.userLoggedIn? "true" : "";
+    res.render( "user/home", { user: userStatus });
 }

@@ -5,7 +5,15 @@ const bcrypt = require( "bcryptjs" );
 
 exports.getLogin = ( req, res, next ) => {
     req.session.signupErrorMessage = ""; // get rid signup error message
-    res.render( "user/user-login", { user: "false", errorMessage: req.session.LoginErrorMessage });
+
+    if( req.session.userLoggedIn ) {
+        res.redirect( "/" );
+    } else {
+        res.render( "user/user-login", { 
+            user: "",
+            errorMessage: req.session.LoginErrorMessage 
+        });
+    }
 }
 
 exports.postLogin = ( req, res, next ) => {
@@ -49,7 +57,15 @@ exports.postLogin = ( req, res, next ) => {
 
 exports.getSignup = ( req, res, next ) => {
     req.session.LoginErrorMessage = ""; // get rid the login error message
-    res.render( "user/user-signup", { user: "", errorMessage: req.session.signupErrorMessage });
+
+    if( req.session.userLoggedIn ) {
+        res.redirect( '/' );
+    } else {
+        res.render( "user/user-signup", { 
+            user: "", 
+            errorMessage: req.session.signupErrorMessage 
+        });
+    }
 }
 
 exports.postSignup = ( req, res, next ) => {
@@ -113,4 +129,9 @@ exports.postSignup = ( req, res, next ) => {
             res.redirect( "signup" );
         }
     })
+}
+
+exports.userLogout = ( req, res, next ) => {
+    req.session.userLoggedIn = false;
+    res.redirect( "/" );
 }
