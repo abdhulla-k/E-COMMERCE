@@ -8,12 +8,40 @@ exports.getLogin = ( req, res, next ) => {
 }
 
 exports.postLogin = ( req, res, next ) => {
-    const userData = {
-        username: req.body.email,
+
+    // optain the user entered data
+    const loginData = {
+        email: req.body.email,
         password: req.body.password
     }
-    console.log( userData );
-    res.redirect( '/' );
+
+    // check is user exist or not
+    User.find({
+        email: loginData.email
+    }, ( err, data ) => {
+        if( data.length > 0 ) {
+            
+            // compare password if a user exist with the given email
+            bcrypt.compare(
+                loginData.password,
+                data[0].password, 
+                ( err, isMatch ) => {
+                    if( err ) {
+                        throw err
+                    } else if( !isMatch ) {
+                        console.log( "password does not match" );
+                        res.redirect( "login" );
+                    } else {
+                        req.session.userLoggedIn = true;
+                        res.redirect( "/" );
+                    }
+                }
+            )
+        } else {
+            console.log( "user not exist" );
+            res.redirect( "login" );
+        }
+    })
 }
 
 exports.getSignup = ( req, res, next ) => {

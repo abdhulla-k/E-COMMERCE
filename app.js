@@ -4,6 +4,10 @@ const express = require( "express" );
 
 const mongoose = require( "mongoose" );
 
+const session = require( "express-session" );
+
+const nocache = require( "nocache" );
+
 const bodyParser = require( "body-parser" );
 
 const app = express();
@@ -14,6 +18,17 @@ app.use( express.static( path.join( __dirname, 'public' )));
 // set view engine
 app.set( "view engine", "ejs" )
 app.set( "views", "views" );
+
+// use express session
+app.use( session({
+    secret: "key",
+    saveUninitialized: true,
+    resave: false,
+    cookie: { maxAge: 600000 }
+}));
+
+// use nocache
+app.use( nocache());
 
 // set body-parser
 app.use( bodyParser.urlencoded({ extended: false }));
