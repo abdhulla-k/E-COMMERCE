@@ -4,7 +4,8 @@ const User = require( "../models/user" );
 const bcrypt = require( "bcryptjs" );
 
 exports.getLogin = ( req, res, next ) => {
-    res.render( "user/user-login", { user: false, admin: false });
+    req.session.signupErrorMessage = ""; // get rid signup error message
+    res.render( "user/user-login", { user: "false", errorMessage: req.session.LoginErrorMessage });
 }
 
 exports.postLogin = ( req, res, next ) => {
@@ -20,7 +21,7 @@ exports.postLogin = ( req, res, next ) => {
         email: loginData.email
     }, ( err, data ) => {
         if( data.length > 0 ) {
-            
+
             // compare password if a user exist with the given email
             bcrypt.compare(
                 loginData.password,
@@ -30,6 +31,7 @@ exports.postLogin = ( req, res, next ) => {
                         throw err
                     } else if( !isMatch ) {
                         console.log( "password does not match" );
+                        req.session.LoginErrorMessage = "wrong email or password";
                         res.redirect( "login" );
                     } else {
                         req.session.userLoggedIn = true;
@@ -39,13 +41,15 @@ exports.postLogin = ( req, res, next ) => {
             )
         } else {
             console.log( "user not exist" );
+            req.session.LoginErrorMessage = "user not exist!";
             res.redirect( "login" );
         }
     })
 }
 
 exports.getSignup = ( req, res, next ) => {
-    res.render( "user/user-signup", { user: false, admin: false });
+    req.session.LoginErrorMessage = ""; // get rid the login error message
+    res.render( "user/user-signup", { user: "", errorMessage: req.session.signupErrorMessage });
 }
 
 exports.postSignup = ( req, res, next ) => {
@@ -104,6 +108,7 @@ exports.postSignup = ( req, res, next ) => {
                 }
             })
         } else {
+            req.session.signupErrorMessage = "user already exist";
             console.log( "emil exist" );
             res.redirect( "signup" );
         }

@@ -33,6 +33,7 @@
                                         name="name" 
                                         id="name" 
                                         class="form-control"
+                                        required
                                     >
                                 </div>
 
@@ -48,6 +49,7 @@
                                         name="email" 
                                         id="email" 
                                         class="form-control"
+                                        required
                                     >
                                 </div>
 
@@ -63,6 +65,7 @@
                                         name="phone" 
                                         id="phone" 
                                         class="form-control"
+                                        required
                                     >
                                 </div>
 
@@ -78,8 +81,15 @@
                                         name="password" 
                                         id="password" 
                                         class="form-control"
+                                        required
                                     >
                                 </div>
+
+                                <% if( errorMessage ) { %>
+                                    <div class="alert alert-danger" role="alert">
+                                        <%= errorMessage %>
+                                    </div>
+                                <% } %>
                                 
                                 <div class="form-group">
                                     <input 
