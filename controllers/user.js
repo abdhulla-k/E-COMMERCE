@@ -11,7 +11,7 @@ exports.getLogin = ( req, res, next ) => {
     } else {
         res.render( "user/user-login", { 
             user: "",
-            errorMessage: req.session.LoginErrorMessage 
+            errorMessage: req.session.LoginErrorMessage
         });
     }
 }
@@ -42,7 +42,11 @@ exports.postLogin = ( req, res, next ) => {
                         req.session.LoginErrorMessage = "wrong email or password";
                         res.redirect( "login" );
                     } else {
+                        const userType = data[0].userType === "user" ? "user" : "seller";
+
                         req.session.userLoggedIn = true;
+                        req.session.userType = userType;
+                        // console.log( req.session.userType );
                         res.redirect( "/" );
                     }
                 }
@@ -133,5 +137,10 @@ exports.postSignup = ( req, res, next ) => {
 
 exports.userLogout = ( req, res, next ) => {
     req.session.userLoggedIn = false;
+
+    // get rid the login and signup error messages if exist
+    req.session.LoginErrorMessage = "";
+    req.session.signupErrorMessage = "";
+    
     res.redirect( "/" );
 }
