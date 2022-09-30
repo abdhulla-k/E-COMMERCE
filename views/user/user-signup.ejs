@@ -15,11 +15,27 @@
                             <form 
                                 id="login-form" 
                                 class="form" 
-                                action="/user/postLogin" 
+                                action="/user/postSignup" 
                                 method="post">
                                 <h3 class="text-center text-warning">
-                                    Login
+                                    Signup
                                 </h3>
+
+                                <div class="form-group">
+                                    <label 
+                                        for="name" 
+                                        class="text-dark">
+                                            Name:
+                                    </label>
+                                    <br>
+                                    <input 
+                                        type="name" 
+                                        name="name" 
+                                        id="name" 
+                                        class="form-control"
+                                    >
+                                </div>
+
                                 <div class="form-group">
                                     <label 
                                         for="email" 
@@ -31,6 +47,21 @@
                                         type="email" 
                                         name="email" 
                                         id="email" 
+                                        class="form-control"
+                                    >
+                                </div>
+
+                                <div class="form-group">
+                                    <label 
+                                        for="phone" 
+                                        class="text-dark">
+                                            Phone number:
+                                    </label>
+                                    <br>
+                                    <input 
+                                        type="text" 
+                                        name="phone" 
+                                        id="phone" 
                                         class="form-control"
                                     >
                                 </div>
@@ -49,6 +80,7 @@
                                         class="form-control"
                                     >
                                 </div>
+                                
                                 <div class="form-group">
                                     <input 
                                         type="submit" 
@@ -57,14 +89,15 @@
                                         value="submit"
                                     >
                                 </div>
+                                
                                 <div 
                                     id="register-link" 
                                     class="text-right"
                                     >
                                     <a 
-                                        href="/user/signup" 
+                                        href="/user/login" 
                                         class="text-dark">
-                                            Signup
+                                            Login
                                     </a>
                                 </div>
                             </form>
@@ -73,4 +106,5 @@
         </div>
     </div>
 </div>
+
 <%- include( "../includes/end.ejs" )%>
