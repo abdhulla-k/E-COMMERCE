@@ -30,6 +30,9 @@ exports.postLogin = ( req, res, next ) => {
     }, ( err, data ) => {
         if( data.length > 0 ) {
 
+            // save user id to use other places
+            req.session.userId = data[0].id
+
             // compare password if a user exist with the given email
             bcrypt.compare(
                 loginData.password,
