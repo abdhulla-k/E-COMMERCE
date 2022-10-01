@@ -3,16 +3,19 @@ const User = require( "../models/user" );
 // import bcryptjs third party module
 const bcrypt = require( "bcryptjs" );
 
+let loginErrorMessage;
+let signupErrorMessage;
+
 exports.getLogin = ( req, res, next ) => {
-    req.session.signupErrorMessage = ""; // get rid signup error message
 
     if( req.session.userLoggedIn ) {
         res.redirect( "/" );
     } else {
         res.render( "user/user-login", { 
             user: "",
-            errorMessage: req.session.LoginErrorMessage
+            errorMessage: loginErrorMessage
         });
+        loginErrorMessage = "";
     }
 }
 
@@ -42,7 +45,7 @@ exports.postLogin = ( req, res, next ) => {
                         throw err
                     } else if( !isMatch ) {
                         console.log( "password does not match" );
-                        req.session.LoginErrorMessage = "wrong email or password";
+                        loginErrorMessage = "wrong email or password";
                         res.redirect( "login" );
                     } else {
                         const userType = data[0].userType === "user" ? "user" : "seller";
@@ -56,22 +59,22 @@ exports.postLogin = ( req, res, next ) => {
             )
         } else {
             console.log( "user not exist" );
-            req.session.LoginErrorMessage = "user not exist!";
+            loginErrorMessage = "user not exist!";
             res.redirect( "login" );
         }
     })
 }
 
 exports.getSignup = ( req, res, next ) => {
-    req.session.LoginErrorMessage = ""; // get rid the login error message
 
     if( req.session.userLoggedIn ) {
         res.redirect( '/' );
     } else {
         res.render( "user/user-signup", { 
             user: "", 
-            errorMessage: req.session.signupErrorMessage 
+            errorMessage: signupErrorMessage
         });
+        signupErrorMessage = "";
     }
 }
 
@@ -131,7 +134,7 @@ exports.postSignup = ( req, res, next ) => {
                 }
             })
         } else {
-            req.session.signupErrorMessage = "user already exist";
+            signupErrorMessage = "user already exist";
             console.log( "emil exist" );
             res.redirect( "signup" );
         }
@@ -140,10 +143,6 @@ exports.postSignup = ( req, res, next ) => {
 
 exports.userLogout = ( req, res, next ) => {
     req.session.userLoggedIn = false;
-
-    // get rid the login and signup error messages if exist
-    req.session.LoginErrorMessage = "";
-    req.session.signupErrorMessage = "";
     
     res.redirect( "/" );
 }
