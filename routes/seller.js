@@ -8,4 +8,6 @@ router.get( "/addProduct", sellerController.getAddProduct );
 
 router.post( "/saveNewProduct", sellerController.postAddProduct );
 
+router.get( "/showMyProducts", sellerController.showMyProducts );
+
 module.exports = router;

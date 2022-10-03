@@ -41,3 +41,19 @@ exports.postAddProduct = ( req, res, next ) => {
             res.redirect( "/" );
         })
 }
+
+exports.showMyProducts = ( req, res, next ) => {
+    if( req.session.userLoggedIn ) {
+
+        // get all products from database
+        Product.find({ user: req.session.userId }, ( err, data ) => {
+            res.render( "seller/my-products", { 
+                products: data,
+                user: req.session.userLoggedIn? "true" : "",
+                userType: req.session.userType
+            });
+        })
+    } else {
+        res.redirect( "/" );
+    }
+}
