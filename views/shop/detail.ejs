@@ -170,9 +170,17 @@
                   </button>
                 </div>
               </div>
-              <button class="btn btn-primary px-3">
+              <button style="margin: 0px 5px 0px 5px;" class="btn btn-primary px-3">
                 <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
               </button>
+              <% if(userType === 'seller' && productDetails.user === userId && user) { %>
+                <button style="margin: 0px 5px 0px 5px;" class="btn btn-primary px-3">
+                  Edit
+                </button>
+                <button style="margin: 0px 5px 0px 5px;" class="btn btn-danger px-3">
+                  Delete
+                </button>
+              <% } %>
             </div>
             <div class="d-flex pt-2">
               <strong class="text-dark mr-2">Share on:</strong>

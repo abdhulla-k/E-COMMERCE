@@ -75,7 +75,8 @@ exports.productDetails = (req, res, next) => {
             res.render("shop/detail", {
                 user: userStatus,
                 userType: userType,
-                productDetails: product
+                productDetails: product,
+                userId: req.session.userId
             });
         }).catch(err => {
             console.log(err);
