@@ -85,7 +85,6 @@ exports.showMyProducts = (req, res, next) => {
 }
 
 exports.filterProducts = (req, res, next) => {
-    console.log(req.body.kidsDress);
     if (req.body.all) {
         req.session.filtering = false;
         console.log(false);
