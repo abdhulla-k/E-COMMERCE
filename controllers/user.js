@@ -13,7 +13,8 @@ exports.getLogin = ( req, res, next ) => {
     } else {
         res.render( "user/user-login", { 
             user: "",
-            errorMessage: loginErrorMessage
+            errorMessage: loginErrorMessage,
+            userType: 'user'
         });
         loginErrorMessage = "";
     }
@@ -31,7 +32,7 @@ exports.postLogin = ( req, res, next ) => {
     User.find({
         email: loginData.email
     }, ( err, data ) => {
-        if( data.length > 0 ) {
+        if( data.length > 0 && data[0].userType === 'user' ) {
 
             // save user id to use other places
             req.session.userId = data[0].id
@@ -48,11 +49,7 @@ exports.postLogin = ( req, res, next ) => {
                         loginErrorMessage = "wrong email or password";
                         res.redirect( "login" );
                     } else {
-                        const userType = data[0].userType === "user" ? "user" : "seller";
-
                         req.session.userLoggedIn = true;
-                        req.session.userType = userType;
-                        // console.log( req.session.userType );
                         res.redirect( "/" );
                     }
                 }
@@ -72,7 +69,8 @@ exports.getSignup = ( req, res, next ) => {
     } else {
         res.render( "user/user-signup", { 
             user: "", 
-            errorMessage: signupErrorMessage
+            errorMessage: signupErrorMessage,
+            userType: 'user'
         });
         signupErrorMessage = "";
     }

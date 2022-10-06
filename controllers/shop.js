@@ -3,12 +3,9 @@ const Products = require("../models/product");
 let filterKey;
 
 exports.getShop = (req, res, next) => {
-    let userStatus = req.session.userLoggedIn ? "true" : "";
-    let userType = req.session.userType; // seller or user
-
     res.render("user/home", {
-        user: userStatus,
-        userType: userType
+        userType: "user",
+        user: req.session.userLoggedIn ? "user" : ""
     });
 }
 
@@ -34,13 +31,15 @@ exports.showAllProducts = (req, res, next) => {
                 res.render("shop/shop", {
                     user: userStatus,
                     userType: userType,
-                    products: data
+                    products: data,
+                    loginFrom: 'user'
                 });
             } else {
                 res.render("shop/shop", {
                     user: userStatus,
                     userType: userType,
-                    products: []
+                    products: [],
+                    loginFrom: 'user'
                 });
             }
         })
@@ -51,13 +50,15 @@ exports.showAllProducts = (req, res, next) => {
                 res.render("shop/shop", {
                     user: userStatus,
                     userType: userType,
-                    products: data
+                    products: data,
+                    loginFrom: 'user'
                 });
             } else {
                 res.render("shop/shop", {
                     user: userStatus,
                     userType: userType,
-                    products: []
+                    products: [],
+                    loginFrom: 'user'
                 });
             }
         })
@@ -74,9 +75,9 @@ exports.productDetails = (req, res, next) => {
         .then(product => {
             res.render("shop/detail", {
                 user: userStatus,
-                userType: userType,
+                userType: "user",
                 productDetails: product,
-                userId: req.session.userId
+                userId: req.session.userId,
             });
         }).catch(err => {
             console.log(err);

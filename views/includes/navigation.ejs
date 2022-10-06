@@ -117,8 +117,12 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
-                        <a href="/" class="nav-item nav-link">Home</a>
-                        <a href="/showProducts" class="nav-item nav-link">Shop</a>
+                        <% if(userType === "user") { %>
+                            <a href="/" class="nav-item nav-link">Home</a>
+                            <a href="/showProducts" class="nav-item nav-link">Shop</a>
+                        <% } else { %>
+                            <a href="/seller/" class="nav-item nav-link">Dashboard</a>
+                        <% } %>
                         <a href="/contact" class="nav-item nav-link">Contact</a>
 
                         <% if( user ) { %>
@@ -143,21 +147,27 @@
                                             class="dropdown-item">
                                                 Add Product
                                         </a>
+                                    <% } else { %>
+                                        <a 
+                                            href="/user/cart" 
+                                            class="dropdown-item">
+                                                Shopping Cart
+                                        </a>
+                                        <a 
+                                            href="/user/checkout" 
+                                            class="dropdown-item">
+                                                Checkout
+                                        </a>
                                     <% } %>
-                                    <a 
-                                        href="/user/cart" 
-                                        class="dropdown-item">
-                                            Shopping Cart
-                                    </a>
-                                    <a 
-                                        href="/user/checkout" 
-                                        class="dropdown-item">
-                                            Checkout
-                                    </a>
+                                    
                                 </div>
                             </div>
 
-                            <a href="/user/myAccount" class="nav-item nav-link">My Account</a>
+                            <% if( userType === 'seller' ) { %>
+                                <a href="/seller/myAccount" class="nav-item nav-link">My Account</a>
+                            <% } else { %>
+                                <a href="/user/myAccount" class="nav-item nav-link">My Account</a>
+                            <% } %>
 
                         <%} else { %>
 
@@ -179,27 +189,33 @@
                     
                     <% if( user ) { %>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
-                            <a 
-                                href="/user/cart" 
-                                class="btn px-0">
-                                <i class="fas fa-heart text-primary"></i>
-                                <span 
-                                    class="badge text-secondary border border-secondary rounded-circle" 
-                                    style="padding-bottom: 2px;"
-                                    >0
-                                </span>
-                            </a>
-                            <a href="/user/wishlist" class="btn px-0 ml-3">
-                                <i class="fas fa-shopping-cart text-primary"></i>
-                                <span 
-                                    class="badge text-secondary border border-secondary rounded-circle" 
-                                    style="padding-bottom: 2px;"
-                                    >0
-                                </span>
-                            </a>
-                            <a href="/user/logout" class="btn text-white px-0 ml-3">
-                                Logout
-                            </a>
+                            <% if(userType === 'seller') { %>
+                                <a href="/seller/logout" class="btn text-white px-0 ml-3">
+                                    Logout
+                                </a>
+                            <% } else { %>
+                                <a 
+                                    href="/user/cart" 
+                                    class="btn px-0">
+                                    <i class="fas fa-heart text-primary"></i>
+                                    <span 
+                                        class="badge text-secondary border border-secondary rounded-circle" 
+                                        style="padding-bottom: 2px;"
+                                        >0
+                                    </span>
+                                </a>
+                                <a href="/user/wishlist" class="btn px-0 ml-3">
+                                    <i class="fas fa-shopping-cart text-primary"></i>
+                                    <span 
+                                        class="badge text-secondary border border-secondary rounded-circle" 
+                                        style="padding-bottom: 2px;"
+                                        >0
+                                    </span>
+                                </a>
+                                <a href="/user/logout" class="btn text-white px-0 ml-3">
+                                    Logout
+                                </a>
+                            <% } %>
                         </div>
                     <% } %>
                 </div>
