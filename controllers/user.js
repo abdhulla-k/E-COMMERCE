@@ -1,17 +1,28 @@
-const User = require( "../models/user" );
+const User = require("../models/user");
 
 // import bcryptjs third party module
-const bcrypt = require( "bcryptjs" );
+const bcrypt = require("bcryptjs");
+
+// import twilio to send otp
+const tiloPersonalData = require("../tilo");
+const accountSid = tiloPersonalData.accountSid;
+const authToken = tiloPersonalData.authToken;
+const client = require('twilio')(accountSid, authToken);
 
 let loginErrorMessage;
 let signupErrorMessage;
+let otpErrormessage;
+let waitingOtp;
 
-exports.getLogin = ( req, res, next ) => {
+// save user data to signup and to save after otp verification
+let user;
 
-    if( req.session.userLoggedIn ) {
-        res.redirect( "/" );
+exports.getLogin = (req, res, next) => {
+
+    if (req.session.userLoggedIn) {
+        res.redirect("/");
     } else {
-        res.render( "user/user-login", { 
+        res.render("user/user-login", {
             user: "",
             errorMessage: loginErrorMessage,
             userType: 'user'
@@ -20,7 +31,7 @@ exports.getLogin = ( req, res, next ) => {
     }
 }
 
-exports.postLogin = ( req, res, next ) => {
+exports.postLogin = (req, res, next) => {
 
     // optain the user entered data
     const loginData = {
@@ -31,8 +42,8 @@ exports.postLogin = ( req, res, next ) => {
     // check is user exist or not
     User.find({
         email: loginData.email
-    }, ( err, data ) => {
-        if( data.length > 0 && data[0].userType === 'user' ) {
+    }, (err, data) => {
+        if (data.length > 0 && data[0].userType === 'user') {
 
             // save user id to use other places
             req.session.userId = data[0].id
@@ -40,35 +51,35 @@ exports.postLogin = ( req, res, next ) => {
             // compare password if a user exist with the given email
             bcrypt.compare(
                 loginData.password,
-                data[0].password, 
-                ( err, isMatch ) => {
-                    if( err ) {
+                data[0].password,
+                (err, isMatch) => {
+                    if (err) {
                         throw err
-                    } else if( !isMatch ) {
-                        console.log( "password does not match" );
+                    } else if (!isMatch) {
+                        console.log("password does not match");
                         loginErrorMessage = "wrong email or password";
-                        res.redirect( "login" );
+                        res.redirect("login");
                     } else {
                         req.session.userLoggedIn = true;
-                        res.redirect( "/" );
+                        res.redirect("/");
                     }
                 }
             )
         } else {
-            console.log( "user not exist" );
+            console.log("user not exist");
             loginErrorMessage = "user not exist!";
-            res.redirect( "login" );
+            res.redirect("login");
         }
     })
 }
 
-exports.getSignup = ( req, res, next ) => {
+exports.getSignup = (req, res, next) => {
 
-    if( req.session.userLoggedIn ) {
-        res.redirect( '/' );
+    if (req.session.userLoggedIn) {
+        res.redirect('/');
     } else {
-        res.render( "user/user-signup", { 
-            user: "", 
+        res.render("user/user-signup", {
+            user: "",
             errorMessage: signupErrorMessage,
             userType: 'user'
         });
@@ -76,7 +87,7 @@ exports.getSignup = ( req, res, next ) => {
     }
 }
 
-exports.postSignup = ( req, res, next ) => {
+exports.postSignup = (req, res, next) => {
 
     // obtain all data user entered in signup form
     const signupData = {
@@ -93,23 +104,23 @@ exports.postSignup = ( req, res, next ) => {
     // check is it exist or not
     User.find({
         email: signupData.email
-    }, ( err, data ) => {
+    }, (err, data) => {
 
         // save user if it is not exist in database
-        if( data.length === 0 ) {
+        if (data.length === 0) {
 
             // bcrypt the password
-            bcrypt.genSalt( saltRound, ( saltError, salt ) => {
-                if( saltError ) {
+            bcrypt.genSalt(saltRound, (saltError, salt) => {
+                if (saltError) {
                     throw saltError
                 } else {
-                    bcrypt.hash( signupData.password, salt, ( hashError, hash ) => {
-                        if( hashError ) {
+                    bcrypt.hash(signupData.password, salt, (hashError, hash) => {
+                        if (hashError) {
                             throw hashError
                         } else {
 
                             // create User object or document
-                            const user = new User({
+                            user = new User({
                                 name: signupData.name,
                                 email: signupData.email,
                                 phoneNumber: signupData.phoneNumber,
@@ -117,15 +128,55 @@ exports.postSignup = ( req, res, next ) => {
                                 userType: signupData.userType
                             })
 
-                            // save the user
-                            user.save()
-                                .then( result => {
-                                    res.redirect( "/user/login" );
+                            // create otp 
+                            let otpPromise = new Promise((res, rej) => {
+                                let number = ''
+                                let digits = "0123456789";
+                                for (let i = 0; i < 2; i++) {
+                                    number += digits[Math.floor(Math.random() * 10)]
+                                }
+                                if (number) {
+                                    res(number);
+                                } else {
+                                    rej("error in otp generation");
+                                }
+                            })
+
+                            // use otpPromise to create an otp
+                            otpPromise.then(generatedOtp => {
+                                    waitingOtp = generatedOtp;
+                                    console.log(generatedOtp);
+
+                                    // send created otp
+                                    client.messages
+                                        .create({
+                                            body: generatedOtp,
+                                            from: '+13854835372',
+                                            to: '+916282679611'
+                                        })
+                                        .then(message => {
+                                            otpErrormessage = "";
+                                        })
+                                        .done(
+                                            console.log("done")
+                                        );
+
+                                        // destroy the othp after 30 seconds
+                                        setTimeout(() => {
+                                            waitingOtp = "";
+                                            console.log(waitingOtp);
+                                        }, 30000);
+                                        
+                                        // show the page to enter otp
+                                        res.render("user/otp", {
+                                            user: "",
+                                            errorMessage: otpErrormessage,
+                                            userType: 'user'
+                                        });
                                 })
-                                .catch( err => {
-                                    console.log( "error in user createion" );
-                                    console.log( err );
-                                    res.redirect( '/' );
+                                .catch(err => {
+                                    console("error in otp createion");
+                                    res.redirect("/");
                                 })
                         }
                     })
@@ -133,14 +184,44 @@ exports.postSignup = ( req, res, next ) => {
             })
         } else {
             signupErrorMessage = "user already exist";
-            console.log( "emil exist" );
-            res.redirect( "signup" );
+            console.log("emil exist");
+            res.redirect("signup");
         }
     })
 }
 
-exports.userLogout = ( req, res, next ) => {
+// to show otp entering page
+exports.otpVerify = (req, res, next) => {
+    res.render("user/otp", {
+        errorMessage: ""
+    });
+}
+
+// check otp and save user data
+exports.postSignupOtp = (req, res, next) => {
+
+    if (waitingOtp == req.body.otp) {
+        // save the user
+        user.save()
+            .then(result => {
+                user = "";
+                res.redirect("/user/login");
+            })
+            .catch(err => {
+                console.log("error in user createion");
+                console.log(err);
+                res.redirect("/");
+            })
+    } else {
+        console.log("incorrect otp");
+        otpErrormessage = "incorrect otp";
+        res.redirect("/otp");
+    }
+    otpErrormessage = "";
+}
+
+exports.userLogout = (req, res, next) => {
     req.session.userLoggedIn = false;
-    
-    res.redirect( "/" );
+
+    res.redirect("/");
 }

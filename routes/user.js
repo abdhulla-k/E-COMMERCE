@@ -12,6 +12,10 @@ router.get( '/signup', userController.getSignup );
 
 router.post( '/postSignup', userController.postSignup );
 
+router.get('/otp', userController.otpVerify);
+
+router.post('/postSignupOtp', userController.postSignupOtp);
+
 router.get( '/logout', userController.userLogout );
 
 module.exports = router;
