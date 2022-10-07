@@ -24,9 +24,9 @@ router.get("/detail/:productId", sellerController.myProductDetails);
 
 router.get("/edit/:productId", sellerController.editProduct);
 
-router.post("/postEdit", sellerController.saveProductEdit )
+router.post("/postEdit", sellerController.saveProductEdit );
 
-// router.get("/delete/:ProductId", sellerController.deleteProduct)
+router.get("/delete/:productId", sellerController.deleteProduct);
 
 router.get("/logout", sellerController.logout);
 

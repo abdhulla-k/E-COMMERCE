@@ -244,46 +244,54 @@ exports.showMyProducts = (req, res, next) => {
             })
         }
     } else {
-        res.redirect("/");
+        res.redirect("/seller/");
     }
 }
 
 exports.myProductDetails = (req, res, next) => {
-    let userStatus = req.session.sellerLoggedIn ? "true" : "";
+    if (req.session.sellerLoggedIn) {
+        let userStatus = req.session.sellerLoggedIn ? "true" : "";
 
-    const prodId = req.params.productId
+        const prodId = req.params.productId
 
-    Product.findById(prodId)
-        .then(product => {
-            res.render("shop/detail", {
-                user: "seller",
-                userType: "seller",
-                productDetails: product,
-                userId: req.session.sellerId
-            });
-        }).catch(err => {
-            console.log(err);
-            res.redirect("/seller/");
-        })
+        Product.findById(prodId)
+            .then(product => {
+                res.render("shop/detail", {
+                    user: "seller",
+                    userType: "seller",
+                    productDetails: product,
+                    userId: req.session.sellerId
+                });
+            }).catch(err => {
+                console.log(err);
+                res.redirect("/seller/");
+            })
+    } else {
+        res.redirect("/seller/");
+    }
 }
 
 exports.filterProducts = (req, res, next) => {
-    if (req.body.all) {
-        req.session.filtering = false;
-        console.log(false);
-        res.redirect("showMyProducts");
-    } else {
-        req.session.filtering = true;
+    if (req.session.sellerLoggedIn) {
+        if (req.body.all) {
+            req.session.filtering = false;
+            console.log(false);
+            res.redirect("showMyProducts");
+        } else {
+            req.session.filtering = true;
 
-        filterKey = filterKey = {
-            menDress: req.body.menDress ? "Men dress" : "",
-            womenDress: req.body.womenDress ? "Women dress" : "",
-            kidsDress: req.body.kidsDress ? "Kids dress" : "",
-            electronics: req.body.electronics ? "Electronics" : "",
-            mobiles: req.body.mobiles ? "Mobiles" : "",
-            vegitables: req.body.vegitables ? "Vegitables" : ""
+            filterKey = filterKey = {
+                menDress: req.body.menDress ? "Men dress" : "",
+                womenDress: req.body.womenDress ? "Women dress" : "",
+                kidsDress: req.body.kidsDress ? "Kids dress" : "",
+                electronics: req.body.electronics ? "Electronics" : "",
+                mobiles: req.body.mobiles ? "Mobiles" : "",
+                vegitables: req.body.vegitables ? "Vegitables" : ""
+            }
+            res.redirect("showMyProducts");
         }
-        res.redirect("showMyProducts");
+    } else {
+        res.redirect("/seller/");
     }
 }
 
@@ -337,6 +345,23 @@ exports.saveProductEdit = (req, res, next) => {
             .catch(err => {
                 console.log(err);
                 res.redirect("/seller/")
+            })
+    } else {
+        res.redirect("/seller/");
+    }
+}
+
+exports.deleteProduct = (req, res, next) => {
+    if (req.session.sellerLoggedIn) {
+        const prodId = req.params.productId;
+        Product.findByIdAndRemove(prodId)
+            .then(() => {
+                console.log("deleted");
+                res.redirect("/seller/showMyProducts");
+            })
+            .catch(err => {
+                console.log(err);
+                res.redirect("/seller/showMyProducts");
             })
     } else {
         res.redirect("/seller/");
