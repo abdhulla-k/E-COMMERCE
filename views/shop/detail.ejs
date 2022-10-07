@@ -175,14 +175,24 @@
                   <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
                 </button>
               <% } %>
+
+              <!-- edit and delete buttons -->
               <% if(userType === 'seller') { %>
-                <button style="margin: 0px 5px 0px 5px;" class="btn btn-primary px-3">
-                  Edit
-                </button>
-                <button style="margin: 0px 5px 0px 5px;" class="btn btn-danger px-3">
-                  Delete
-                </button>
+                <a 
+                  href="/seller/edit/<%= productDetails.id %>" 
+                  style="margin: 0px 5px 0px 0px;" 
+                  class="btn btn-primary px-3">
+                    Edit
+                </a>
+                <a 
+                  href="/seller/delete/<%= productDetails.id %>" 
+                  style="margin: 0px 5px 0px 5px;" 
+                  class="btn btn-danger px-3">
+                    Delete
+                </a>
               <% } %>
+              <!-- /edit and delete buttons -->
+              
             </div>
             <div class="d-flex pt-2">
               <strong class="text-dark mr-2">Share on:</strong>

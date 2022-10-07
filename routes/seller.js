@@ -18,9 +18,15 @@ router.post("/saveNewProduct", sellerController.postAddProduct);
 
 router.get("/showMyProducts", sellerController.showMyProducts);
 
-router.get("/detail/:productId", sellerController.myProductDetails );
-
 router.post("/filteredProducts", sellerController.filterProducts);
+
+router.get("/detail/:productId", sellerController.myProductDetails);
+
+router.get("/edit/:productId", sellerController.editProduct);
+
+router.post("/postEdit", sellerController.saveProductEdit )
+
+// router.get("/delete/:ProductId", sellerController.deleteProduct)
 
 router.get("/logout", sellerController.logout);
 

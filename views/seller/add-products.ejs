@@ -15,99 +15,195 @@
         </h2>
         <div class="row px-xl-5 pb-3">
             <div class="col-lg-12 col-md-12 col-sm-12 pb-1">
-                <form 
-                    action="/seller/saveNewProduct" 
-                    method="POST"
-                    enctype="multipart/form-data"
-                    >
-                    <div class="form-row">
 
-                      <div class="form-group col-md-6">
-                        <label for="inputEmail4">Product Title</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="inputEmail4" 
-                            name="title"
-                            placeholder="product name"
-                            required
-                            >
+                  <!-- editing mode -->
+                  <% if(editing === true) { %>
+                    <form 
+                      action="/seller/postEdit" 
+                      method="POST"
+                      enctype="multipart/form-data"
+                      >
+                      <div class="form-row">
+
+                        <div class="form-group col-md-6">
+                          <label for="inputEmail4">Product Title</label>
+                          <input 
+                              type="text" 
+                              class="form-control" 
+                              id="inputEmail4"
+                              value="<%= productDetails.title %>"
+                              name="title"
+                              placeholder="product name"
+                              required
+                              >
+                        </div>
+
+                        <div class="form-group col-md-6" hidden>
+                          <label for="inputEmail4">id</label>
+                          <input 
+                              type="text" 
+                              class="form-control"
+                              value="<%= productId %>"
+                              name="id"
+                              >
+                        </div>
+
+                        <div class="form-group col-md-6">
+                          <label for="inputState">Category</label>
+                          <select id="inputState" name="category" class="form-control" required>
+                            <option selected>Men dress</option>
+                            <option>Women dress</option>
+                            <option>Kids dress</option>
+                            <option>Electronics</option>
+                            <option>Mobiles</option>
+                            <option>Vegitables</option>
+                          </select>
+                        </div>
+
+                      </div>
+                      <div class="form-group">
+                          <label for="exampleFormControlTextarea1">Description</label>
+                          <textarea 
+                              class="form-control" 
+                              id="exampleFormControlTextarea1" 
+                              rows="3"
+                              name="description"
+                              required
+                              ><%= productDetails.description %>
+                          </textarea>
                       </div>
 
-                      <div class="form-group col-md-6">
-                        <label for="inputState">Category</label>
-                        <select id="inputState" name="category" class="form-control" required>
-                          <option selected>Men dress</option>
-                          <option>Women dress</option>
-                          <option>Kids dress</option>
-                          <option>Electronics</option>
-                          <option>Mobiles</option>
-                          <option>Vegitables</option>
-                        </select>
+                      <div class="form-row">
+
+                        <!-- add product mode -->
+                        <div class="form-group col-md-2">
+                          <label for="inputZip">Quantity</label>
+                          <input 
+                              type="number" 
+                              class="form-control" 
+                              id="inputZip"
+                              value="<%= productDetails.quantity %>"
+                              name="quantity"
+                              required
+                              >
+                        </div>
+
+                        <div class="form-group col-md-2">
+                          <label for="inputZip">Price</label>
+                          <input 
+                              type="number" 
+                              class="form-control" 
+                              id="inputZip"
+                              value="<%= productDetails.price %>"
+                              name="price"
+                              required
+                              >
+                        </div>
                       </div>
 
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlTextarea1">Description</label>
-                        <textarea 
-                            class="form-control" 
-                            id="exampleFormControlTextarea1" 
-                            rows="3"
-                            name="description"
-                            required
-                            >
-                        </textarea>
-                    </div>
-
-                    <div class="form-row">
-                      <!-- <div class="form-group col-md-6">
-                        <label for="inputCity">Price</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="inputCity"
-                            required
-                            >
-                      </div> -->
-                      
-                      <div class="form-group col-md-2">
-                        <label for="inputZip">Quantity</label>
-                        <input 
-                            type="number" 
-                            class="form-control" 
-                            id="inputZip"
-                            name="quantity"
-                            required
-                            >
+                      <div class="form-group">
+                          <div class="form-group">
+                              <label for="image">Chooe an Image</label>
+                              <input 
+                                  type="file" 
+                                  name="image" 
+                                  class="form-control-file" 
+                                  id="exampleFormControlFile1"
+                                  >
+                          </div>
                       </div>
+                      <!-- /add product mode -->
 
-                      <div class="form-group col-md-2">
-                        <label for="inputZip">Price</label>
-                        <input 
-                            type="number" 
-                            class="form-control" 
-                            id="inputZip"
-                            name="price"
-                            required
-                            >
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="form-group">
-                            <label for="image">Chooe an Image</label>
+                      <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                  <% } else { %>
+                    <form 
+                      action="/seller/saveNewProduct" 
+                      method="POST"
+                      enctype="multipart/form-data"
+                      >
+                        <div class="form-row">
+                        
+                          <div class="form-group col-md-6">
+                            <label for="inputEmail4">Product Title</label>
                             <input 
-                                type="file" 
-                                name="image" 
-                                class="form-control-file" 
-                                id="exampleFormControlFile1"
+                                type="text" 
+                                class="form-control" 
+                                id="inputEmail4" 
+                                name="title"
+                                placeholder="product name"
                                 required
                                 >
+                          </div>
+                        
+                          <div class="form-group col-md-6">
+                            <label for="inputState">Category</label>
+                            <select id="inputState" name="category" class="form-control" required>
+                              <option selected>Men dress</option>
+                              <option>Women dress</option>
+                              <option>Kids dress</option>
+                              <option>Electronics</option>
+                              <option>Mobiles</option>
+                              <option>Vegitables</option>
+                            </select>
+                          </div>
+                        
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlTextarea1">Description</label>
+                            <textarea 
+                                class="form-control" 
+                                id="exampleFormControlTextarea1" 
+                                rows="3"
+                                name="description"
+                                required
+                                ></textarea>
+                        </div>
+                      
+                        <div class="form-row">
 
-                    <button type="submit" class="btn btn-primary">Add</button>
-                  </form>
+                          <!-- add product mode -->
+                          <div class="form-group col-md-2">
+                            <label for="inputZip">Quantity</label>
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                id="inputZip"
+                                name="quantity"
+                                required
+                                >
+                          </div>
+                        
+                          <div class="form-group col-md-2">
+                            <label for="inputZip">Price</label>
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                id="inputZip"
+                                name="price"
+                                required
+                                >
+                          </div>
+                        </div>
+                      
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="image">Chooe an Image</label>
+                                <input 
+                                    type="file" 
+                                    name="image" 
+                                    class="form-control-file" 
+                                    id="exampleFormControlFile1"
+                                    required
+                                    >
+                            </div>
+                        </div>
+                        <!-- /add product mode -->
+                      
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                  <% } %>
+                <!-- /editing mode -->
             </div>
         </div>
     </div>

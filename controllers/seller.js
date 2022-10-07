@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const User = require("../models/user");
 let filterKey;
+let editnigProdId;
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
@@ -148,11 +149,24 @@ exports.postSignup = (req, res, next) => {
 
 exports.getAddProduct = (req, res, next) => {
     if (req.session.sellerLoggedIn) {
-        res.render("seller/add-products", {
-            user: req.session.sellerLoggedIn ? "true" : "",
-            userType: "seller",
-            loginFrom: 'seller'
-        });
+        // check is it editing mode or not
+        if (req.session.productEditing) {
+            req.session.productEditing = false;
+            res.render("seller/add-products", {
+                user: req.session.sellerLoggedIn ? "true" : "",
+                userType: "seller",
+                loginFrom: 'seller',
+                editing: true,
+                productId: editnigProdId,
+                productDetails: req.session.editingProduct
+            });
+        } else {
+            res.render("seller/add-products", {
+                user: req.session.sellerLoggedIn ? "true" : "",
+                userType: "seller",
+                editing: false
+            });
+        }
     } else {
         res.redirect("/seller/");
     }
@@ -270,6 +284,62 @@ exports.filterProducts = (req, res, next) => {
             vegitables: req.body.vegitables ? "Vegitables" : ""
         }
         res.redirect("showMyProducts");
+    }
+}
+
+exports.editProduct = (req, res, next) => {
+    if (req.session.sellerLoggedIn) {
+        editnigProdId = req.params.productId;
+        console.log(editnigProdId);
+        Product.findById(editnigProdId)
+            .then(product => {
+                req.session.productEditing = true;
+                req.session.editingProduct = product;
+                res.redirect("/seller/addProduct/");
+            })
+            .catch(err => {
+                console.log(err);
+                res.redirect("/seller/");
+            })
+    } else {
+        res.redirect("/seller/");
+    }
+
+}
+
+// save edited product
+exports.saveProductEdit = (req, res, next) => {
+    if (req.session.sellerLoggedIn) {
+
+        // get edited data
+        const newProdData = {
+            title: req.body.title,
+            price: req.body.price,
+            description: req.body.description,
+            quantity: req.body.quantity,
+            category: req.body.category
+        }
+        Product.findById(editnigProdId)
+            .then(data => {
+
+                // change the data and save it
+                data.title = newProdData.title;
+                data.price = newProdData.price;
+                data.description = newProdData.description;
+                data.quantity = newProdData.quantity;
+                data.category = newProdData.category;
+                // save new data
+                return data.save();
+            })
+            .then(result => {
+                res.redirect("/seller/showMyProducts");
+            })
+            .catch(err => {
+                console.log(err);
+                res.redirect("/seller/")
+            })
+    } else {
+        res.redirect("/seller/");
     }
 }
 
