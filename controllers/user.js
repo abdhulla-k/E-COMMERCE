@@ -263,6 +263,14 @@ exports.postSignupOtp = (req, res, next) => {
     otpErrormessage = "";
 }
 
+exports.showCart = (req, res, next) => {
+    res.render("user/my-cart", {
+        user: "",
+        categories: categories,
+        userType: "user"
+    });
+}
+
 exports.userLogout = (req, res, next) => {
     req.session.userLoggedIn = false;
 
