@@ -51,8 +51,12 @@
                                     <div class="product-img position-relative overflow-hidden">
                                         <img class="img-fluid w-100" src="/images/<%=product.id%>.jpg" alt="">
                                         <div class="product-action">
-                                            <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
-                                            <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
+                                            <a 
+                                                class="btn btn-outline-dark btn-square"
+                                                onclick="addToCart('<%= product.id %>')">
+                                                    <i class="fa fa-shopping-cart"></i>
+                                            </a>
+                                            <a class="btn btn-outline-dark btn-square" href="/user/addToWishlist"><i class="far fa-heart"></i></a>
                                             <a class="btn btn-outline-dark btn-square" href="/detail/<%= product.id %>">info</a>
                                         </div>
                                     </div>
@@ -86,6 +90,17 @@
         </div>
     </div>
     <!-- Shop End -->
+
+    <!-- cart update ajax -->
+    <script>
+        function addToCart(productId) {
+            $.ajax({
+                url: `/user/addToCart/${productId}`,
+                method: "get"
+            })
+        }
+    </script>
+    <!-- /card update ajax -->
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>

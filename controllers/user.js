@@ -1,5 +1,7 @@
 const User = require("../models/user");
 const Categories = require("../models/product_category");
+const Cart = require("../models/cart");
+const Product = require("../models/product");
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
@@ -269,6 +271,192 @@ exports.showCart = (req, res, next) => {
         categories: categories,
         userType: "user"
     });
+}
+
+// this is for post requests
+// from details page with quantity and data. not using ajax
+exports.addToCart = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+
+        // save the cart data
+        const cartData = {
+            productId: req.body.id,
+            quantity: req.body.quantity,
+            price: req.body.price
+        }
+
+        // get the previous cart data
+        Cart.findOne({
+            userId: req.session.userId
+        }, (err, data) => {
+
+            // create a new cart if the user has no a cart
+            if (data.length === 0) {
+                const cart = new Cart({
+                    userId: req.session.userId,
+                    products: [{
+                        productId: cartData.productId,
+                        quantity: cartData.quantity,
+                        price: cartData.quantity * cartData.price
+                    }]
+                })
+
+                // save the new cart
+                cart.save()
+                    .then(result => {
+                        res.redirect("/showProducts");
+                    })
+                    .then(err => {
+                        console.log(err);
+                        res.redirect("/showProducts");
+                    })
+            } else {
+
+                // update the cart if there is an existing cart
+                let k = 0;
+                for (i of data.products) {
+                    k++;
+
+                    // increase the quantity and the total price of the cart if the product 
+                    // already exist in the cart
+                    if (i.productId === cartData.productId) {
+                        i.price = Number(i.price) + Number(cartData.quantity * cartData.price);
+                        i.quantity = Number(i.quantity) + Number(cartData.quantity);
+                        data.save()
+                            .then(result => {
+                                res.redirect("/showProducts");
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.redirect("/showProducts");
+                            })
+
+                        break;
+                    } else {
+
+                        // add the product and quantity and price if the product not exist in cart
+                        if (k === data.products.length) {
+                            data.products.push({
+                                productId: cartData.productId,
+                                quantity: cartData.quantity,
+                                price: cartData.quantity * cartData.price
+                            })
+                            data.save()
+                                .then(result => {
+                                    res.redirect("/showProducts");
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                    res.redirect("/showProducts");
+                                })
+                            break;
+                        }
+                    }
+                }
+            }
+        })
+    } else {
+        res.redirect("/user/login");
+    }
+}
+
+// add a product to cart with ajax
+exports.getAddToCart = (req, res, next) => {
+
+    if (req.session.userLoggedIn) {
+        // save the product id user sended
+        let prodId = req.params.productId;
+
+        // get the product data
+        Product.findById(prodId)
+            .then(productData => {
+                if (productData !== null) {
+
+                    // save the cart data
+                    const cartData = {
+                        productId: prodId,
+                        quantity: 1,
+                        price: productData.price
+                    }
+
+                    // get the previous cart data
+                    Cart.findOne({
+                        userId: req.session.userId
+                    }, (err, data) => {
+
+                        // create a new cart if the user has no a cart
+                        if (data.length === 0) {
+                            const cart = new Cart({
+                                userId: req.session.userId,
+                                products: [{
+                                    productId: cartData.productId,
+                                    quantity: cartData.quantity,
+                                    price: cartData.quantity * cartData.price
+                                }]
+                            })
+
+                            // save the new cart
+                            cart.save()
+                                .then(result => {
+                                    res.redirect("/showProducts");
+                                })
+                                .then(err => {
+                                    console.log(err);
+                                    res.redirect("/showProducts");
+                                })
+                        } else {
+
+                            // update the cart if there is an existing cart
+                            let k = 0;
+                            for (i of data.products) {
+                                k++;
+
+                                // increase the quantity and the total price of the cart if the product 
+                                // already exist in the cart
+                                if (i.productId === cartData.productId) {
+                                    i.price = Number(i.price) + Number(cartData.quantity * cartData.price);
+                                    i.quantity = Number(i.quantity) + Number(cartData.quantity);
+                                    data.save()
+                                        .then(result => {
+                                            res.redirect("/showProducts");
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                            res.redirect("/showProducts");
+                                        })
+
+                                    break;
+                                } else {
+
+                                    // add the product and quantity and price if the product not exist in cart
+                                    if (k === data.products.length) {
+                                        data.products.push({
+                                            productId: cartData.productId,
+                                            quantity: cartData.quantity,
+                                            price: cartData.quantity * cartData.price
+                                        })
+                                        data.save()
+                                            .then(result => {
+                                                res.redirect("/showProducts");
+                                            })
+                                            .catch(err => {
+                                                console.log(err);
+                                                res.redirect("/showProducts");
+                                            })
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    })
+                } else {
+                    console.log("null returned by findById");
+                }
+            })
+            .catch(err => {
+                console.log("error in finding product");
+            })
+    }
 }
 
 exports.userLogout = (req, res, next) => {

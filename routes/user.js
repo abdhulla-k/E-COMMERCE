@@ -20,4 +20,8 @@ router.get('/logout', userController.userLogout);
 
 router.get('/cart', userController.showCart);
 
+router.post('/addToCart', userController.addToCart);
+
+router.get('/addToCart/:productId', userController.getAddToCart);
+
 module.exports = router;
