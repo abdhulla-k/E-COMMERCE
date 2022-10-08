@@ -34,10 +34,12 @@ app.use(fileUPload());
 const shopRoute = require( "./routes/shop" );
 const userRoute = require( "./routes/user" );
 const sellerRoute = require( "./routes/seller" );
+const adminRoute = require("./routes/admin");
 
 app.use( '/', shopRoute );
 app.use( '/user', userRoute );
 app.use( '/seller', sellerRoute );
+app.use( '/admin', adminRoute );
 
 // connect with mongodb and make app listenable from browser
 mongoose.connect( "mongodb://localhost:27017/bigCart" ).then( data => {

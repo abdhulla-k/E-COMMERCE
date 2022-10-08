@@ -182,8 +182,6 @@ exports.postAddProduct = (req, res, next) => {
         user: req.session.sellerId,
     })
 
-    console.log(product);
-
     product.save()
         .then(result => {
 
