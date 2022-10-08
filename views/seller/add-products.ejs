@@ -10,7 +10,11 @@
     <div class="container-fluid pt-5">
         <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
             <span class="bg-secondary pr-3">
+              <% if(editing === true) { %>
+                Edit Product
+              <% } else { %>
                 Add Product
+              <% } %>
             </span>
         </h2>
         <div class="row px-xl-5 pb-3">
@@ -50,13 +54,23 @@
 
                         <div class="form-group col-md-6">
                           <label for="inputState">Category</label>
-                          <select id="inputState" name="category" class="form-control" required>
-                            <option selected>Men dress</option>
-                            <option>Women dress</option>
-                            <option>Kids dress</option>
-                            <option>Electronics</option>
-                            <option>Mobiles</option>
-                            <option>Vegitables</option>
+                          <select 
+                            id="inputState" 
+                            name="category" 
+                            class="form-control" 
+                            required
+                            >
+                            <% for(category of categories) { %>
+                              <% if(productDetails.category === category.categoryName) { %>
+                                <option value="<%= category.id %>" selected>
+                                  <%= category.categoryName %>
+                                </option>
+                              <% } else { %>
+                                <option value="<%= category.id %>">
+                                  <%= category.categoryName %>
+                                </option>
+                              <% } %>
+                            <% } %>
                           </select>
                         </div>
 

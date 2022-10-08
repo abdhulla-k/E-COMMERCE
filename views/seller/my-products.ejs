@@ -15,106 +15,21 @@
         </h5>
         <div class="bg-light p-4 mb-30">
           <form action="/seller/filteredProducts" method="post">
-            <div
-              class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
-            >
-              <input
-                type="checkbox"
-                name="all"
-                class="custom-control-input"
-                id="price-all"
-              />
-              <label class="custom-control-label" for="price-all">All</label>
-              <span class="badge border font-weight-normal">1000</span>
-            </div>
-
-            <div
-              class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
-            >
-              <input
-                type="checkbox"
-                name="menDress"
-                class="custom-control-input"
-                id="price-1"
-              />
-              <label class="custom-control-label" for="price-1"
-                >Men Dress</label
-              >
-              <span class="badge border font-weight-normal">150</span>
-            </div>
-
-            <div
-              class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
-            >
-              <input
-                type="checkbox"
-                name="womenDress"
-                class="custom-control-input"
-                id="price-2"
-              />
-              <label class="custom-control-label" for="price-2"
-                >Women Dress</label
-              >
-              <span class="badge border font-weight-normal">295</span>
-            </div>
-
-            <div
-              class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
-            >
-              <input
-                type="checkbox"
-                name="kidsDress"
-                class="custom-control-input"
-                id="price-3"
-              />
-              <label class="custom-control-label" for="price-3"
-                >Kids Dress</label
-              >
-              <span class="badge border font-weight-normal">246</span>
-            </div>
-
-            <div
-              class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
-            >
-              <input
-                type="checkbox"
-                name="electronics"
-                class="custom-control-input"
-                id="price-4"
-              />
-              <label class="custom-control-label" for="price-4"
-                >Electronics</label
-              >
-              <span class="badge border font-weight-normal">145</span>
-            </div>
-
-            <div
-              class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3"
-            >
-              <input
-                type="checkbox"
-                name="vegitables"
-                class="custom-control-input"
-                id="color-2"
-              />
-              <label class="custom-control-label" for="color-2"
-                >Vegitables</label
-              >
-              <span class="badge border font-weight-normal">295</span>
-            </div>
-
-            <div
-              class="custom-control custom-checkbox d-flex align-items-center justify-content-between"
-            >
-              <input
-                type="checkbox"
-                name="mobiles"
-                class="custom-control-input"
-                id="price-5"
-              />
-              <label class="custom-control-label" for="price-5">Mobiles</label>
-              <span class="badge border font-weight-normal">168</span>
-            </div>
+            <% for( category of categories ) { %>
+              <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                  <input 
+                    style="margin-bottom: 6px;"
+                    class="form-check-input" 
+                    name="<%= category.categoryName %>"
+                    type="checkbox" 
+                    id="inlineCheckbox1" 
+                    value="<%= category.id %>"
+                  >
+                  <label class="form-check-label" for="inlineCheckbox1">
+                    <%= category.categoryName %>
+                  </label>
+              </div>
+            <% } %>
 
             <br />
             <button type="submit" class="btn btn-warning">Filter</button>

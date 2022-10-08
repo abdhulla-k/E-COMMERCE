@@ -1,6 +1,8 @@
 const Product = require("../models/product");
 const User = require("../models/user");
-let filterKey;
+const Category = require("../models/product_category");
+
+let filterKey = [];
 let editnigProdId;
 
 // import bcryptjs third party module
@@ -8,21 +10,29 @@ const bcrypt = require("bcryptjs");
 
 let loginErrorMessage;
 let signupErrorMessage;
+let categories;
 
 exports.getLogin = (req, res, next) => {
-    if (req.session.sellerLoggedIn) {
-        res.render("seller/seller-dashboard", {
-            user: req.session.sellerLoggedIn ? "true" : "",
-            userType: "seller",
-        });
-    } else {
-        res.render("seller/seller-login", {
-            user: "",
-            errorMessage: loginErrorMessage,
-            userType: "seller",
-        });
-        loginErrorMessage = "";
-    }
+    Category.find({}, (err, data) => {
+        if (data) {
+            categories = data;
+            if (req.session.sellerLoggedIn) {
+                res.render("seller/seller-dashboard", {
+                    user: req.session.sellerLoggedIn ? "true" : "",
+                    userType: "seller",
+                    categories: categories
+                });
+            } else {
+                res.render("seller/seller-login", {
+                    user: "",
+                    errorMessage: loginErrorMessage,
+                    userType: "seller",
+                    categories: categories
+                });
+                loginErrorMessage = "";
+            }
+        }
+    })
 }
 
 exports.postLogin = (req, res, next) => {
@@ -158,12 +168,14 @@ exports.getAddProduct = (req, res, next) => {
                 loginFrom: 'seller',
                 editing: true,
                 productId: editnigProdId,
+                categories: categories,
                 productDetails: req.session.editingProduct
             });
         } else {
             res.render("seller/add-products", {
                 user: req.session.sellerLoggedIn ? "true" : "",
                 userType: "seller",
+                categories: categories,
                 editing: false
             });
         }
@@ -210,12 +222,7 @@ exports.showMyProducts = (req, res, next) => {
                 user: req.session.sellerId,
                 category: {
                     $in: [
-                        filterKey.menDress,
-                        filterKey.womenDress,
-                        filterKey.kidsDress,
-                        filterKey.electronics,
-                        filterKey.mobiles,
-                        filterKey.vegitables
+                        ...filterKey
                     ]
                 }
             }, (err, data) => {
@@ -224,7 +231,7 @@ exports.showMyProducts = (req, res, next) => {
                     products: data,
                     user: req.session.sellerLoggedIn ? "true" : "",
                     userType: "seller",
-                    loginFrom: 'seller'
+                    categories: categories,
                 });
             })
         } else {
@@ -236,8 +243,8 @@ exports.showMyProducts = (req, res, next) => {
                 res.render("seller/my-products", {
                     products: data,
                     user: req.session.sellerLoggedIn ? "true" : "",
+                    categories: categories,
                     userType: "seller",
-                    loginFrom: 'seller'
                 });
             })
         }
@@ -258,7 +265,8 @@ exports.myProductDetails = (req, res, next) => {
                     user: "seller",
                     userType: "seller",
                     productDetails: product,
-                    userId: req.session.sellerId
+                    userId: req.session.sellerId,
+                    categories: categories,
                 });
             }).catch(err => {
                 console.log(err);
@@ -271,23 +279,36 @@ exports.myProductDetails = (req, res, next) => {
 
 exports.filterProducts = (req, res, next) => {
     if (req.session.sellerLoggedIn) {
-        if (req.body.all) {
-            req.session.filtering = false;
-            console.log(false);
-            res.redirect("showMyProducts");
-        } else {
-            req.session.filtering = true;
-
-            filterKey = filterKey = {
-                menDress: req.body.menDress ? "Men dress" : "",
-                womenDress: req.body.womenDress ? "Women dress" : "",
-                kidsDress: req.body.kidsDress ? "Kids dress" : "",
-                electronics: req.body.electronics ? "Electronics" : "",
-                mobiles: req.body.mobiles ? "Mobiles" : "",
-                vegitables: req.body.vegitables ? "Vegitables" : ""
+        Category.find({}, (err, data) => {
+            if(data) {
+                if (req.body.all) {
+                    req.session.filtering = false;
+                    res.redirect("showMyProducts");
+                } else {
+                    // get rid previous filter key if ther it is
+                    filterKey = [];
+                        // don't want to filter if user asked all products
+                        if (req.body.all) {
+                            req.session.filtering = false;
+                            res.redirect("showMyProducts");
+                        } else {
+                            req.session.filtering = true;
+        
+                            // get categories to filter
+                            for (category of data) {
+                                let key = category.categoryName;
+                                if (req.body[key]) {
+                                    filterKey.push(category.id);
+                                }
+                            }
+                            // filtering will be applied in showMyProducts
+                            res.redirect("showMyProducts");
+                        }
+                }
+            } else {
+                res.redirect("/seller/");
             }
-            res.redirect("showMyProducts");
-        }
+        })
     } else {
         res.redirect("/seller/");
     }

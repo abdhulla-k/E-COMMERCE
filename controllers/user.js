@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Categories = require("../models/product_category");
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
@@ -17,17 +18,47 @@ let waitingOtp;
 // save user data to signup and to save after otp verification
 let user;
 
+// all categories
+let categories;
+
+// a function to get all product categories
+CategoriesGet = new Promise((resolve, reject) => {
+    Categories.find({}, (err, data) => {
+        if (data) {
+            resolve(data);
+        } else {
+            if (err) {
+                reject(err)
+            } else {
+                reject("no data found");
+            }
+        }
+    })
+})
+
 exports.getLogin = (req, res, next) => {
 
     if (req.session.userLoggedIn) {
         res.redirect("/");
     } else {
-        res.render("user/user-login", {
-            user: "",
-            errorMessage: loginErrorMessage,
-            userType: 'user'
-        });
-        loginErrorMessage = "";
+        if (categories) {
+            res.render("user/user-login", {
+                user: "",
+                errorMessage: loginErrorMessage,
+                userType: 'user',
+                categories: categories
+            });
+            loginErrorMessage = "";
+        } else {
+            CategoriesGet.then(data => {
+                    categories = data
+                    res.redirect('/user/login');
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.redirect('user/login');
+                })
+        }
     }
 }
 
@@ -78,12 +109,24 @@ exports.getSignup = (req, res, next) => {
     if (req.session.userLoggedIn) {
         res.redirect('/');
     } else {
-        res.render("user/user-signup", {
-            user: "",
-            errorMessage: signupErrorMessage,
-            userType: 'user'
-        });
-        signupErrorMessage = "";
+        if (category) {
+            res.render("user/user-signup", {
+                user: "",
+                errorMessage: signupErrorMessage,
+                categories: categories,
+                userType: 'user'
+            });
+            signupErrorMessage = "";
+        } else {
+            CategoriesGet.then(data => {
+                    categories = data
+                    res.redirect('user/user-signup');
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.redirect('/user/user-signup');
+                })
+        }
     }
 }
 
@@ -161,18 +204,18 @@ exports.postSignup = (req, res, next) => {
                                             console.log("done")
                                         );
 
-                                        // destroy the othp after 30 seconds
-                                        setTimeout(() => {
-                                            waitingOtp = "";
-                                            console.log(waitingOtp);
-                                        }, 30000);
-                                        
-                                        // show the page to enter otp
-                                        res.render("user/otp", {
-                                            user: "",
-                                            errorMessage: otpErrormessage,
-                                            userType: 'user'
-                                        });
+                                    // destroy the othp after 30 seconds
+                                    setTimeout(() => {
+                                        waitingOtp = "";
+                                        console.log(waitingOtp);
+                                    }, 30000);
+
+                                    // show the page to enter otp
+                                    res.render("user/otp", {
+                                        user: "",
+                                        errorMessage: otpErrormessage,
+                                        userType: 'user'
+                                    });
                                 })
                                 .catch(err => {
                                     console("error in otp createion");
