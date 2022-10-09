@@ -7,11 +7,13 @@
     <!-- Cart Start -->
     <div class="container-fluid">
         <div class="row px-xl-5">
-            <div class="col-lg-8 table-responsive mb-5">
+            <div class="col-lg-9 table-responsive mb-5">
+                <!-- cart element table -->
                 <table class="table table-light table-borderless table-hover text-center mb-0">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Products</th>
+                            <th>Images</th>
+                            <th>Product Name</th>
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Total</th>
@@ -19,115 +21,96 @@
                         </tr>
                     </thead>
                     <tbody class="align-middle">
-                        <tr>
-                            <td class="align-middle"><img src="img/product-1.jpg" alt="" style="width: 50px;"> Product Name</td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle"><img src="img/product-2.jpg" alt="" style="width: 50px;"> Product Name</td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle"><img src="img/product-3.jpg" alt="" style="width: 50px;"> Product Name</td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle"><img src="img/product-4.jpg" alt="" style="width: 50px;"> Product Name</td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle"><img src="img/product-5.jpg" alt="" style="width: 50px;"> Product Name</td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">$150</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></td>
-                        </tr>
+                        <% let cartPrice = 0 %>
+                        <% for(cart of cartData[0].products) { %>
+                            <% for(product of productsData) { %>
+                                <% if(product.id === cart.productId) { %>
+                                    <% cartPrice = Number(cartPrice) + Number(cart.price) %>
+                                    <!-- cart table row -->
+                                    <tr>
+                                        <!-- table colemn for images -->
+                                        <td class="align-middle">
+                                            <img 
+                                                src="/images/<%=cart.productId %>.jpg" 
+                                                alt="" 
+                                                style="width: 50px;"
+                                            >
+                                        </td>
+                                        <!-- /table colemn for images -->
+
+                                        <!-- table colemn for product name -->
+                                        <td class="align-middle">
+                                            <%= product.title %>
+                                        </td>
+                                        <!-- /table colemn for product name -->
+
+                                        <!-- table colemn for product price -->
+                                        <td class="align-middle">
+                                            $<%= product.price %>
+                                        </td>
+                                        <!-- /table colemn for product price -->
+
+                                        <!-- table colemn for quantity and quanity buttons -->
+                                        <td class="align-middle">
+                                            <div 
+                                                class="input-group quantity mx-auto" 
+                                                style="width: 100px;">
+                                                <div class="input-group-btn">
+                                                    <div class="input-group-btn">
+                                                        <a 
+                                                            class="btn btn-sm btn-primary btn-minus"  
+                                                            id="<%= product.id %>."
+                                                            onclick="decreaseValue(id)"
+                                                            >
+                                                          <i class="fa fa-minus"></i>
+                                                        </a>
+                                                      </div>
+                                                </div>
+                                                <input
+                                                  type="text" 
+                                                  id="<%= product.id %>" 
+                                                  name="quantity"
+                                                  class="form-control bg-secondary border-0 text-center form-control form-control-sm bg-secondary border-0 text-center"
+                                                  value="<%= cart.quantity %>"
+                                                />
+                                                <div class="input-group-btn">
+                                                    <a 
+                                                        class="btn btn-sm btn-primary btn-plus" 
+                                                        onclick="increaseValue(id)"
+                                                        id="<%= product.id %>"
+                                                        >
+                                                      <i class="fa fa-plus"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <!-- /table colemn for quantity and quantity buttons -->
+
+                                        <!-- table colemn for total quantity price -->
+                                        <td 
+                                            class="align-middle" 
+                                            id="<%= product.id %>p">
+                                                $<%= cart.price %>
+                                        </td>
+                                        <!-- /table colemn for total quantity price -->
+
+                                        <!-- table colemn for delet product from cart button -->
+                                        <td class="align-middle">
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </td>
+                                        <!-- /table colemsn for delet product from cart button -->
+                                    </tr>
+                                    <!-- / cart table row -->
+                                <% } %>
+                            <% } %>
+                        <% } %>
                     </tbody>
                 </table>
+                <!-- /cart element table -->
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <form class="mb-30" action="">
                     <div class="input-group">
                         <input type="text" class="form-control border-0 p-4" placeholder="Coupon Code">
@@ -136,30 +119,58 @@
                         </div>
                     </div>
                 </form>
-                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Cart Summary</span></h5>
+                <h5 
+                    class="section-title position-relative text-uppercase mb-3">
+                        <span class="bg-secondary pr-3">
+                            Cart Summary
+                        </span>
+                </h5>
                 <div class="bg-light p-30 mb-5">
                     <div class="border-bottom pb-2">
                         <div class="d-flex justify-content-between mb-3">
                             <h6>Subtotal</h6>
-                            <h6>$150</h6>
+                            <h6>$0</h6>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium">$10</h6>
+                            <h6 class="font-weight-medium">$0</h6>
                         </div>
                     </div>
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5>$160</h5>
+                            <h5>$<%= cartPrice %></h5>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
+                        <a href="/user/checkout" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
+                            Proceed To Checkout
+                        </a>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Cart End -->
+
+    <!-- script of product quantity buttons -->
+    <script>
+        function increaseValue(id) {
+            var value = parseInt(document.getElementById(id).value, 10);
+            value = isNaN(value) ? 0 : value;
+            value++;
+            document.getElementById(id).value = value;
+        }
+
+        function decreaseValue(iD) {
+            let str = iD.substring(0, iD.length - 1);
+            var value = parseInt(document.getElementById(str).value, 10);
+            value = isNaN(value) ? 0 : value;
+            value < 1 ? value = 1 : '';
+            value--;
+            document.getElementById(str).value = value;
+        }
+    </script>
+    <!-- /script of product quantity buttons -->
 
     
     <%- include( "../includes/footer.ejs" ) %>

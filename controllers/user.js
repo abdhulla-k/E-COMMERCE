@@ -266,11 +266,35 @@ exports.postSignupOtp = (req, res, next) => {
 }
 
 exports.showCart = (req, res, next) => {
-    res.render("user/my-cart", {
-        user: "",
-        categories: categories,
-        userType: "user"
-    });
+    if (req.session.userLoggedIn) {
+        // get cart data
+        Cart.find({
+            userId: req.session.userId
+        },(err, data) => {
+            if( data.length !== 0) {
+                Product.find({ id: { $in: [ ...data[0].products ]}}, (err, products)=> {
+                    if(products) {
+                        // render the cart page
+                        res.render("user/my-cart", {
+                            user: "",
+                            categories: categories,
+                            userType: "user",
+                            cartData: data,
+                            productsData: products
+                        });
+                    } else {
+                        console.log(err)
+                        console.log("error while geting cart products data");
+                        res.redirect("/");
+                    }
+                })
+            } else {
+                res.redirect("/");
+            }
+        })
+    } else {
+        res.redirect("/user/login");
+    }
 }
 
 // this is for post requests
