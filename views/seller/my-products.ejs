@@ -15,6 +15,19 @@
         </h5>
         <div class="bg-light p-4 mb-30">
           <form action="/seller/filteredProducts" method="post">
+            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+              <input 
+                style="margin-bottom: 6px;"
+                class="form-check-input" 
+                name="all"
+                type="checkbox" 
+                id="inlineCheckbox1" 
+                value="all"
+              >
+              <label class="form-check-label" for="inlineCheckbox1">
+                all
+              </label>
+          </div>
             <% for( category of categories ) { %>
               <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                   <input 

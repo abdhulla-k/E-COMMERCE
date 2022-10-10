@@ -144,11 +144,12 @@
                             <h5>Total</h5>
                             <h5>$<%= cartPrice %></h5>
                         </div>
-                        <% if(cart === true) { %>
+                        <% if(cart) { %>
                             <a href="/user/checkout?cartPrice=<%=cartPrice%>" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
                                 Proceed To Checkout
                             </a>
-                        <% } else { %>
+                        <% } %>
+                        <% if(cart === false) { %>
                             <a href="/showProducts" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
                                 Brows some products
                             </a>

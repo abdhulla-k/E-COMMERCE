@@ -350,25 +350,25 @@ exports.addToCart = (req, res, next) => {
         Cart.findOne({
             userId: req.session.userId
         }, (err, data) => {
+            console.log(data)
 
-            if (data) {
+            if (data.length !== 0) {
                 // create a new cart if the user has no a cart
-                if (data.length === 0) {
-                    const cart = new Cart({
-                        userId: req.session.userId,
-                        products: [{
-                            productId: cartData.productId,
-                            quantity: cartData.quantity,
-                            price: cartData.quantity * cartData.price
-                        }]
-                    })
+                if (data.products.length === 0) {
+
+                    data.products = [{
+                        productId: cartData.productId,
+                        quantity: cartData.quantity,
+                        price: cartData.price
+                    }]
 
                     // save the new cart
-                    cart.save()
+                    data.save()
                         .then(result => {
+                            console.log(result)
                             res.redirect("/showProducts");
                         })
-                        .then(err => {
+                        .catch(err => {
                             console.log(err);
                             res.redirect("/showProducts");
                         })
@@ -405,6 +405,7 @@ exports.addToCart = (req, res, next) => {
                                 })
                                 data.save()
                                     .then(result => {
+                                        console.log(result)
                                         res.redirect("/showProducts");
                                     })
                                     .catch(err => {
@@ -546,7 +547,7 @@ exports.getAddToCart = (req, res, next) => {
                                 .then(result => {
                                     res.redirect("/showProducts");
                                 })
-                                .then(err => {
+                                .catch(err => {
                                     console.log(err);
                                     res.redirect("/showProducts");
                                 })
