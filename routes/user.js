@@ -24,4 +24,8 @@ router.post('/addToCart', userController.addToCart);
 
 router.get('/addToCart/:productId', userController.getAddToCart);
 
+router.get('/checkout', userController.getCheckout);
+
+router.post('/placeOrder', userController.placeOrder);
+
 module.exports = router;

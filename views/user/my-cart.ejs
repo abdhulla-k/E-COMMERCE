@@ -1,5 +1,4 @@
 <%- include( "../includes/head.ejs" ) %>
-<body>
     <!-- header -->
     <%- include( "../includes/navigation.ejs" ) %>
     <!-- /header -->
@@ -20,93 +19,97 @@
                             <th>Remove</th>
                         </tr>
                     </thead>
-                    <tbody class="align-middle">
-                        <% let cartPrice = 0 %>
-                        <% for(cart of cartData[0].products) { %>
-                            <% for(product of productsData) { %>
-                                <% if(product.id === cart.productId) { %>
-                                    <% cartPrice = Number(cartPrice) + Number(cart.price) %>
-                                    <!-- cart table row -->
-                                    <tr>
-                                        <!-- table colemn for images -->
-                                        <td class="align-middle">
-                                            <img 
-                                                src="/images/<%=cart.productId %>.jpg" 
-                                                alt="" 
-                                                style="width: 50px;"
-                                            >
-                                        </td>
-                                        <!-- /table colemn for images -->
-
-                                        <!-- table colemn for product name -->
-                                        <td class="align-middle">
-                                            <%= product.title %>
-                                        </td>
-                                        <!-- /table colemn for product name -->
-
-                                        <!-- table colemn for product price -->
-                                        <td class="align-middle">
-                                            $<%= product.price %>
-                                        </td>
-                                        <!-- /table colemn for product price -->
-
-                                        <!-- table colemn for quantity and quanity buttons -->
-                                        <td class="align-middle">
-                                            <div 
-                                                class="input-group quantity mx-auto" 
-                                                style="width: 100px;">
-                                                <div class="input-group-btn">
+                    <% if(cart === true) { %>
+                        <tbody class="align-middle">
+                            <% let cartPrice = 0 %>
+                            <% for(cart of cartData[0].products) { %>
+                                <% for(product of productsData) { %>
+                                    <% if(product.id === cart.productId) { %>
+                                        <% cartPrice = Number(cartPrice) + Number(cart.price) %>
+                                        <!-- cart table row -->
+                                        <tr>
+                                            <!-- table colemn for images -->
+                                            <td class="align-middle">
+                                                <img 
+                                                    src="/images/<%=cart.productId %>.jpg" 
+                                                    alt="" 
+                                                    style="width: 50px;"
+                                                >
+                                            </td>
+                                            <!-- /table colemn for images -->
+    
+                                            <!-- table colemn for product name -->
+                                            <td class="align-middle">
+                                                <%= product.title %>
+                                            </td>
+                                            <!-- /table colemn for product name -->
+    
+                                            <!-- table colemn for product price -->
+                                            <td class="align-middle">
+                                                $<%= product.price %>
+                                            </td>
+                                            <!-- /table colemn for product price -->
+    
+                                            <!-- table colemn for quantity and quanity buttons -->
+                                            <td class="align-middle">
+                                                <div 
+                                                    class="input-group quantity mx-auto" 
+                                                    style="width: 100px;">
+                                                    <div class="input-group-btn">
+                                                        <div class="input-group-btn">
+                                                            <a 
+                                                                class="btn btn-sm btn-primary btn-minus"  
+                                                                id="<%= product.id %>."
+                                                                onclick="decreaseValue(id)"
+                                                                >
+                                                              <i class="fa fa-minus"></i>
+                                                            </a>
+                                                          </div>
+                                                    </div>
+                                                    <input
+                                                      type="text" 
+                                                      id="<%= product.id %>" 
+                                                      name="quantity"
+                                                      class="form-control bg-secondary border-0 text-center form-control form-control-sm bg-secondary border-0 text-center"
+                                                      value="<%= cart.quantity %>"
+                                                    />
                                                     <div class="input-group-btn">
                                                         <a 
-                                                            class="btn btn-sm btn-primary btn-minus"  
-                                                            id="<%= product.id %>."
-                                                            onclick="decreaseValue(id)"
+                                                            class="btn btn-sm btn-primary btn-plus" 
+                                                            onclick="increaseValue(id)"
+                                                            id="<%= product.id %>"
                                                             >
-                                                          <i class="fa fa-minus"></i>
+                                                          <i class="fa fa-plus"></i>
                                                         </a>
-                                                      </div>
+                                                    </div>
                                                 </div>
-                                                <input
-                                                  type="text" 
-                                                  id="<%= product.id %>" 
-                                                  name="quantity"
-                                                  class="form-control bg-secondary border-0 text-center form-control form-control-sm bg-secondary border-0 text-center"
-                                                  value="<%= cart.quantity %>"
-                                                />
-                                                <div class="input-group-btn">
-                                                    <a 
-                                                        class="btn btn-sm btn-primary btn-plus" 
-                                                        onclick="increaseValue(id)"
-                                                        id="<%= product.id %>"
-                                                        >
-                                                      <i class="fa fa-plus"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <!-- /table colemn for quantity and quantity buttons -->
-
-                                        <!-- table colemn for total quantity price -->
-                                        <td 
-                                            class="align-middle" 
-                                            id="<%= product.id %>p">
-                                                $<%= cart.price %>
-                                        </td>
-                                        <!-- /table colemn for total quantity price -->
-
-                                        <!-- table colemn for delet product from cart button -->
-                                        <td class="align-middle">
-                                            <button class="btn btn-sm btn-danger">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </td>
-                                        <!-- /table colemsn for delet product from cart button -->
-                                    </tr>
-                                    <!-- / cart table row -->
+                                            </td>
+                                            <!-- /table colemn for quantity and quantity buttons -->
+    
+                                            <!-- table colemn for total quantity price -->
+                                            <td 
+                                                class="align-middle" 
+                                                id="<%= product.id %>p">
+                                                    $<%= cart.price %>
+                                            </td>
+                                            <!-- /table colemn for total quantity price -->
+    
+                                            <!-- table colemn for delet product from cart button -->
+                                            <td class="align-middle">
+                                                <button class="btn btn-sm btn-danger">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                            <!-- /table colemsn for delet product from cart button -->
+                                        </tr>
+                                        <!-- / cart table row -->
+                                    <% } %>
                                 <% } %>
                             <% } %>
-                        <% } %>
-                    </tbody>
+                        </tbody>
+                    <% } else { %>
+                        <h1>Your cart is empty! Add some products</h1>
+                    <% } %>
                 </table>
                 <!-- /cart element table -->
             </div>
@@ -139,7 +142,11 @@
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5>$<%= cartPrice %></h5>
+                            <% if(cart === true) { %>
+                                <h5>$<%= cartPrice %></h5>
+                            <% } else { %>
+                                <h5>$0</h5>
+                            <% } %>
                         </div>
                         <a href="/user/checkout" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
                             Proceed To Checkout
