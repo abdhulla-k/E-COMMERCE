@@ -23,8 +23,31 @@
                     <div class="bg-light p-30 mb-5">
 
                         <!-- get user address -->
+                        <% let index = 0 %>
                         <% if(address) { %>
-                            <h1>address</h1>
+                                <% for(address of address) { %>
+                                    <% index++; %>
+                                    <div class="card">
+                                        <div class="card-header">
+                                          Address: <%= index %>
+                                        </div>
+                                        <div class="card-body">
+                                          <h5 class="card-title"><%= address.home %></h5>
+                                          <p class="card-text"><%= address.street %>, <%= address.district %>, <%= address.state %></p>
+                                          <h4>zip: <%= address.zip %></h4>
+                                          <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="<%= index %>">
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                              Select an address
+                                            </label>
+                                          </div>
+                                          
+                                        </div>
+                                      </div>
+                                <% } %>
+                                <div class="hide alert alert-danger" id="error" role="alert">
+                                    make sure you filled all the fields and choosed a payment method
+                                </div>
                         <% } else { %>
                             <div class="row">
                                 <div class="col-md-6 form-group">
@@ -102,7 +125,7 @@
                                 </div>
                             </div>
                             <div class="hide alert alert-danger" id="error" role="alert">
-                                make sure you filled all the fields and choosed a payment method
+                                make sure you choosed an address and payment method
                             </div>
                         <% }  %>
                         <!-- /get user address -->
@@ -127,7 +150,7 @@
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5>$160</h5>
+                            <h5>$ <%= cartPrice %></h5>
                         </div>
                     </div>
                 </div>
@@ -156,10 +179,14 @@
                         
                         <% if(address) { %>
                             <button 
+                                id = "<%= index %>"
+                                id = "<%= address %>"
                                 class="btn btn-block btn-primary font-weight-bold py-3"
+                                onclick="placeOrderOledAddress(id)"
                                 >
                                     Place Order
                             </button>
+                            <a href="/user/placeOrderGet" id="payment" hidden>payment</a>
                         <% } else { %>
                             <button 
                                 onclick="placeOrder()" 
@@ -174,6 +201,72 @@
         </div>
     </div>
     <script>
+        function placeOrderOledAddress(lengthAddress) {
+            let choose = false;
+            let flag = false;
+            let paymentMethod;
+            const showAlert = document.querySelector("#error");
+            for(i = 1; i <= lengthAddress; i++) {
+                if(document.getElementById(String(i)).checked === true) {
+                    console.log(i);
+                    choose = true;
+                    break
+                }
+                if( i == lengthAddress && choose ===  false) {
+                    showAlert.classList.remove("hide")
+                    setTimeout(()=> {
+                        showAlert.classList.add("hide")
+                    }, 3000)
+                }
+            } 
+            if(document.getElementById("directcheck").checked === true) {
+                        paymentMethod = "cashOnDelivery"
+                        flag = true;
+                } else {
+                    if( document.getElementById("paypal").checked === true) {
+                        paymentMethod = "googlePay"
+                        flag = true;
+                    } else {
+                        if( document.getElementById("paypal").checked === true) {
+                            paymentMethod = "banktransfer"
+                            flag = true;
+                        } else {
+
+                            showAlert.classList.remove("hide")
+                            setTimeout(()=> {
+                                showAlert.classList.add("hide")
+                            }, 3000)
+                        }
+                    }
+                }
+            if( choose === true && flag === true ) {
+                if(paymentMethod === 'cashOnDelivery') {
+                    $.ajax({
+                        url: `/user/placeOrder`,
+                        method: "post",
+                        data: {
+                            "addressId": i,
+                            "paymentMethod": paymentMethod
+                        },
+                    })
+                    let success = document.querySelector("#placed")
+                    success.classList.remove("hide")
+                } else {
+                    $.ajax({
+                    url: `/user/placeOrder`,
+                    method: "post",
+                    data: {
+                        'addressId' : i,
+                        "paymentMethod": paymentMethod
+                        }
+                    })
+                    document.getElementById("payment").click();
+                }
+                
+                
+            }
+        }
+
         function placeOrder() {
             let home = document.getElementById("home").value;
             let street = document.getElementById("street").value;
@@ -233,13 +326,35 @@
                                 url: `/user/placeOrder`,
                                 method: "post",
                                 data: {
-                                    "address": address,
+                                    "home": address.home,
+                                    "street": address.street,
+                                    "city": address.city,
+                                    "district": address.district,
+                                    "state": address.state,
+                                    "country": address.country,
+                                    "zip": address.zip,
                                     "paymentMethod": paymentMethod
-                                }
+                                },
                             })
                             let success = document.querySelector("#placed")
                             success.classList.remove("hide")
                         } else {
+                            $.ajax({
+                                url: `/user/placeOrder`,
+                                method: "post",
+                                data: {
+                                    "home": address.home,
+                                    "street": address.street,
+                                    "city": address.city,
+                                    "district": address.district,
+                                    "state": address.state,
+                                    "country": address.country,
+                                    "zip": address.zip,
+                                    "paymentMethod": paymentMethod
+                                },
+                            })
+                            let success = document.querySelector("#placed")
+                            success.classList.remove("hide")
                             document.getElementById("reload").click();
                         }
                     }

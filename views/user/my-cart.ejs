@@ -19,9 +19,9 @@
                             <th>Remove</th>
                         </tr>
                     </thead>
+                    <% let cartPrice = 0 %>
                     <% if(cart === true) { %>
                         <tbody class="align-middle">
-                            <% let cartPrice = 0 %>
                             <% for(cart of cartData[0].products) { %>
                                 <% for(product of productsData) { %>
                                     <% if(product.id === cart.productId) { %>
@@ -142,15 +142,17 @@
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <% if(cart === true) { %>
-                                <h5>$<%= cartPrice %></h5>
-                            <% } else { %>
-                                <h5>$0</h5>
-                            <% } %>
+                            <h5>$<%= cartPrice %></h5>
                         </div>
-                        <a href="/user/checkout" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
-                            Proceed To Checkout
-                        </a>
+                        <% if(cart === true) { %>
+                            <a href="/user/checkout?cartPrice=<%=cartPrice%>" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
+                                Proceed To Checkout
+                            </a>
+                        <% } else { %>
+                            <a href="/showProducts" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
+                                Brows some products
+                            </a>
+                        <% } %>
                         
                     </div>
                 </div>

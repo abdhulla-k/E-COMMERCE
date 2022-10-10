@@ -23,6 +23,16 @@ let user;
 // all categories
 let categories;
 
+function getCategories() {
+    Categories.find({}, (err, data) => {
+        if (data) {
+            return data;
+        } else {
+            return [];
+        }
+    })
+}
+
 // a function to get all product categories
 CategoriesGet = new Promise((resolve, reject) => {
     Categories.find({}, (err, data) => {
@@ -272,14 +282,16 @@ exports.showCart = (req, res, next) => {
         Cart.find({
             userId: req.session.userId
         }, (err, data) => {
+            console.log(data)
             if (data) {
-                if (data.length !== 0) {
+                if (data.length !== 0 && data[0].products.length > 0) {
                     Product.find({
                         id: {
                             $in: [...data[0].products]
                         }
                     }, (err, products) => {
                         if (products) {
+                            // console.log(products)
                             // render the cart page
                             res.render("user/my-cart", {
                                 user: "user",
@@ -296,6 +308,7 @@ exports.showCart = (req, res, next) => {
                         }
                     })
                 } else {
+                    console.log("emptycart")
                     res.render("user/my-cart", {
                         user: "user",
                         categories: categories,
@@ -470,7 +483,7 @@ exports.getAddToCart = (req, res, next) => {
                                     .then(result => {
                                         res.redirect("/showProducts");
                                     })
-                                    .then(err => {
+                                    .catch(err => {
                                         console.log(err);
                                         res.redirect("/showProducts");
                                     })
@@ -549,16 +562,29 @@ exports.getAddToCart = (req, res, next) => {
     }
 }
 
+// /user/checkout?cartPrice
 exports.getCheckout = (req, res, next) => {
     if (req.session.userLoggedIn) {
         User.findById(req.session.userId)
             .then(data => {
-                res.render("user/checkout", {
-                    user: "true",
-                    categories: categories,
-                    userType: "user",
-                    address: data.address.length > 0 ? data.address : ""
-                });
+                if (data) {
+                    Cart.find({
+                        user: req.session.userId
+                    }, (err, cart) => {
+                        if (cart) {
+                            res.render("user/checkout", {
+                                user: "true",
+                                cart: cart,
+                                cartPrice: req.query.cartPrice,
+                                categories: categories ? categories : getCategories(),
+                                userType: "user",
+                                address: data.address.length > 0 ? data.address : ""
+                            });
+                        }
+                    })
+                } else {
+                    res.redirect("/");
+                }
             })
     } else {
         res.redirect("/user/login");
@@ -566,7 +592,64 @@ exports.getCheckout = (req, res, next) => {
 }
 
 exports.placeOrder = (req, res, next) => {
-    console.log(req.body);
+    if (req.session.userLoggedIn) {
+        let paymentMethod = req.body.paymentMethod;
+        let currentDate = new Date().toJSON().slice(0, 10);
+        let today = new Date();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        let address;
+        let orders = [];
+
+        if (req.body.addressId) {
+            User.findById(req.session.userId)
+                .then(user => {
+                    address = user.address[req.body.addressId - 1]
+                    return Cart.find({
+                        userId: user.id
+                    });
+                })
+                .then(cart => {
+                    for (product of cart[0].products) {
+                        orders.push({
+                            product: product.productId,
+                            date: currentDate,
+                            time: time,
+                            quantity: product.quantity,
+                            price: product.price,
+                            address: address,
+                            paymentMethod: paymentMethod
+                        })
+                    }
+                    return Cart.updateOne({
+                        userId: req.session.userId
+                    }, {
+                        products: []
+                    })
+                })
+                .then(updatedCart => {
+                    console.log(updatedCart)
+                    return User.findById(req.session.userId)
+                })
+                .then(userData => {
+                    userData.orders = [
+                        ...userData.orders,
+                        ...orders
+                    ]
+                    return userData.save();
+                })
+                .then(result => {
+                    console.log(result);
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.redirect('/');
+                })
+        } else {
+            console.log("nos");
+        }
+    } else {
+        res.redirect("/")
+    }
 }
 
 exports.userLogout = (req, res, next) => {
