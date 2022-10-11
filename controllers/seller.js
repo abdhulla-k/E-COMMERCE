@@ -17,6 +17,7 @@ exports.getLogin = (req, res, next) => {
         if (data) {
             categories = data;
             if (req.session.sellerLoggedIn) {
+                req.session.imageNames = [];
                 res.render("seller/seller-dashboard", {
                     user: req.session.sellerLoggedIn ? "true" : "",
                     userType: "seller",
@@ -185,6 +186,10 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
+    let imagesName = [];
+    for (file of req.files) {
+        imagesName.push(file.filename)
+    }
     const product = Product({
         title: req.body.title,
         price: req.body.price,
@@ -192,20 +197,13 @@ exports.postAddProduct = (req, res, next) => {
         quantity: req.body.quantity,
         category: req.body.category,
         user: req.session.sellerId,
+        images: imagesName
     })
 
     product.save()
         .then(result => {
-
-            // save image using express-fileuploader
-            let image = req.files.image;
-            image.mv("./public/images/" + result.id + '.jpg', (err, done) => {
-                if (!err) {
-                    res.redirect('/seller/');
-                } else {
-                    console.log(err);
-                }
-            })
+            console.log(result)
+            res.redirect('/seller/');
         })
         .catch(err => {
             console.log(err);
@@ -280,30 +278,30 @@ exports.myProductDetails = (req, res, next) => {
 exports.filterProducts = (req, res, next) => {
     if (req.session.sellerLoggedIn) {
         Category.find({}, (err, data) => {
-            if(data) {
+            if (data) {
                 if (req.body.all) {
                     req.session.filtering = false;
                     res.redirect("showMyProducts");
                 } else {
                     // get rid previous filter key if ther it is
                     filterKey = [];
-                        // don't want to filter if user asked all products
-                        if (req.body.all) {
-                            req.session.filtering = false;
-                            res.redirect("showMyProducts");
-                        } else {
-                            req.session.filtering = true;
-        
-                            // get categories to filter
-                            for (category of data) {
-                                let key = category.categoryName;
-                                if (req.body[key]) {
-                                    filterKey.push(category.id);
-                                }
+                    // don't want to filter if user asked all products
+                    if (req.body.all) {
+                        req.session.filtering = false;
+                        res.redirect("showMyProducts");
+                    } else {
+                        req.session.filtering = true;
+
+                        // get categories to filter
+                        for (category of data) {
+                            let key = category.categoryName;
+                            if (req.body[key]) {
+                                filterKey.push(category.id);
                             }
-                            // filtering will be applied in showMyProducts
-                            res.redirect("showMyProducts");
                         }
+                        // filtering will be applied in showMyProducts
+                        res.redirect("showMyProducts");
+                    }
                 }
             } else {
                 res.redirect("/seller/");
