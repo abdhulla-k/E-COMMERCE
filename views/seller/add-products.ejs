@@ -61,7 +61,7 @@
                             required
                             >
                             <% for(category of categories) { %>
-                              <% if(productDetails.category === category.categoryName) { %>
+                              <% if(productDetails.category === category.id) { %>
                                 <option value="<%= category.id %>" selected>
                                   <%= category.categoryName %>
                                 </option>
@@ -152,13 +152,17 @@
                         
                           <div class="form-group col-md-6">
                             <label for="inputState">Category</label>
-                            <select id="inputState" name="category" class="form-control" required>
-                              <option selected>Men dress</option>
-                              <option>Women dress</option>
-                              <option>Kids dress</option>
-                              <option>Electronics</option>
-                              <option>Mobiles</option>
-                              <option>Vegitables</option>
+                            <select 
+                              id="inputState" 
+                              name="category" 
+                              class="form-control" 
+                              required
+                              >
+                              <% for(category of categories) { %>
+                                <option value="<%= category.id %>">
+                                  <%= category.categoryName %>
+                                </option>
+                              <% } %>
                             </select>
                           </div>
                         
