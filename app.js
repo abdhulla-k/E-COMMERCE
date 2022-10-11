@@ -4,8 +4,27 @@ const mongoose = require( "mongoose" );
 const session = require( "express-session" );
 const nocache = require( "nocache" );
 const bodyParser = require( "body-parser" );
+
+// requre and set multer
+const multer = require("multer");
+const storage = multer.diskStorage({
+    destination: function( req, file, cb ) {
+        cb(null, './public/images/')
+    },
+    filename: function(req, file, cb ) {
+        // let ext = req.files.image.name;
+        const uniqueName = Date.now() + '.jpg'
+        cb(null, uniqueName)
+    }
+})
+const upload = multer({storage: storage})
+
 const app = express();
-const fileUPload = require( "express-fileupload" );
+
+// use multer
+app.use(upload.array('image', 3), function (req, res, next) {
+    next()
+})
 
 // set public path
 app.use( express.static( path.join( __dirname, 'public' )));
@@ -28,7 +47,6 @@ app.use( nocache());
 // set body-parser
 app.use( bodyParser.urlencoded({ extended: false }));
 
-app.use(fileUPload());
 
 // import routes
 const shopRoute = require( "./routes/shop" );

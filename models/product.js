@@ -26,7 +26,8 @@ const productSchema = new Schema({
     user: {
         type: String,
         required: true
-    }
+    },
+    images: []
 })
 
 module.exports = mongoose.model( "Product", productSchema );

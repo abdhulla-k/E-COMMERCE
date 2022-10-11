@@ -33,6 +33,7 @@ exports.showAllProducts = (req, res, next) => {
             }
         }, (err, data) => {
             if (data) {
+                console.log(data)
                 res.render("shop/shop", {
                     user: userStatus,
                     userType: userType,
@@ -47,6 +48,7 @@ exports.showAllProducts = (req, res, next) => {
         // send all products to shop
         Products.find({}, (err, data) => {
             if (data) {
+                console.log(data)
                 res.render("shop/shop", {
                     user: userStatus,
                     userType: userType,
@@ -78,6 +80,7 @@ exports.productDetails = (req, res, next) => {
 
     Products.findById(prodId)
         .then(product => {
+            console.log(product)
             res.render("shop/detail", {
                 user: userStatus,
                 userType: "user",
