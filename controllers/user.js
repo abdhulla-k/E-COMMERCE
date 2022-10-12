@@ -12,6 +12,13 @@ const accountSid = tiloPersonalData.accountSid;
 const authToken = tiloPersonalData.authToken;
 const client = require('twilio')(accountSid, authToken);
 
+// signup data
+let userData = {
+    name: "",
+    email: "",
+    phoneNumber: "",
+};
+
 let loginErrorMessage;
 let signupErrorMessage;
 let otpErrormessage;
@@ -49,7 +56,6 @@ CategoriesGet = new Promise((resolve, reject) => {
 })
 
 exports.getLogin = (req, res, next) => {
-
     if (req.session.userLoggedIn) {
         res.redirect("/");
     } else {
@@ -126,9 +132,20 @@ exports.getSignup = (req, res, next) => {
                 user: "",
                 errorMessage: signupErrorMessage,
                 categories: categories,
-                userType: 'user'
+                userType: 'user',
+                signupData: {
+                    name: userData.name ? userData.name : '',
+                    email: userData.email ? userData.email : '',
+                    phoneNumber: userData.phoneNumber ? userData.phoneNumber : ''
+                }
             });
             signupErrorMessage = "";
+            // get rid the previous data
+            userData = {
+                name: "",
+                email: "",
+                phoneNumber: "",
+            }
         } else {
             CategoriesGet.then(categories => {
                     categories = categories;
@@ -136,9 +153,20 @@ exports.getSignup = (req, res, next) => {
                         user: "",
                         errorMessage: signupErrorMessage,
                         categories: categories,
-                        userType: 'user'
+                        userType: 'user',
+                        signupData: {
+                            name: userData.name ? userData.name : '',
+                            email: userData.email ? userData.email : '',
+                            phoneNumber: userData.phoneNumber ? userData.phoneNumber : ''
+                        }
                     });
                     signupErrorMessage = "";
+                    // get rid the previous data
+                    userData = {
+                        name: "",
+                        email: "",
+                        phoneNumber: "",
+                    }
                 })
                 .catch(err => {
                     console.log(err);
@@ -159,94 +187,111 @@ exports.postSignup = (req, res, next) => {
         userType: 'user'
     }
 
+    userData = {
+        name: req.body.name,
+        email: req.body.email,
+        phoneNumber: req.body.phone,
+    }
+
     // set salt round to bcrypt the password
     const saltRound = 10;
 
     // check is it exist or not
     User.find({
-        email: signupData.email
+        phoneNumber: signupData.phoneNumber
     }, (err, data) => {
-
-        // save user if it is not exist in database
         if (data.length === 0) {
+            // check is it exist or not
+            User.find({
+                email: signupData.email
+            }, (err, data) => {
 
-            // bcrypt the password
-            bcrypt.genSalt(saltRound, (saltError, salt) => {
-                if (saltError) {
-                    throw saltError
-                } else {
-                    bcrypt.hash(signupData.password, salt, (hashError, hash) => {
-                        if (hashError) {
-                            throw hashError
+                // save user if it is not exist in database
+                if (data.length === 0) {
+
+                    // bcrypt the password
+                    bcrypt.genSalt(saltRound, (saltError, salt) => {
+                        if (saltError) {
+                            throw saltError
                         } else {
-
-                            // create User object or document
-                            user = new User({
-                                name: signupData.name,
-                                email: signupData.email,
-                                phoneNumber: signupData.phoneNumber,
-                                password: hash,
-                                userType: signupData.userType
-                            })
-
-                            // create otp 
-                            let otpPromise = new Promise((res, rej) => {
-                                let number = ''
-                                let digits = "0123456789";
-                                for (let i = 0; i < 2; i++) {
-                                    number += digits[Math.floor(Math.random() * 10)]
-                                }
-                                if (number) {
-                                    res(number);
+                            bcrypt.hash(signupData.password, salt, (hashError, hash) => {
+                                if (hashError) {
+                                    throw hashError
                                 } else {
-                                    rej("error in otp generation");
+
+                                    // create User object or document
+                                    user = new User({
+                                        name: signupData.name,
+                                        email: signupData.email,
+                                        phoneNumber: signupData.phoneNumber,
+                                        password: hash,
+                                        userType: signupData.userType
+                                    })
+
+                                    // create otp 
+                                    let otpPromise = new Promise((res, rej) => {
+                                        let number = ''
+                                        let digits = "0123456789";
+                                        for (let i = 0; i < 2; i++) {
+                                            number += digits[Math.floor(Math.random() * 10)]
+                                        }
+                                        if (number) {
+                                            res(number);
+                                        } else {
+                                            rej("error in otp generation");
+                                        }
+                                    })
+
+                                    // use otpPromise to create an otp
+                                    otpPromise.then(generatedOtp => {
+                                            waitingOtp = generatedOtp;
+                                            console.log(generatedOtp);
+
+                                            // send created otp
+                                            client.messages
+                                                .create({
+                                                    body: generatedOtp,
+                                                    from: '+13854835372',
+                                                    to: '+916282679611'
+                                                })
+                                                .then(message => {
+                                                    otpErrormessage = "";
+                                                })
+                                                .done(
+                                                    console.log("done")
+                                                );
+
+                                            // destroy the othp after 30 seconds
+                                            setTimeout(() => {
+                                                waitingOtp = "";
+                                                console.log(waitingOtp);
+                                            }, 30000);
+
+                                            // show the page to enter otp
+                                            res.render("user/otp", {
+                                                user: "",
+                                                errorMessage: otpErrormessage,
+                                                userType: 'user',
+                                                categories: categories
+                                            });
+                                        })
+                                        .catch(err => {
+                                            console("error in otp createion");
+                                            res.redirect("/");
+                                        })
                                 }
                             })
-
-                            // use otpPromise to create an otp
-                            otpPromise.then(generatedOtp => {
-                                    waitingOtp = generatedOtp;
-                                    console.log(generatedOtp);
-
-                                    // send created otp
-                                    client.messages
-                                        .create({
-                                            body: generatedOtp,
-                                            from: '+13854835372',
-                                            to: '+916282679611'
-                                        })
-                                        .then(message => {
-                                            otpErrormessage = "";
-                                        })
-                                        .done(
-                                            console.log("done")
-                                        );
-
-                                    // destroy the othp after 30 seconds
-                                    setTimeout(() => {
-                                        waitingOtp = "";
-                                        console.log(waitingOtp);
-                                    }, 30000);
-
-                                    // show the page to enter otp
-                                    res.render("user/otp", {
-                                        user: "",
-                                        errorMessage: otpErrormessage,
-                                        userType: 'user',
-                                        categories: categories
-                                    });
-                                })
-                                .catch(err => {
-                                    console("error in otp createion");
-                                    res.redirect("/");
-                                })
                         }
                     })
+                } else {
+                    signupErrorMessage = "user already exist";
+                    console.log("emil exist");
+                    res.redirect("signup");
                 }
             })
         } else {
-            signupErrorMessage = "user already exist";
-            console.log("emil exist");
+            signupErrorMessage = "mobile already exist";
+            console.log("mobile exist");
             res.redirect("signup");
         }
     })
