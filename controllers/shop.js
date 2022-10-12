@@ -5,58 +5,71 @@ let filterKey = [];
 let categories;
 
 exports.getShop = (req, res, next) => {
-    Category.find({}, (err, data) => {
-        if (data) {
-            categories = data;
-            res.render("user/home", {
-                userType: "user",
-                user: req.session.userLoggedIn ? "user" : "",
-                categories: data
-            });
-        }
-    })
+    if (categories) {
+        res.render("user/home", {
+            userType: "user",
+            user: req.session.userLoggedIn ? "user" : "",
+            categories: categories
+        });
+    } else {
+        Category.find({}, (err, data) => {
+            if (data) {
+                categories = data;
+                res.redirect('/')
+            }
+        })
+    }
 }
 
 exports.showAllProducts = (req, res, next) => {
     let userStatus = req.session.userLoggedIn ? "true" : "";
     let userType = req.session.userType; // seller or user
 
-    if (req.session.filtering === true) {
-        req.session.filtering = false;
+    if (categories) {
+        if (req.session.filtering === true) {
+            req.session.filtering = false;
 
-        // send filtered products to shop
-        Products.find({
-            category: {
-                $in: [
-                    ...filterKey
-                ]
-            }
-        }, (err, data) => {
-            if (data) {
-                console.log(data)
-                res.render("shop/shop", {
-                    user: userStatus,
-                    userType: userType,
-                    products: data,
-                    categories: categories
-                });
-            } else {
-                noProductsAvailable();
-            }
-        })
+            // send filtered products to shop
+            Products.find({
+                category: {
+                    $in: [
+                        ...filterKey
+                    ]
+                }
+            }, (err, data) => {
+                if (data) {
+                    res.render("shop/shop", {
+                        user: userStatus,
+                        userType: userType,
+                        products: data,
+                        categories: categories
+                    });
+                } else {
+                    noProductsAvailable();
+                }
+            })
+        } else {
+            // send all products to shop
+            Products.find({}, (err, data) => {
+                if (data) {
+                    console.log(data)
+                    res.render("shop/shop", {
+                        user: userStatus,
+                        userType: userType,
+                        products: data,
+                        categories: categories
+                    });
+                } else {
+                    noProductsAvailable();
+                }
+            })
+        }
     } else {
-        // send all products to shop
-        Products.find({}, (err, data) => {
+        // find categories if it is empty
+        Category.find({}, (err, data) => {
             if (data) {
-                console.log(data)
-                res.render("shop/shop", {
-                    user: userStatus,
-                    userType: userType,
-                    products: data,
-                    categories: categories
-                });
-            } else {
-                noProductsAvailable();
+                categories = data;
+                res.redirect('/showProducts')
             }
         })
     }
@@ -78,7 +91,11 @@ exports.productDetails = (req, res, next) => {
 
     const prodId = req.params.productId
 
-    Products.findById(prodId)
+    Category.find({})
+        .then(data => {
+            categories = data;
+            return Products.findById(prodId)
+        })
         .then(product => {
             console.log(product)
             res.render("shop/detail", {
@@ -105,7 +122,7 @@ exports.filterProducts = (req, res, next) => {
         // get categories to filter
         for (category of categories) {
             let key = category.categoryName;
-            if(req.body[key]) {
+            if (req.body[key]) {
                 filterKey.push(category.id);
             }
         }

@@ -121,7 +121,7 @@ exports.getSignup = (req, res, next) => {
     if (req.session.userLoggedIn) {
         res.redirect('/');
     } else {
-        if (category) {
+        if (categories) {
             res.render("user/user-signup", {
                 user: "",
                 errorMessage: signupErrorMessage,
@@ -130,13 +130,19 @@ exports.getSignup = (req, res, next) => {
             });
             signupErrorMessage = "";
         } else {
-            CategoriesGet.then(data => {
-                    categories = data
-                    res.redirect('user/user-signup');
+            CategoriesGet.then(categories => {
+                    categories = categories;
+                    res.render("user/user-signup", {
+                        user: "",
+                        errorMessage: signupErrorMessage,
+                        categories: categories,
+                        userType: 'user'
+                    });
+                    signupErrorMessage = "";
                 })
                 .catch(err => {
                     console.log(err);
-                    res.redirect('/user/user-signup');
+                    res.redirect("/user/signup");
                 })
         }
     }
@@ -293,6 +299,7 @@ exports.showCart = (req, res, next) => {
                         if (products) {
                             // console.log(products)
                             // render the cart page
+                            console.log(products[0])
                             res.render("user/my-cart", {
                                 user: "user",
                                 categories: categories,
@@ -432,7 +439,7 @@ exports.addToCart = (req, res, next) => {
                     .then(result => {
                         res.redirect("/showProducts");
                     })
-                    .then(err => {
+                    .catch(err => {
                         console.log(err);
                         res.redirect("/showProducts");
                     })
