@@ -21,7 +21,8 @@ let userData = {
 
 let loginErrorMessage;
 let signupErrorMessage;
-let otpErrormessage;
+let otpErrormessage = '';
+let otpTimeError = '';
 let waitingOtp;
 
 // save user data to signup and to save after otp verification
@@ -265,15 +266,11 @@ exports.postSignup = (req, res, next) => {
                                             setTimeout(() => {
                                                 waitingOtp = "";
                                                 console.log(waitingOtp);
+                                                otpTimeError = "Time is over! try again!"
                                             }, 30000);
 
                                             // show the page to enter otp
-                                            res.render("user/otp", {
-                                                user: "",
-                                                errorMessage: otpErrormessage,
-                                                userType: 'user',
-                                                categories: categories
-                                            });
+                                            res.redirect("/user/otp")
                                         })
                                         .catch(err => {
                                             console("error in otp createion");
@@ -286,22 +283,52 @@ exports.postSignup = (req, res, next) => {
                 } else {
                     signupErrorMessage = "user already exist";
                     console.log("emil exist");
-                    res.redirect("signup");
+                    res.redirect("/user/signup");
                 }
             })
         } else {
             signupErrorMessage = "mobile already exist";
             console.log("mobile exist");
-            res.redirect("signup");
+            res.redirect("/user/signup");
         }
     })
 }
 
-// to show otp entering page
+// to show the page to enter otp
 exports.otpVerify = (req, res, next) => {
-    res.render("user/otp", {
-        errorMessage: ""
-    });
+    console.log(otpTimeError)
+    if (categories) {
+        res.render("/user/otp", {
+            errorMessage: "",
+            categories: categories
+        });
+    } else {
+        CategoriesGet
+        .then(categories => {
+            res.render("user/otp", {
+                errorMessage: otpErrormessage,
+                categories: categories,
+                userType: "user",
+                user: '',
+                otpTimeError: otpTimeError,
+            });
+            otpErrormessage = "";
+            otpTimeError = '';
+        })
+        .catch(err => {
+            res.render("user/otp", {
+                errorMessage: otpErrormessage,
+                categories: [],
+                userType: "user",
+                user: '',
+                errorMessage: otpErrormessage,
+                otpTimeError: otpTimeError,
+            });
+            otpErrormessage = "";
+            otpTimeError = '';
+        })
+    }
+
 }
 
 // check otp and save user data
@@ -315,16 +342,15 @@ exports.postSignupOtp = (req, res, next) => {
                 res.redirect("/user/login");
             })
             .catch(err => {
-                console.log("error in user createion");
                 console.log(err);
-                res.redirect("/");
+                signupErrorMessage = "we are very sory! trouble in creating user! try after sometime or contact us"
+                res.redirect("/user/signup");
             })
     } else {
         console.log("incorrect otp");
         otpErrormessage = "incorrect otp";
-        res.redirect("/otp");
+        res.redirect("/user/otp");
     }
-    otpErrormessage = "";
 }
 
 exports.showCart = (req, res, next) => {
