@@ -298,35 +298,35 @@ exports.postSignup = (req, res, next) => {
 exports.otpVerify = (req, res, next) => {
     console.log(otpTimeError)
     if (categories) {
-        res.render("/user/otp", {
+        res.render("user/otp", {
             errorMessage: "",
             categories: categories
         });
     } else {
         CategoriesGet
-        .then(categories => {
-            res.render("user/otp", {
-                errorMessage: otpErrormessage,
-                categories: categories,
-                userType: "user",
-                user: '',
-                otpTimeError: otpTimeError,
-            });
-            otpErrormessage = "";
-            otpTimeError = '';
-        })
-        .catch(err => {
-            res.render("user/otp", {
-                errorMessage: otpErrormessage,
-                categories: [],
-                userType: "user",
-                user: '',
-                errorMessage: otpErrormessage,
-                otpTimeError: otpTimeError,
-            });
-            otpErrormessage = "";
-            otpTimeError = '';
-        })
+            .then(categories => {
+                res.render("user/otp", {
+                    errorMessage: otpErrormessage,
+                    categories: categories,
+                    userType: "user",
+                    user: '',
+                    otpTimeError: otpTimeError,
+                });
+                otpErrormessage = "";
+                otpTimeError = '';
+            })
+            .catch(err => {
+                res.render("user/otp", {
+                    errorMessage: otpErrormessage,
+                    categories: [],
+                    userType: "user",
+                    user: '',
+                    errorMessage: otpErrormessage,
+                    otpTimeError: otpTimeError,
+                });
+                otpErrormessage = "";
+                otpTimeError = '';
+            })
     }
 
 }
@@ -359,7 +359,6 @@ exports.showCart = (req, res, next) => {
         Cart.find({
             userId: req.session.userId
         }, (err, data) => {
-            console.log(data)
             if (data) {
                 if (data.length !== 0 && data[0].products.length > 0) {
                     Product.find({
@@ -368,16 +367,13 @@ exports.showCart = (req, res, next) => {
                         }
                     }, (err, products) => {
                         if (products) {
-                            // console.log(products)
-                            // render the cart page
-                            console.log(products[0])
                             res.render("user/my-cart", {
                                 user: "user",
                                 categories: categories,
                                 userType: "user",
                                 cartData: data,
                                 productsData: products,
-                                cart: true
+                                cart: data[0].products.length > 0 ? true : false
                             });
                         } else {
                             console.log(err)
@@ -430,70 +426,91 @@ exports.addToCart = (req, res, next) => {
         }, (err, data) => {
             console.log(data)
 
-            if (data.length !== 0) {
-                // create a new cart if the user has no a cart
-                if (data.products.length === 0) {
+            if (data) {
+                if (data.length !== 0) {
+                    // create a new cart if the user has no a cart
+                    if (data.products.length === 0) {
 
-                    data.products = [{
-                        productId: cartData.productId,
-                        quantity: cartData.quantity,
-                        price: cartData.price
-                    }]
+                        data.products = [{
+                            productId: cartData.productId,
+                            quantity: cartData.quantity,
+                            price: cartData.price
+                        }]
 
-                    // save the new cart
-                    data.save()
-                        .then(result => {
-                            console.log(result)
-                            res.redirect("/showProducts");
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            res.redirect("/showProducts");
-                        })
-                } else {
+                        // save the new cart
+                        data.save()
+                            .then(result => {
+                                console.log(result)
+                                res.redirect("/showProducts");
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.redirect("/showProducts");
+                            })
+                    } else {
 
-                    // update the cart if there is an existing cart
-                    let k = 0;
-                    for (i of data.products) {
-                        k++;
+                        // update the cart if there is an existing cart
+                        let k = 0;
+                        for (i of data.products) {
+                            k++;
 
-                        // increase the quantity and the total price of the cart if the product 
-                        // already exist in the cart
-                        if (i.productId === cartData.productId) {
-                            i.price = Number(i.price) + Number(cartData.quantity * cartData.price);
-                            i.quantity = Number(i.quantity) + Number(cartData.quantity);
-                            data.save()
-                                .then(result => {
-                                    res.redirect("/showProducts");
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                    res.redirect("/showProducts");
-                                })
-
-                            break;
-                        } else {
-
-                            // add the product and quantity and price if the product not exist in cart
-                            if (k === data.products.length) {
-                                data.products.push({
-                                    productId: cartData.productId,
-                                    quantity: cartData.quantity,
-                                    price: cartData.quantity * cartData.price
-                                })
+                            // increase the quantity and the total price of the cart if the product 
+                            // already exist in the cart
+                            if (i.productId === cartData.productId) {
+                                i.price = Number(i.price) + Number(cartData.quantity * cartData.price);
+                                i.quantity = Number(i.quantity) + Number(cartData.quantity);
                                 data.save()
                                     .then(result => {
-                                        console.log(result)
                                         res.redirect("/showProducts");
                                     })
                                     .catch(err => {
                                         console.log(err);
                                         res.redirect("/showProducts");
                                     })
+
                                 break;
+                            } else {
+
+                                // add the product and quantity and price if the product not exist in cart
+                                if (k === data.products.length) {
+                                    data.products.push({
+                                        productId: cartData.productId,
+                                        quantity: cartData.quantity,
+                                        price: cartData.quantity * cartData.price
+                                    })
+                                    data.save()
+                                        .then(result => {
+                                            console.log(result)
+                                            res.redirect("/showProducts");
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                            res.redirect("/showProducts");
+                                        })
+                                    break;
+                                }
                             }
                         }
                     }
+                } else {
+                    const cart = new Cart({
+                        userId: req.session.userId,
+                        products: [{
+                            productId: cartData.productId,
+                            quantity: cartData.quantity,
+                            price: cartData.quantity * cartData.price
+                        }]
+                    })
+
+                    // save the new cart
+                    cart.save()
+                        .then(result => {
+                            res.redirect("/showProducts");
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.redirect("/showProducts");
+                        })
                 }
             } else {
                 const cart = new Cart({
