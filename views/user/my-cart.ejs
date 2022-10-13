@@ -3,6 +3,46 @@
     <%- include( "../includes/navigation.ejs" ) %>
     <!-- /header -->
 
+    <style>
+        .hide {
+            visibility: hidden;
+        }
+        @keyframes fadeIn {
+          from {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+        }
+        @keyframes fedOut {
+          from {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+        }
+        .animate {
+          animation: fadeIn 500ms ease-out backwards;
+        }
+        .out-animate {
+            animation: fedOut 500ms ease-in forwards;
+        }
+    </style>
+    <div 
+        style="position: absolute; z-index: 100; width: 100%; text-align: center;" 
+        class="hide alert alert-danger" 
+        role="alert"
+        id="remove"
+        >
+        removed from cart
+    </div>
+
     <!-- Cart Start -->
     <div class="container-fluid">
         <div class="row px-xl-5">
@@ -51,7 +91,7 @@
                                             <!-- /table colemn for product price -->
     
                                             <!-- table colemn for quantity and quanity buttons -->
-                                            <td class="align-middle">
+                                            <td class="align-middle" id="<%= product.id %>.">
                                                 <div 
                                                     class="input-group quantity mx-auto" 
                                                     style="width: 100px;">
@@ -96,9 +136,14 @@
     
                                             <!-- table colemn for delet product from cart button -->
                                             <td class="align-middle">
-                                                <button class="btn btn-sm btn-danger">
+                                                <a 
+                                                    class="btn btn-sm btn-danger"
+                                                    id="<%= product.id %>"
+                                                    onclick="removeFromCart(id)"
+                                                    >
                                                     <i class="fa fa-times"></i>
-                                                </button>
+                                                </a>
+                                                <a id="relodMyCart" href="/user/cart" hidden>remove relode</a>
                                             </td>
                                             <!-- /table colemsn for delet product from cart button -->
                                         </tr>
@@ -178,6 +223,25 @@
             value < 1 ? value = 1 : '';
             value--;
             document.getElementById(str).value = value;
+        }
+
+        function removeFromCart(id) {
+            let remove = document.querySelector('#remove')
+            remove.classList.remove('hide')
+            remove.classList.remove('out-animate')
+            remove.classList.add('animate')
+            $.ajax({
+                url: `/user/removeFromCart/${id}`
+            })
+            setTimeout(() => {
+                remove.classList.remove('animate')
+                remove.classList.add('out-animate')
+                document.getElementById("relodMyCart").click();
+            }, 1000)
+            setTimeout(() => {
+                remove.classList.add('hide')
+            }, 2000)
+            
         }
     </script>
     <!-- /script of product quantity buttons -->

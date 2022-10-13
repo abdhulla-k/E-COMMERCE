@@ -52,7 +52,6 @@ exports.showAllProducts = (req, res, next) => {
             // send all products to shop
             Products.find({}, (err, data) => {
                 if (data) {
-                    console.log(data)
                     res.render("shop/shop", {
                         user: userStatus,
                         userType: userType,
