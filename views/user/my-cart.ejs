@@ -100,7 +100,7 @@
                                                             <a 
                                                                 class="btn btn-sm btn-primary btn-minus"  
                                                                 id="<%= product.id %>."
-                                                                onclick="decreaseValue(id)"
+                                                                onclick="decreaseValue(id, '<%= product.price %>')"
                                                                 >
                                                               <i class="fa fa-minus"></i>
                                                             </a>
@@ -116,7 +116,7 @@
                                                     <div class="input-group-btn">
                                                         <a 
                                                             class="btn btn-sm btn-primary btn-plus" 
-                                                            onclick="increaseValue(id)"
+                                                            onclick="increaseValue(id, '<%= product.price %>')"
                                                             id="<%= product.id %>"
                                                             >
                                                           <i class="fa fa-plus"></i>
@@ -209,20 +209,41 @@
 
     <!-- script of product quantity buttons -->
     <script>
-        function increaseValue(id) {
+        function increaseValue(id, price) {
             var value = parseInt(document.getElementById(id).value, 10);
             value = isNaN(value) ? 0 : value;
             value++;
             document.getElementById(id).value = value;
+            
+            // change the total price
+            let totalPrice = value * price
+            document.getElementById(id+"p").innerHTML = totalPrice
+
+            // send request
+            $.ajax({
+                url: `/user/addToCart/${id}`,
+                method: "get"
+            })
         }
 
-        function decreaseValue(iD) {
+        function decreaseValue(iD, price) {
             let str = iD.substring(0, iD.length - 1);
             var value = parseInt(document.getElementById(str).value, 10);
             value = isNaN(value) ? 0 : value;
             value < 1 ? value = 1 : '';
             value--;
             document.getElementById(str).value = value;
+
+            // totoal price of product
+            let totalPrice = price * value;
+            let idOfPrice = iD.slice(0,-1)+'p'
+            // change the value
+            document.getElementById(idOfPrice).innerHTML = totalPrice
+            
+            $.ajax({
+                url: `/user/decreaseQt/${iD}`,
+                method: "get"
+            })
         }
 
         function removeFromCart(id) {
