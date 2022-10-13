@@ -4,6 +4,46 @@
     <%- include( "../includes/navigation.ejs" ) %>
     <!-- /header -->
 
+    <style>
+        .hide {
+            visibility: hidden;
+        }
+        @keyframes fadeIn {
+          from {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+        }
+        @keyframes fedOut {
+          from {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+        }
+        .animate {
+          animation: fadeIn 500ms ease-out backwards;
+        }
+        .out-animate {
+            animation: fedOut 500ms ease-in forwards;
+        }
+    </style>
+    <div 
+        style="position: absolute; z-index: 100; width: 100%; text-align: center;" 
+        class="hide alert" 
+        role="alert"
+        id="addedNotification"
+        >
+        product added to cart
+    </div>
+
     <!-- Shop Start -->
     <div class="container-fluid">
         <div class="row px-xl-5">
@@ -66,7 +106,7 @@
                                         <div class="product-action">
                                             <a 
                                                 class="btn btn-outline-dark btn-square"
-                                                onclick="addToCart('<%= product.id %>')">
+                                                onclick="addToCart('<%= product.id %>' , '<%= user %>')">
                                                     <i class="fa fa-shopping-cart"></i>
                                             </a>
                                             <a class="btn btn-outline-dark btn-square" href="/user/addToWishlist"><i class="far fa-heart"></i></a>
@@ -106,11 +146,30 @@
 
     <!-- cart update ajax -->
     <script>
-        function addToCart(productId) {
+        function addToCart(productId, user) {
+            console.log(user)
+            let addedNotification = document.querySelector('#addedNotification')
+            if(user) {
+                addedNotification.innerHTML = "product added to your cart!"
+                addedNotification.classList.add("alert-success")
+            } else {
+                addedNotification.innerHTML = "your not logged in!"
+                addedNotification.classList.add("alert-warning")
+            }
+            addedNotification.classList.remove('hide')
+            addedNotification.classList.remove('out-animate')
+            addedNotification.classList.add('animate')
             $.ajax({
                 url: `/user/addToCart/${productId}`,
                 method: "get"
             })
+            setTimeout(() => {
+                addedNotification.classList.remove('animate')
+                addedNotification.classList.add('out-animate')
+            }, 1000)
+            setTimeout(() => {
+                addedNotification.classList.add('hide')
+            }, 2000)
         }
     </script>
     <!-- /card update ajax -->
