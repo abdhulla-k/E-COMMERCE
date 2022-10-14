@@ -187,7 +187,8 @@
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5>$<%= cartPrice %></h5>
+                            <h5 id="cartPriceShow" class="cartPrice">$<%= cartPrice %></h5>
+                            <input hidden type="number" value="<%= cartPrice %>" id="cartPrice">
                         </div>
                         <% if(cart) { %>
                             <a href="/user/checkout?cartPrice=<%=cartPrice%>" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
@@ -214,10 +215,15 @@
             value = isNaN(value) ? 0 : value;
             value++;
             document.getElementById(id).value = value;
+
+            // get cart price
+            let cartPrice = document.getElementById("cartPrice").value;
+            document.getElementById("cartPrice").value = Number(cartPrice) + Number(price);
+            document.getElementById("cartPriceShow").innerHTML = Number(cartPrice) + Number(price);
             
-            // change the total price
+            // change the total price of that row
             let totalPrice = value * price
-            document.getElementById(id+"p").innerHTML = totalPrice
+            document.getElementById(id+"p").innerHTML = totalPrice;
 
             // send request
             $.ajax({
@@ -232,18 +238,25 @@
             value = isNaN(value) ? 0 : value;
             value < 1 ? value = 1 : '';
             value--;
-            document.getElementById(str).value = value;
+            if( value > 0 ) {
+                document.getElementById(str).value = value;
 
-            // totoal price of product
-            let totalPrice = price * value;
-            let idOfPrice = iD.slice(0,-1)+'p'
-            // change the value
-            document.getElementById(idOfPrice).innerHTML = totalPrice
-            
-            $.ajax({
-                url: `/user/decreaseQt/${iD}`,
-                method: "get"
-            })
+                // get cart price
+                let cartPrice = document.getElementById("cartPrice").value;
+                document.getElementById("cartPrice").value = Number(cartPrice) - Number(price);
+                document.getElementById("cartPriceShow").innerHTML = Number(cartPrice) - Number(price);
+
+                // totoal price of product
+                let totalPrice = price * value;
+                let idOfPrice = iD.slice(0,-1)+'p'
+                // change the value
+                document.getElementById(idOfPrice).innerHTML = totalPrice
+                
+                $.ajax({
+                    url: `/user/decreaseQt/${iD}`,
+                    method: "get"
+                })
+            }
         }
 
         function removeFromCart(id) {
