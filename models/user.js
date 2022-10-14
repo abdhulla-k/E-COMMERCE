@@ -34,20 +34,27 @@ const addressScema = new Schema({
 
 })
 
-const ordersSchema = new Schema({
-    product: {
+const productsSchema = new Schema({
+    productId: {
         type: String,
         required: true
     },
+    quantity: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: String,
+        required: true
+    }
+})
+
+const ordersSchema = new Schema({
     date: {
         type: String,
         required: true
     },
     time: {
-        type: String,
-        required: true
-    },
-    quantity: {
         type: String,
         required: true
     },
@@ -62,7 +69,12 @@ const ordersSchema = new Schema({
     paymentMethod: {
         type: String,
         required: true
-    }
+    },
+    orderStatus: {
+        type: String,
+        required: true
+    },
+    products: [productsSchema]
 
 })
 

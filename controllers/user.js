@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Categories = require("../models/product_category");
 const Cart = require("../models/cart");
 const Product = require("../models/product");
+const Order = require("../models/orders");
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
@@ -359,33 +360,44 @@ exports.postSignupOtp = (req, res, next) => {
 exports.showCart = (req, res, next) => {
     if (req.session.userLoggedIn) {
         // get cart data
-        Cart.find({
-            userId: req.session.userId
-        }, (err, data) => {
-            if (data) {
-                if (data.length !== 0 && data[0].products.length > 0) {
-                    Product.find({
-                        id: {
-                            $in: [...data[0].products]
-                        }
-                    }, (err, products) => {
-                        if (products) {
-                            res.render("user/my-cart", {
-                                user: "user",
-                                categories: categories,
-                                userType: "user",
-                                cartData: data,
-                                productsData: products,
-                                cart: data[0].products.length > 0 ? true : false
-                            });
-                        } else {
-                            console.log(err)
-                            console.log("error while geting cart products data");
-                            res.redirect("/");
-                        }
-                    })
+        if (categories) {
+            Cart.find({
+                userId: req.session.userId
+            }, (err, data) => {
+                if (data) {
+                    if (data.length !== 0 && data[0].products.length > 0) {
+                        Product.find({
+                            id: {
+                                $in: [...data[0].products]
+                            }
+                        }, (err, products) => {
+                            if (products) {
+                                res.render("user/my-cart", {
+                                    user: "user",
+                                    categories: categories,
+                                    userType: "user",
+                                    cartData: data,
+                                    productsData: products,
+                                    cart: data[0].products.length > 0 ? true : false
+                                });
+                            } else {
+                                console.log(err)
+                                console.log("error while geting cart products data");
+                                res.redirect("/");
+                            }
+                        })
+                    } else {
+                        console.log("emptycart")
+                        res.render("user/my-cart", {
+                            user: "user",
+                            categories: categories,
+                            userType: "user",
+                            cartData: '',
+                            productsData: '',
+                            cart: false
+                        });
+                    }
                 } else {
-                    console.log("emptycart")
                     res.render("user/my-cart", {
                         user: "user",
                         categories: categories,
@@ -395,19 +407,12 @@ exports.showCart = (req, res, next) => {
                         cart: false
                     });
                 }
-            } else {
-                res.render("user/my-cart", {
-                    user: "user",
-                    categories: categories,
-                    userType: "user",
-                    cartData: '',
-                    productsData: '',
-                    cart: false
-                });
-            }
-        })
+            })
+        } else {
+            res.redirect("/user/login");
+        }
     } else {
-        res.redirect("/user/login");
+        res.redirect("/");
     }
 }
 
@@ -687,7 +692,7 @@ exports.getDecreaseCartQuantity = (req, res, next) => {
     console.log("reached")
     if (req.session.userLoggedIn) {
         // save the product id user sended
-        let prodId = req.params.productId.slice(0,-1);
+        let prodId = req.params.productId.slice(0, -1);
 
         // get the product data
         Product.findById(prodId)
@@ -856,6 +861,7 @@ exports.removeFromCart = (req, res, next) => {
 // /user/checkout?cartPrice
 exports.getCheckout = (req, res, next) => {
     if (req.session.userLoggedIn) {
+        req.session.cartPrice = req.query.cartPrice;
         User.findById(req.session.userId)
             .then(data => {
                 if (data) {
@@ -900,17 +906,15 @@ exports.placeOrder = (req, res, next) => {
                     });
                 })
                 .then(cart => {
-                    for (product of cart[0].products) {
-                        orders.push({
-                            product: product.productId,
-                            date: currentDate,
-                            time: time,
-                            quantity: product.quantity,
-                            price: product.price,
-                            address: address,
-                            paymentMethod: paymentMethod
-                        })
-                    }
+                    orders.push({
+                        date: currentDate,
+                        time: time,
+                        price: req.session.cartPrice,
+                        address: address,
+                        paymentMethod: paymentMethod,
+                        products: [...cart[0].products],
+                        orderStatus: 'placed'
+                    })
                     return Cart.updateOne({
                         userId: req.session.userId
                     }, {
@@ -918,7 +922,6 @@ exports.placeOrder = (req, res, next) => {
                     })
                 })
                 .then(updatedCart => {
-                    console.log(updatedCart)
                     return User.findById(req.session.userId)
                 })
                 .then(userData => {
@@ -929,10 +932,34 @@ exports.placeOrder = (req, res, next) => {
                     return userData.save();
                 })
                 .then(result => {
-                    console.log(result);
+                    for (product of orders[0].products) {
+                        Product.findById(product.productId)
+                            .then(productData => {
+                                let newOrder ={
+                                    date: currentDate,
+                                    time: time,
+                                    userId: req.session.userId,
+                                    orderStatus: 'placed',
+                                    address: address
+                                }
+                                return Order.updateOne({
+                                    sellerId: productData.user
+                                }, {
+                                    $push: { orders: newOrder }
+                                })
+                            })
+                            .then(result => {
+                                console.log(result)
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                res.redirect('/')
+                            })
+                    }
                 })
                 .catch(err => {
                     console.log(err);
+                    console.log("error in order plasing!");
                     res.redirect('/');
                 })
         } else {
