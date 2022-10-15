@@ -935,7 +935,7 @@ exports.placeOrder = (req, res, next) => {
                     for (product of orders[0].products) {
                         Product.findById(product.productId)
                             .then(productData => {
-                                let newOrder ={
+                                let newOrder = {
                                     date: currentDate,
                                     time: time,
                                     userId: req.session.userId,
@@ -945,7 +945,9 @@ exports.placeOrder = (req, res, next) => {
                                 return Order.updateOne({
                                     sellerId: productData.user
                                 }, {
-                                    $push: { orders: newOrder }
+                                    $push: {
+                                        orders: newOrder
+                                    }
                                 })
                             })
                             .then(result => {
@@ -963,7 +965,95 @@ exports.placeOrder = (req, res, next) => {
                     res.redirect('/');
                 })
         } else {
-            console.log("nos");
+            const address = {
+                home: req.body.home,
+                street: req.body.street,
+                district: req.body.district,
+                state: req.body.state,
+                city: req.body.city,
+                country: req.body.country,
+                zip: req.body.zip
+            }
+            let userId = req.session.userId
+
+            // save new address to user data
+            User.findByIdAndUpdate(userId, {
+                $push: {
+                    address: address
+                }
+            }, (err, data) => {
+                if (data) {
+                    console.log("address updated")
+                } else if (err) {
+                    console.log("\n\nerror in updating address")
+                    console.log(err)
+                }
+            })
+
+            Cart.find({
+                    userId: req.session.userId
+                })
+                .then(cart => {
+                    orders.push({
+                        date: currentDate,
+                        time: time,
+                        price: req.session.cartPrice,
+                        address: address,
+                        paymentMethod: paymentMethod,
+                        products: [...cart[0].products],
+                        orderStatus: 'placed'
+                    })
+                    return Cart.updateOne({
+                        userId: req.session.userId
+                    }, {
+                        products: []
+                    })
+                })
+                .then(updatedCart => {
+                    return User.findById(req.session.userId)
+                })
+                .then(userData => {
+                    userData.orders = [
+                        ...userData.orders,
+                        ...orders
+                    ]
+                    return userData.save();
+                })
+                .then(result => {
+                    for (product of orders[0].products) {
+                        Product.findById(product.productId)
+                            .then(productData => {
+                                let newOrder = {
+                                    date: currentDate,
+                                    time: time,
+                                    userId: req.session.userId,
+                                    orderStatus: 'placed',
+                                    address: address
+                                }
+                                return Order.updateOne({
+                                    sellerId: productData.user
+                                }, {
+                                    $push: {
+                                        orders: newOrder
+                                    }
+                                })
+                            })
+                            .then(result => {
+                                console.log(result)
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                res.redirect('/')
+                            })
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    console.log("error in order plasing!");
+                    res.redirect('/');
+                })
+                orders = [];
+
         }
     } else {
         res.redirect("/")
