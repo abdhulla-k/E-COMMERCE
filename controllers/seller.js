@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const User = require("../models/user");
 const Category = require("../models/product_category");
+const Orders = require("../models/orders");
 
 let filterKey = [];
 let editnigProdId;
@@ -383,6 +384,34 @@ exports.deleteProduct = (req, res, next) => {
     } else {
         res.redirect("/seller/");
     }
+}
+
+exports.showOrders = (req, res, next) => {
+    Orders.aggregate([{
+            $match: {
+                sellerId: req.session.sellerId
+            }
+        }])
+        .then(data => {
+            if (data) {
+                console.log(data[0].orders)
+                res.render('seller/show-orders', {
+                    user: req.session.sellerLoggedIn ? "true" : "",
+                    userType: "seller",
+                    categories: categories,
+                    orderDetails: data[0].orders
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.render('seller/show-orders', {
+                user: req.session.sellerLoggedIn ? "true" : "",
+                userType: "seller",
+                categories: categories,
+                orderDetails: []
+            })
+        })
 }
 
 exports.logout = (req, res, next) => {

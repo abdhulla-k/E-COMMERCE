@@ -28,6 +28,8 @@ router.post("/postEdit", sellerController.saveProductEdit );
 
 router.get("/delete/:productId", sellerController.deleteProduct);
 
+router.get("/showOrders", sellerController.showOrders);
+
 router.get("/logout", sellerController.logout);
 
 module.exports = router;

@@ -896,6 +896,7 @@ exports.placeOrder = (req, res, next) => {
         let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
         let address;
         let orders = [];
+        let userName;
 
         if (req.body.addressId) {
             User.findById(req.session.userId)
@@ -925,6 +926,7 @@ exports.placeOrder = (req, res, next) => {
                     return User.findById(req.session.userId)
                 })
                 .then(userData => {
+                    userName = userData.name;
                     userData.orders = [
                         ...userData.orders,
                         ...orders
@@ -938,6 +940,9 @@ exports.placeOrder = (req, res, next) => {
                                 let newOrder = {
                                     date: currentDate,
                                     time: time,
+                                    price: product.price,
+                                    paymentMethod: paymentMethod,
+                                    userName: userName,
                                     userId: req.session.userId,
                                     orderStatus: 'placed',
                                     address: address
@@ -1026,7 +1031,10 @@ exports.placeOrder = (req, res, next) => {
                                 let newOrder = {
                                     date: currentDate,
                                     time: time,
+                                    price: product.price,
+                                    paymentMethod: paymentMethod,
                                     userId: req.session.userId,
+                                    userName: userName,
                                     orderStatus: 'placed',
                                     address: address
                                 }

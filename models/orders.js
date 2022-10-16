@@ -10,6 +10,10 @@ const orders = new Schema({
         type: String,
         required: true
     },
+    userName: {
+        type: String,
+        required: true
+    },
     userId: {
         type: String,
         required: true
@@ -18,8 +22,16 @@ const orders = new Schema({
         type: String,
         require: true
     },
+    paymentMethod: {
+        type: String,
+        required: true
+    },
     address: {
         type: Object,
+        required: true
+    },
+    price: {
+        type: String,
         required: true
     }
 
@@ -30,7 +42,7 @@ const orderSchema = new Schema({
         type: String,
         required: true
     },
-    orders: []
+    orders: [orders]
 })
 
 module.exports = mongoose.model('order', orderSchema);
