@@ -1091,7 +1091,33 @@ exports.myAccount = (req, res, next) => {
                     res.redirect("/user/myAccount");
                 })
         }
+    } else {
+        res.redirect('/');
     }
+}
+
+exports.myOrders = (req, res, next) => {
+    CategoriesGet.then(categories => {
+            categories = categories;
+            User.findById(req.session.userId)
+                .then(userData => {
+                    res.render("user/my-orders", {
+                        user: "",
+                        userType: "user",
+                        categories: categories,
+                        orders: userData.orders
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.redirect("/");
+                })
+        })
+        .catch(err => {
+            console.log(err);
+            categories = [];
+            res.redirect("/user/myProfile");
+        })
 }
 
 exports.userLogout = (req, res, next) => {

@@ -1,0 +1,62 @@
+<%- include( "../includes/head.ejs" ) %>
+<body>
+    <!-- header -->
+    <%- include( "../includes/navigation.ejs" ) %>
+    <!-- /header -->
+
+    <!-- Carousel Start -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+              <%- include("../includes/user/user-sidebar.ejs") %>
+
+              <div class="col-lg-9 col-md-9">
+                <h5 class="section-title position-relative text-uppercase mb-3">
+                  <span class="bg-secondary pr-3">My Orders</span>
+                </h5>
+                    <div class="row px-xl-5">
+                        <% if(orders.length > 0) { %>
+                              <table class="table table-image">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col"></th>
+                                </thead>
+                                <tbody>
+                                  <% orders.forEach(order => { %>
+                                    <tr>
+                                      <td class="w-25">
+                                        <%= order.date %>
+                                      </td>
+                                      <td class="w-25">
+                                        <%= order.time %>
+                                      </td>
+                                      <td class="w-25">
+                                        <%= order.price %>
+                                      </td>
+                                      <td class="w-25">
+                                        <%= order.orderStatus %>
+                                      </td>
+                                      <td>
+                                        <a 
+                                            style="background-color: rgb(255, 217, 0);" 
+                                            class="btn btn-outline-dark btn-square" 
+                                            href="/user/myOrders/<%= order.id %>">info</a>
+                                      </td>
+                                    </tr>
+                                  <% }) %>
+                                </tbody>
+                              </table>  
+                        <% } else { %>
+                          <h3>No orders</h3>
+                        <% } %>
+                      </div>
+              </div>
+        </div>
+    </div>
+    <!-- Carousel End -->
+    <%- include( "../includes/footer.ejs" ) %>
+    
+<%- include( "../includes/end.ejs" )%>
