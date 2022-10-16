@@ -387,31 +387,35 @@ exports.deleteProduct = (req, res, next) => {
 }
 
 exports.showOrders = (req, res, next) => {
-    Orders.aggregate([{
-            $match: {
-                sellerId: req.session.sellerId
-            }
-        }])
-        .then(data => {
-            if (data) {
-                console.log(data[0].orders)
+    if (req.session.sellerLoggedIn) {
+        Orders.aggregate([{
+                $match: {
+                    sellerId: req.session.sellerId
+                }
+            }])
+            .then(data => {
+                if (data) {
+                    console.log(data[0].orders)
+                    res.render('seller/show-orders', {
+                        user: req.session.sellerLoggedIn ? "true" : "",
+                        userType: "seller",
+                        categories: categories,
+                        orderDetails: data[0].orders
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
                 res.render('seller/show-orders', {
                     user: req.session.sellerLoggedIn ? "true" : "",
                     userType: "seller",
                     categories: categories,
-                    orderDetails: data[0].orders
+                    orderDetails: []
                 })
-            }
-        })
-        .catch(err => {
-            console.log(err);
-            res.render('seller/show-orders', {
-                user: req.session.sellerLoggedIn ? "true" : "",
-                userType: "seller",
-                categories: categories,
-                orderDetails: []
             })
-        })
+    } else {
+        res.redirect('/seller/');
+    }
 }
 
 exports.logout = (req, res, next) => {
