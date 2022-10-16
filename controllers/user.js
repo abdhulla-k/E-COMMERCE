@@ -1060,11 +1060,37 @@ exports.placeOrder = (req, res, next) => {
                     console.log("error in order plasing!");
                     res.redirect('/');
                 })
-                orders = [];
+            orders = [];
 
         }
     } else {
         res.redirect("/")
+    }
+}
+
+exports.myAccount = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+        if (categories) {
+            res.render("user/my-profile", {
+                user: "",
+                userType: "user",
+                categories: categories
+            })
+        } else {
+            CategoriesGet.then(categories => {
+                    categories = categories
+                    res.render("user/my-profile", {
+                        user: "",
+                        userType: "user",
+                        categories: categories
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                    categories = [];
+                    res.redirect("/user/myAccount");
+                })
+        }
     }
 }
 

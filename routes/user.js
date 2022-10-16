@@ -32,4 +32,8 @@ router.get('/checkout', userController.getCheckout);
 
 router.post('/placeOrder', userController.placeOrder);
 
+router.get('/myAccount', userController.myAccount);
+
+router.get('/myOrders', userController.myOrders);
+
 module.exports = router;
