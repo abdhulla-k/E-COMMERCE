@@ -1072,7 +1072,7 @@ exports.myAccount = (req, res, next) => {
     if (req.session.userLoggedIn) {
         if (categories) {
             res.render("user/my-profile", {
-                user: "",
+                user: "true",
                 userType: "user",
                 categories: categories
             })
@@ -1097,12 +1097,13 @@ exports.myAccount = (req, res, next) => {
 }
 
 exports.myOrders = (req, res, next) => {
-    CategoriesGet.then(categories => {
+    if(req.session.userLoggedIn) {
+        CategoriesGet.then(categories => {
             categories = categories;
             User.findById(req.session.userId)
                 .then(userData => {
                     res.render("user/my-orders", {
-                        user: "",
+                        user: "true",
                         userType: "user",
                         categories: categories,
                         orders: userData.orders
@@ -1118,6 +1119,9 @@ exports.myOrders = (req, res, next) => {
             categories = [];
             res.redirect("/user/myProfile");
         })
+    } else {
+        res.redirect('/user/login');
+    }
 }
 
 exports.userLogout = (req, res, next) => {
