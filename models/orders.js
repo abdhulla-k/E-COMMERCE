@@ -33,6 +33,10 @@ const orders = new Schema({
     price: {
         type: String,
         required: true
+    },
+    productId: {
+        type: String,
+        required: true
     }
 
 })

@@ -388,19 +388,67 @@ exports.deleteProduct = (req, res, next) => {
 
 exports.showOrders = (req, res, next) => {
     if (req.session.sellerLoggedIn) {
+        let sellerOrders;
         Orders.aggregate([{
                 $match: {
                     sellerId: req.session.sellerId
                 }
             }])
             .then(data => {
-                if (data) {
-                    console.log(data[0].orders)
+                sellerOrders = data;
+                return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
+                    $project: {
+                        orders: 1,
+                        _id: 0
+                    }
+                }, {
+                    $unwind: "$orders"
+                }, {
+                    $project: {
+                        orders: {
+                            _id: 0,
+                            date: 0,
+                            time: 0,
+                            userName: 0,
+                            userId: 0,
+                            orderStatus: 0,
+                            paymentMethod:0,
+                            address: 0,
+                            price: 0
+                        }
+                    }
+                }, {
+                    $lookup: {
+                        from: "products",
+                        localField: "productId",
+                        foreignField: "_id.str",
+                        as: "array"
+                    }
+                },{
+                    $unwind: "$array"
+                },{
+                    $project: {
+                        orders: {
+                            productId: 1
+                        },
+                        array: {
+                            _id: 1
+                        }
+                    }
+                }])
+            })
+            .then(result => {
+                console.log(result)
+                if (sellerOrders) {
                     res.render('seller/show-orders', {
                         user: req.session.sellerLoggedIn ? "true" : "",
                         userType: "seller",
                         categories: categories,
-                        orderDetails: data[0].orders
+                        orderDetails: sellerOrders[0].orders
                     })
                 }
             })

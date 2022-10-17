@@ -945,7 +945,8 @@ exports.placeOrder = (req, res, next) => {
                                     userName: userName,
                                     userId: req.session.userId,
                                     orderStatus: 'placed',
-                                    address: address
+                                    address: address,
+                                    productId: product.productId
                                 }
                                 return Order.updateOne({
                                     sellerId: productData.user
