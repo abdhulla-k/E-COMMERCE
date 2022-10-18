@@ -164,6 +164,50 @@ exports.showSellers = (req, res, next) => {
     }
 }
 
+exports.showSerDetails = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        const userId = req.params.userId;
+        User.findById(userId, (err, data) => {
+            if(err) {
+                console.log(err);
+                res.redirect('/');
+            } else {
+                res.render("admin/seller-details", {
+                    userType: "admin",
+                    user: "",
+                    userDetails: data,
+                    route: 'details'
+                });
+            }
+        })
+        
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
+exports.showSerOrders = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        const userId = req.params.userId;
+        User.findById(userId, (err, data) => {
+            if(err) {
+                console.log(err);
+                res.redirect('/');
+            } else {
+                res.render("admin/seller-details", {
+                    userType: "admin",
+                    user: "",
+                    userDetails: data,
+                    route: 'orders'
+                });
+            }
+        })
+        
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
 exports.addCategory = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         res.render("admin/add-category", {

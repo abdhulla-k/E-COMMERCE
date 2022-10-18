@@ -9,6 +9,8 @@ router.get('/showUsers', adminController.showUsers);
 router.get('/user/:userId', adminController.showUserDetails);
 router.get('/user/orders/:userId', adminController.showUserOrders);
 router.get('/showSellers', adminController.showSellers);
+router.get('/user/:sellerId', adminController.showSerDetails);
+router.get('/user/orders/:sellerId', adminController.showSerOrders);
 router.get('/addCategory', adminController.addCategory);
 router.post('/saveCategory', adminController.postSaveCategory);
 router.get('/logout', adminController.logout);
