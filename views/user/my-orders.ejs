@@ -40,10 +40,19 @@
                                         <%= order.orderStatus %>
                                       </td>
                                       <td>
-                                        <a 
+                                          <a 
                                             style="background-color: rgb(255, 217, 0);" 
                                             class="btn btn-outline-dark btn-square" 
-                                            href="/user/myOrders/<%= order.id %>">info</a>
+                                            href="/user/myOrders/<%= order.id %>">
+                                            info
+                                          </a>
+                                      </td>
+                                      <td>
+                                        <a
+                                        class="btn btn-outline-warning btn-square text-dark"
+                                        style="margin-left: 5px; background-color: red;"
+                                        href=""
+                                        ><i class="fa fa-times"></i>
                                       </td>
                                     </tr>
                                   <% }) %>

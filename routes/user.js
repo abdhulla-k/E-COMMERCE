@@ -36,4 +36,6 @@ router.get('/myAccount', userController.myAccount);
 
 router.get('/myOrders', userController.myOrders);
 
+router.get('/myOrders/:orderId', userController.orderDetails);
+
 module.exports = router;

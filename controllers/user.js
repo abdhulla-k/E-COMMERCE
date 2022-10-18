@@ -1098,30 +1098,86 @@ exports.myAccount = (req, res, next) => {
 }
 
 exports.myOrders = (req, res, next) => {
-    if(req.session.userLoggedIn) {
+    if (req.session.userLoggedIn) {
         CategoriesGet.then(categories => {
-            categories = categories;
-            User.findById(req.session.userId)
-                .then(userData => {
-                    res.render("user/my-orders", {
-                        user: "true",
-                        userType: "user",
-                        categories: categories,
-                        orders: userData.orders
+                categories = categories;
+                User.findById(req.session.userId)
+                    .then(userData => {
+                        res.render("user/my-orders", {
+                            user: "true",
+                            userType: "user",
+                            categories: categories,
+                            orders: userData.orders
+                        })
                     })
+                    .catch(err => {
+                        console.log(err);
+                        res.redirect("/");
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+                categories = [];
+                res.redirect("/user/myProfile");
+            })
+    } else {
+        res.redirect('/user/login');
+    }
+}
+
+exports.orderDetails = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+        // function to render
+        function orderDetails(req, res, next) {
+            const orderId = req.params.orderId;
+            User.findById(req.session.userId, (err, data) => {
+                if (data) {
+                    let index = data.orders.findIndex(p => p.id === orderId)
+                    if (index !== -1) {
+                        let orderDetails = data.orders[index]
+                        let products = orderDetails.products.map(p => {
+                            return p.productId;
+                        })
+
+                        Product.find({
+                                _id: {
+                                    $in: products
+                                }
+                            })
+                            .then(data => {
+                                console.log(data)
+                                console.log("=======================")
+                                console.log(products)
+                                console.log("=======================")
+                                res.render("user/order-details", {
+                                    user: "true",
+                                    userType: "user",
+                                    categories: categories,
+                                    orderDetails: orderDetails,
+                                    products: data
+                                });
+                            })
+                    }
+                } else {
+                    res.redirect("/")
+                }
+            })
+        }
+        if (categories) {
+            orderDetails(req, res, next)
+        } else {
+            CategoriesGet.then(categories => {
+                    categories = categories
+                    orderDetails(req, res, next);
                 })
                 .catch(err => {
                     console.log(err);
-                    res.redirect("/");
+                    categories = [];
+                    res.redirect("/user/myAccount");
                 })
-        })
-        .catch(err => {
-            console.log(err);
-            categories = [];
-            res.redirect("/user/myProfile");
-        })
+        }
     } else {
-        res.redirect('/user/login');
+        res.redirect('/');
     }
 }
 
