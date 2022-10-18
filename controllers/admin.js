@@ -98,6 +98,50 @@ exports.showUsers = (req, res, next) => {
     }
 }
 
+exports.showUserDetails = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        const userId = req.params.userId;
+        User.findById(userId, (err, data) => {
+            if(err) {
+                console.log(err);
+                res.redirect('/');
+            } else {
+                res.render("admin/user-details", {
+                    userType: "admin",
+                    user: "",
+                    userDetails: data,
+                    route: 'details'
+                });
+            }
+        })
+        
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
+exports.showUserOrders = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        const userId = req.params.userId;
+        User.findById(userId, (err, data) => {
+            if(err) {
+                console.log(err);
+                res.redirect('/');
+            } else {
+                res.render("admin/user-details", {
+                    userType: "admin",
+                    user: "",
+                    userDetails: data,
+                    route: 'orders'
+                });
+            }
+        })
+        
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
 exports.addCategory = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         res.render("admin/add-category", {

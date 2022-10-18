@@ -1,0 +1,94 @@
+<%- include( "../includes/head.ejs" ) %>
+<body>
+    <!-- header -->
+    <%- include( "../includes/admin/admin-navigation.ejs" ) %>
+    <!-- /header -->
+
+    <!-- Carousel Start -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+              <%- include("../includes/admin/admin-sidebar.ejs") %>
+
+              <div class="col-lg-9 col-md-9">
+                <h4 class="section-title position-relative text-uppercase mb-3">
+                  <span class="bg-secondary pr-3"><%= userDetails.name %></span>
+                </h4>
+                <div class="row px-xl-5">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                          <ul class="navbar-nav">
+                            <li class="nav-item <% if(route === 'details') { %> active <% } %>">
+                              <a class="nav-link" href="/admin/user/<%= userDetails.id %>">Details <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item <% if(route === 'orders') { %> active <% } %>">
+                              <a class="nav-link" href="/admin/user/orders/<%= userDetails.id %>">Orders</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </nav>
+                  </div>
+                  <% if(route === 'orders') { %>
+                    <div class="row px-xl-5">
+                        <% if(userDetails.orders.length > 0) { %>
+                              <table class="table table-image">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Payment Method</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col"></th>
+                                </thead>
+                                <tbody>
+                                  <% userDetails.orders.forEach(order => { %>
+                                    <tr>
+                                      <td class="w-25">
+                                        <%= order.date %>
+                                      </td>
+                                      <td class="w-25">
+                                        <%= order.time %>
+                                      </td>
+                                      <td class="w-25">
+                                        <%= order.price %>
+                                      </td>
+                                      <td class="w-25">
+                                        <%= order.paymentMethod %>
+                                      </td>
+                                      <td class="w-25">
+                                        <%= order.orderStatus %>
+                                      </td>
+                                      <td>
+                                          <a 
+                                            style="background-color: rgb(255, 217, 0);" 
+                                            class="btn btn-outline-dark btn-square" 
+                                            href="">
+                                            info
+                                          </a>
+                                      </td>
+                                      <!-- <td>
+                                        <a
+                                        class="btn btn-outline-warning btn-square text-dark"
+                                        style="margin-left: 5px; background-color: red;"
+                                        href=""
+                                        ><i class="fa fa-times"></i>
+                                      </td> -->
+                                    </tr>
+                                  <% }) %>
+                                </tbody>
+                              </table>  
+                        <% } else { %>
+                          <h3>No orders</h3>
+                        <% } %>
+                      </div>
+                  <% } %>
+                  <% if(route === 'details') { %>
+                    <h1>Details</h1>
+                  <% } %>
+              </div>
+        </div>
+    </div>
+    <!-- Carousel End -->
+    <%- include( "../includes/footer.ejs" ) %>
+    
+<%- include( "../includes/end.ejs" )%>
