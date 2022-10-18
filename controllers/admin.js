@@ -76,6 +76,28 @@ exports.postLogin = (req, res, next) => {
     })
 }
 
+exports.showUsers = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        User.aggregate([{
+            $match: {
+                'userType': 'user'
+            }
+        }])
+        .then(data => {
+            res.render("admin/all-users", {
+                userType: "admin",
+                user: "",
+                userData: data
+            });
+        })
+        .catch(err => {
+            res.redirect('/admin/');
+        })
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
 exports.addCategory = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         res.render("admin/add-category", {
