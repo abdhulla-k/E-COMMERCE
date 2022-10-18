@@ -15,6 +15,8 @@ router.get('/user/orders/:userId', adminController.showUserOrders);
 
 router.get('/user/orders/details/:orderId', adminController.showUserOrderDetail);
 
+router.get('/user/cancelOrder/:orderId', adminController.cancelUserOrder);
+
 router.get('/showSellers', adminController.showSellers);
 
 router.get('/seller/:sellerId', adminController.showSerDetails);

@@ -17,8 +17,8 @@
                   <div class="card-body">
                     <h5 class="card-title">Total Price: <%= orderDetails.price %></h5>
                     <a 
-                      href="/user/cancelOrder/<%= orderDetails.id %>" 
-                      class="btn btn-primary">
+                      href="/admin/user/cancelOrder/<%= orderDetails.id %>?userId=<%= userId %>" 
+                      class="btn btn-primary <% if(orderDetails.orderStatus === 'cancelled') { %> disabled <% } %> ">
                         Cancel order
                     </a>
                   </div>

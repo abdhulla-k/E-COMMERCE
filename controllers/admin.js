@@ -170,7 +170,8 @@ exports.showUserOrderDetail = (req, res, next) => {
                                 user: "",
                                 userType: "admin",
                                 orderDetails: orderDetails,
-                                products: data
+                                products: data,
+                                userId: userId
                             });
                         })
                 }
@@ -181,6 +182,28 @@ exports.showUserOrderDetail = (req, res, next) => {
     } else {
         res.redirect("/admin/");
     }
+}
+
+exports.cancelUserOrder = (req, res, next) => {
+    const orderId = req.params.orderId;
+    const userId = req.query.userId;
+    User.findById(userId)
+    .then(data => {
+        console.log(data);
+        const index = data.orders.findIndex(p => p.id === orderId);
+        if(index > -1 ) {
+            data.orders[index].orderStatus = 'cancelled';
+            data.save()
+                .then(data => {
+                    res.render("admin/user-details", {
+                        userType: "admin",
+                        user: "",
+                        userDetails: data,
+                        route: 'orders'
+                    });
+                })
+        }
+    })
 }
 
 exports.showSellers = (req, res, next) => {
@@ -256,7 +279,9 @@ exports.showSellerProducts = (req, res, next) => {
         User.findById(userId)
             .then(data => {
                 userData = data;
-                return Product.find({user: userId})
+                return Product.find({
+                    user: userId
+                })
             })
             .then(products => {
                 console.log(products)
