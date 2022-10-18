@@ -1064,7 +1064,7 @@ exports.placeOrder = (req, res, next) => {
                 })
                 .then(result => {
                     for (product of orders[0].products) {
-                        Product.findById(product.productId)
+                        return Product.findById(product.productId)
                             .then(productData => {
                                 let newOrder = {
                                     date: currentDate,
@@ -1090,6 +1090,14 @@ exports.placeOrder = (req, res, next) => {
                             .catch(err => {
                                 console.log(err)
                                 res.redirect('/')
+                            })
+                    }
+                })
+                .then(data => {
+                    if (req.body.paymentMethod !== 'cashOnDelivery') {
+                        generateRazorPay(orderId, req.session.cartPrice)
+                            .then(response => {
+                                res.json(response)
                             })
                     }
                 })
