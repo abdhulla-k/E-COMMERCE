@@ -140,6 +140,14 @@ exports.postSignup = (req, res, next) => {
                             // save the user
                             user.save()
                                 .then(result => {
+                                    const order = new Orders({
+                                        sellerId: result.id,
+                                        orders: []
+                                    })
+                                    return order.save()
+                                })
+                                .then(orders => {
+                                    console.log("created seller account");
                                     res.redirect("/seller/");
                                 })
                                 .catch(err => {
