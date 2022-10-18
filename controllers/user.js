@@ -1218,6 +1218,31 @@ exports.orderDetails = (req, res, next) => {
     }
 }
 
+exports.cancelOrder = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+        const orderId = req.params.orderId;
+        User.findById(req.session.userId)
+            .then(data => {
+                console.log(data);
+                const index = data.orders.findIndex(order => order.id === orderId);
+                if (index !== -1) {
+                    data.orders[index].orderStatus = 'cancelled'
+                    data.save()
+                        .then(data => {
+                            console.log("cancelled")
+                            res.redirect('/user/myOrders')
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.redirect('/user/myOrders')
+                        })
+                }
+            })
+    } else {
+        res.redirect("/user/login");
+    }
+}
+
 exports.userLogout = (req, res, next) => {
     req.session.userLoggedIn = false;
 

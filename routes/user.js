@@ -38,4 +38,6 @@ router.get('/myOrders', userController.myOrders);
 
 router.get('/myOrders/:orderId', userController.orderDetails);
 
+router.get('/cancelOrder/:orderId', userController.cancelOrder);
+
 module.exports = router;
