@@ -21,6 +21,9 @@ router.get('/seller/:sellerId', adminController.showSerDetails);
 
 router.get('/seller/orders/:sellerId', adminController.showSerOrders);
 
+// to show the product of each seller
+router.get('/seller/products/:sellerId', adminController.showSellerProducts);
+
 router.get('/addCategory', adminController.addCategory);
 
 router.post('/saveCategory', adminController.postSaveCategory);

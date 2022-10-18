@@ -23,6 +23,9 @@
                             <li class="nav-item <% if(route === 'orders') { %> active <% } %>">
                               <a class="nav-link" href="/admin/seller/orders/<%= userDetails.id %>">Orders</a>
                             </li>
+                            <li class="nav-item <% if(route === 'products') { %> active <% } %>">
+                              <a class="nav-link" href="/admin/seller/products/<%= userDetails.id %>">Products</a>
+                            </li>
                           </ul>
                         </div>
                       </nav>
@@ -82,8 +85,60 @@
                         <% } %>
                       </div>
                   <% } %>
+
                   <% if(route === 'details') { %>
                     <h1>Details</h1>
+                  <% } %>
+
+                  <% if(route === 'products') { %>
+                    <div class="row px-xl-5">
+                        <% if(products.length > 0) { %>
+                          <table class="table table-image">
+                            <thead>
+                              <tr>
+                                <th scope="col">Image</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col"></th>
+                            </thead>
+                            <tbody>
+                              <% products.forEach(product => { %>
+                                <tr>
+                                  <td class="w-25">
+                                    <div class="card" style="width: 18rem;">
+                                      <img 
+                                        style="max-width: 130px;"
+                                        class="card-img-top" 
+                                        src="/images/<%=product.images[0]%>" 
+                                        alt="Card image cap"
+                                      >
+                                    </div>
+                                  </td>
+                                  <th scope="row"><%= product.title %></th>
+                                  <td>$<%= product.price %></td>
+                                  <td>$<%= product.quantity %></td>
+                                  <td>
+                                    <a
+                                      class="btn btn-outline-warning btn-square text-dark"
+                                      style="width: 50px; margin-bottom: 5px;"
+                                      href="/detail/<%= product.id %>"
+                                      >info
+                                    </a>
+                                    <a
+                                      class="btn btn-outline-warning btn-square text-dark"
+                                      style="width: 50px;"
+                                      href="/detail/<%= product.id %>"
+                                      >block
+                                    </a>
+                                  </td>
+                                </tr>
+                              <% }) %>
+                              
+                            </tbody>
+                          </table> 
+                        <% } %>
+                      </div>
                   <% } %>
               </div>
         </div>

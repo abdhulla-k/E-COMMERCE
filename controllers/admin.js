@@ -249,6 +249,55 @@ exports.showSerOrders = (req, res, next) => {
     }
 }
 
+exports.showSellerProducts = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        const userId = req.params.sellerId;
+        let userData;
+        User.findById(userId)
+            .then(data => {
+                userData = data;
+                return Product.find({user: userId})
+            })
+            .then(products => {
+                console.log(products)
+                res.render("admin/seller-details", {
+                    userType: "admin",
+                    user: "",
+                    userDetails: userData,
+                    products: products,
+                    route: 'products'
+                });
+            })
+        // User.findById(userId,(err, data) => {
+        //     if (err) {
+        //         console.log(err);
+        //         res.redirect('/');
+        //     } else {
+        //         console.log(data);
+        //         userData = data;
+        //         Product.find({user: userId}, (err, data) => {
+        //             if (err) {
+        //                 console.log(err);
+        //                 res.redirect('/');
+        //             } else {
+        //                 console.log(data)
+        //                 res.render("admin/seller-details", {
+        //                     userType: "admin",
+        //                     user: "",
+        //                     userDetails: userData,
+        //                     products: data,
+        //                     route: 'products'
+        //                 });
+        //             }
+        //         })
+        //     }
+        // })
+
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
 exports.addCategory = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         res.render("admin/add-category", {
