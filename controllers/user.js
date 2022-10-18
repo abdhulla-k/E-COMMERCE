@@ -6,6 +6,9 @@ const Order = require("../models/orders");
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
+const Razorpay = require("razorpay");
+
+const razorPrivatKey = require("../util/razor-pay");
 
 // import twilio to send otp
 const tiloPersonalData = require("../tilo");
@@ -25,6 +28,12 @@ let signupErrorMessage;
 let otpErrormessage = '';
 let otpTimeError = '';
 let waitingOtp;
+
+// rasor pay
+let instance = new Razorpay({
+    key_id: razorPrivatKey.key_id,
+    key_secret: 'z3bFrnI5ldsLY3rx2u4iHKjV',
+});
 
 // save user data to signup and to save after otp verification
 let user;
@@ -897,6 +906,25 @@ exports.placeOrder = (req, res, next) => {
         let address;
         let orders = [];
         let userName;
+        let orderId;
+
+        function generateRazorPay(id, totalPrice) {
+            return new Promise((resolve, reject) => {
+                var options = {
+                    amount: Number(totalPrice) * 100, // amount in the smallest currency unit
+                    currency: "INR",
+                    receipt: id
+                };
+                instance.orders.create(options, function (err, order) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(order);
+                        resolve(order);
+                    }
+                });
+            })
+        }
 
         if (req.body.addressId) {
             User.findById(req.session.userId)
@@ -934,8 +962,9 @@ exports.placeOrder = (req, res, next) => {
                     return userData.save();
                 })
                 .then(result => {
+                    orderId = result.orders[result.orders.length - 1].id
                     for (product of orders[0].products) {
-                        Product.findById(product.productId)
+                        return Product.findById(product.productId)
                             .then(productData => {
                                 let newOrder = {
                                     date: currentDate,
@@ -962,6 +991,14 @@ exports.placeOrder = (req, res, next) => {
                             .catch(err => {
                                 console.log(err)
                                 res.redirect('/')
+                            })
+                    }
+                })
+                .then(data => {
+                    if (req.body.paymentMethod !== 'cashOnDelivery') {
+                        generateRazorPay(orderId, req.session.cartPrice)
+                            .then(response => {
+                                res.json(response)
                             })
                     }
                 })

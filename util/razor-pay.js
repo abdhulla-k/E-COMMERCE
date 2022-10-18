@@ -1,0 +1,1 @@
+exports.key_id =  'rzp_test_dVMkRm1acV7F3j'
