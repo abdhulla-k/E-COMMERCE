@@ -22,6 +22,10 @@ const orders = new Schema({
         type: String,
         require: true
     },
+    userOrderId: {
+        type: String,
+        required: true
+    },
     paymentMethod: {
         type: String,
         required: true

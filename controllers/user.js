@@ -973,6 +973,7 @@ exports.placeOrder = (req, res, next) => {
                                     paymentMethod: paymentMethod,
                                     userName: userName,
                                     userId: req.session.userId,
+                                    userOrderId: orderId,
                                     orderStatus: 'placed',
                                     address: address,
                                     productId: product.productId
@@ -1063,6 +1064,7 @@ exports.placeOrder = (req, res, next) => {
                     return userData.save();
                 })
                 .then(result => {
+                    let orderId = result.orders[result.orders.length - 1].id
                     for (product of orders[0].products) {
                         return Product.findById(product.productId)
                             .then(productData => {
@@ -1072,6 +1074,7 @@ exports.placeOrder = (req, res, next) => {
                                     price: product.price,
                                     paymentMethod: paymentMethod,
                                     userId: req.session.userId,
+                                    userOrderId: orderId,
                                     userName: userName,
                                     orderStatus: 'placed',
                                     address: address
@@ -1231,7 +1234,6 @@ exports.cancelOrder = (req, res, next) => {
         const orderId = req.params.orderId;
         User.findById(req.session.userId)
             .then(data => {
-                console.log(data);
                 const index = data.orders.findIndex(order => order.id === orderId);
                 if (index !== -1) {
                     data.orders[index].orderStatus = 'cancelled'
@@ -1239,6 +1241,21 @@ exports.cancelOrder = (req, res, next) => {
                         .then(data => {
                             console.log("cancelled")
                             res.redirect('/user/myOrders')
+                            return Order.aggregate([{
+                                $unwind: "$orders"
+                            }, {
+                                $match: {
+                                    'orders.userOrderId': orderId
+                                }
+                            }, {
+                                $addFields: {
+                                    'orders.orderStatus' : 'cancelled'
+                                }
+                            }])
+                        })
+                        .then(data => {
+                            console.log("cancelled")
+                            console.log(data)
                         })
                         .catch(err => {
                             console.log(err);
