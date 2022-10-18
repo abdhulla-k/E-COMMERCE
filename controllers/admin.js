@@ -1,5 +1,6 @@
 const Category = require("../models/product_category");
 const User = require("../models/user");
+const Product = require("../models/product");
 
 const bcrypt = require("bcryptjs")
 
@@ -79,20 +80,20 @@ exports.postLogin = (req, res, next) => {
 exports.showUsers = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         User.aggregate([{
-            $match: {
-                'userType': 'user'
-            }
-        }])
-        .then(data => {
-            res.render("admin/all-users", {
-                userType: "admin",
-                user: "",
-                userData: data
-            });
-        })
-        .catch(err => {
-            res.redirect('/admin/');
-        })
+                $match: {
+                    'userType': 'user'
+                }
+            }])
+            .then(data => {
+                res.render("admin/all-users", {
+                    userType: "admin",
+                    user: "",
+                    userData: data
+                });
+            })
+            .catch(err => {
+                res.redirect('/admin/');
+            })
     } else {
         res.redirect("/admin/");
     }
@@ -102,7 +103,7 @@ exports.showUserDetails = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         const userId = req.params.userId;
         User.findById(userId, (err, data) => {
-            if(err) {
+            if (err) {
                 console.log(err);
                 res.redirect('/');
             } else {
@@ -114,7 +115,7 @@ exports.showUserDetails = (req, res, next) => {
                 });
             }
         })
-        
+
     } else {
         res.redirect("/admin/");
     }
@@ -124,7 +125,7 @@ exports.showUserOrders = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         const userId = req.params.userId;
         User.findById(userId, (err, data) => {
-            if(err) {
+            if (err) {
                 console.log(err);
                 res.redirect('/');
             } else {
@@ -136,7 +137,47 @@ exports.showUserOrders = (req, res, next) => {
                 });
             }
         })
-        
+
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
+exports.showUserOrderDetail = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        const userId = req.params.orderId;
+        const orderId = req.query.orderId;
+        console.log(userId);
+        console.log(orderId);
+        User.findById(userId, (err, data) => {
+            if (data) {
+                let index = data.orders.findIndex(p => p.id === orderId)
+                if (index !== -1) {
+                    let orderDetails = data.orders[index]
+                    let products = orderDetails.products.map(p => {
+                        return p.productId;
+                    })
+
+                    Product.find({
+                            _id: {
+                                $in: products
+                            }
+                        })
+                        .then(data => {
+                            console.log(data)
+                            console.log(products)
+                            res.render("admin/user-order-details", {
+                                user: "",
+                                userType: "admin",
+                                orderDetails: orderDetails,
+                                products: data
+                            });
+                        })
+                }
+            } else {
+                res.redirect("/admin/")
+            }
+        })
     } else {
         res.redirect("/admin/");
     }
@@ -145,20 +186,20 @@ exports.showUserOrders = (req, res, next) => {
 exports.showSellers = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         User.aggregate([{
-            $match: {
-                'userType': 'seller'
-            }
-        }])
-        .then(data => {
-            res.render("admin/all-seller", {
-                userType: "admin",
-                user: "",
-                userData: data
-            });
-        })
-        .catch(err => {
-            res.redirect('/admin/');
-        })
+                $match: {
+                    'userType': 'seller'
+                }
+            }])
+            .then(data => {
+                res.render("admin/all-seller", {
+                    userType: "admin",
+                    user: "",
+                    userData: data
+                });
+            })
+            .catch(err => {
+                res.redirect('/admin/');
+            })
     } else {
         res.redirect("/admin/");
     }
@@ -166,9 +207,9 @@ exports.showSellers = (req, res, next) => {
 
 exports.showSerDetails = (req, res, next) => {
     if (req.session.adminLoggedIn) {
-        const userId = req.params.userId;
+        const userId = req.params.sellerId;
         User.findById(userId, (err, data) => {
-            if(err) {
+            if (err) {
                 console.log(err);
                 res.redirect('/');
             } else {
@@ -180,7 +221,7 @@ exports.showSerDetails = (req, res, next) => {
                 });
             }
         })
-        
+
     } else {
         res.redirect("/admin/");
     }
@@ -188,9 +229,9 @@ exports.showSerDetails = (req, res, next) => {
 
 exports.showSerOrders = (req, res, next) => {
     if (req.session.adminLoggedIn) {
-        const userId = req.params.userId;
+        const userId = req.params.sellerId;
         User.findById(userId, (err, data) => {
-            if(err) {
+            if (err) {
                 console.log(err);
                 res.redirect('/');
             } else {
@@ -202,7 +243,7 @@ exports.showSerOrders = (req, res, next) => {
                 });
             }
         })
-        
+
     } else {
         res.redirect("/admin/");
     }
