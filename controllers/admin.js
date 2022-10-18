@@ -142,6 +142,28 @@ exports.showUserOrders = (req, res, next) => {
     }
 }
 
+exports.showSellers = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        User.aggregate([{
+            $match: {
+                'userType': 'seller'
+            }
+        }])
+        .then(data => {
+            res.render("admin/all-seller", {
+                userType: "admin",
+                user: "",
+                userData: data
+            });
+        })
+        .catch(err => {
+            res.redirect('/admin/');
+        })
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
 exports.addCategory = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         res.render("admin/add-category", {
