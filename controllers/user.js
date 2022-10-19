@@ -1239,6 +1239,7 @@ exports.cancelOrder = (req, res, next) => {
                     data.orders[index].orderStatus = 'cancelled'
                     data.save()
                         .then(data => {
+                            // this aggregate method is not functioning. cancellation wirking becouse of updateMany and code above this
                             console.log("cancelled")
                             res.redirect('/user/myOrders')
                             return Order.aggregate([{
@@ -1255,7 +1256,10 @@ exports.cancelOrder = (req, res, next) => {
                         })
                         .then(data => {
                             console.log("cancelled")
-                            console.log(data)
+                            return Order.updateMany({'orders.userOrderId': orderId}, {$set: {"orders.$[].orderStatus": 'cancelled'}})
+                        })
+                        .then(data => {
+                            console.log(data);
                         })
                         .catch(err => {
                             console.log(err);

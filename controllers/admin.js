@@ -1,6 +1,7 @@
 const Category = require("../models/product_category");
 const User = require("../models/user");
 const Product = require("../models/product");
+const Order = require("../models/orders");
 
 const bcrypt = require("bcryptjs")
 
@@ -185,25 +186,41 @@ exports.showUserOrderDetail = (req, res, next) => {
 }
 
 exports.cancelUserOrder = (req, res, next) => {
-    const orderId = req.params.orderId;
-    const userId = req.query.userId;
-    User.findById(userId)
-    .then(data => {
-        console.log(data);
-        const index = data.orders.findIndex(p => p.id === orderId);
-        if(index > -1 ) {
-            data.orders[index].orderStatus = 'cancelled';
-            data.save()
-                .then(data => {
-                    res.render("admin/user-details", {
-                        userType: "admin",
-                        user: "",
-                        userDetails: data,
-                        route: 'orders'
-                    });
-                })
-        }
-    })
+    if (req.session.adminLoggedIn) {
+        let userData;
+        const orderId = req.params.orderId;
+        const userId = req.query.userId;
+        User.findById(userId)
+            .then(data => {
+                console.log(data);
+                const index = data.orders.findIndex(p => p.id === orderId);
+                if (index > -1) {
+                    data.orders[index].orderStatus = 'cancelled';
+                    data.save()
+                        .then(data => {
+                            userData = data;
+                            return Order.updateMany({
+                                'orders.userOrderId': orderId
+                            }, {
+                                $set: {
+                                    "orders.$[].orderStatus": 'cancelled'
+                                }
+                            })
+                        })
+                        .then(data => {
+                            console.log(data);
+                            res.render("admin/user-details", {
+                                userType: "admin",
+                                user: "",
+                                userDetails: userData,
+                                route: 'orders'
+                            });
+                        })
+                }
+            })
+    } else {
+        res.redirect("/admin/");
+    }
 }
 
 exports.showSellers = (req, res, next) => {
