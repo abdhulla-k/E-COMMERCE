@@ -9,6 +9,8 @@ router.post('/postLogin', adminController.postLogin);
 
 router.get('/showUsers', adminController.showUsers);
 
+router.get('/dashboard/getSalesData', adminController.getData);
+
 router.get('/user/:userId', adminController.showUserDetails);
 
 router.get('/user/orders/:userId', adminController.showUserOrders);

@@ -17,7 +17,8 @@ exports.getLogin = (req, res, next) => {
                 res.render("admin/admin-dashboard", {
                     user: req.session.sellerLoggedIn ? "true" : "",
                     userType: "admin",
-                    categories: categories
+                    categories: categories,
+                    route: "/admin-dashboard"
                 });
             } else {
                 res.render("admin/login", {
@@ -76,6 +77,73 @@ exports.postLogin = (req, res, next) => {
             res.redirect("/admin/");
         }
     })
+}
+
+exports.getData = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        let allOrders = [];
+        let cancelleOrder = [];
+        let line = [];
+        Order.aggregate([{
+                $unwind: "$orders"
+            }, {
+                $group: {
+                    _id: '$orders.date',
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }, {
+                $project: {
+                    count: 1,
+                    _id: 0
+                }
+            }, {
+                $limit: 6
+            }])
+            .then(data => {
+                data.forEach(a => {
+                    allOrders.push(a.count)
+                })
+                return Order.aggregate([{
+                    $unwind: "$orders"
+                }, {
+                    $match: {
+                        "orders.orderStatus": "cancelled"
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        count: {
+                            $sum: 1
+                        }
+                    }
+                }, {
+                    $project: {
+                        count: 1,
+                        _id: 0
+                    }
+                }, {
+                    $limit: 6
+                }])
+            })
+            .then(cancelledOrders => {
+                let index = 0;
+                cancelledOrders.forEach(a => {
+                    cancelleOrder.push(a.count);
+                    line.push(allOrders[index] - a.count);
+                    index++;
+                })
+                allOrders.reverse()
+                cancelleOrder.reverse()
+                line.reverse();
+                res.json({
+                    cancelleOrder: cancelleOrder,
+                    orders: allOrders,
+                    line: line
+                });
+            })
+    }
 }
 
 exports.showUsers = (req, res, next) => {
