@@ -79,11 +79,18 @@ exports.postLogin = (req, res, next) => {
     })
 }
 
+// To share data to admin dashboard
 exports.getData = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         let allOrders = [];
         let cancelleOrder = [];
         let line = [];
+        let date = [];
+        let todayDate = new Date()
+        let year = todayDate.getFullYear()
+        let month = todayDate.getMonth()
+        let dateOnly = todayDate.getDate();
+
         Order.aggregate([{
                 $unwind: "$orders"
             }, {
@@ -130,17 +137,24 @@ exports.getData = (req, res, next) => {
             .then(cancelledOrders => {
                 let index = 0;
                 cancelledOrders.forEach(a => {
+                    // calculate the existing orders
                     cancelleOrder.push(a.count);
                     line.push(allOrders[index] - a.count);
+
+                    // calculate last 5 days date
+                    date.push(`${dateOnly - index}-${month}-${year}`);
                     index++;
                 })
+                
                 allOrders.reverse()
                 cancelleOrder.reverse()
+                date.reverse()
                 line.reverse();
                 res.json({
                     cancelleOrder: cancelleOrder,
                     orders: allOrders,
-                    line: line
+                    line: line,
+                    date: date
                 });
             })
     }

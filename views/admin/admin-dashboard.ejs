@@ -18,55 +18,14 @@
                 <div class="main-panel">
                   <div class="content-wrapper">
                     <div class="row">
+
+                      <!-- order data bar graph -->
                         <div class="row w-100 flex-grow">
                           <div class="col-md-12 grid-margin stretch-card">
                             <div class="card">
                               <div class="card-body">
-                                <p class="card-title">Website Audience Metrics</p>
-                                <p class="text-muted">25% more traffic than previous week</p>
+                                <p class="card-title">Last 5 days orders data</p>
                                 <div class="row mb-3">
-                                  <div class="col-md-7">
-                                    <div class="d-flex justify-content-between traffic-status">
-                                      <div class="item">
-                                        <p class="mb-">Users</p>
-                                        <h5 class="font-weight-bold mb-0">93,956</h5>
-                                        <div class="color-border"></div>
-                                      </div>
-                                      <div class="item">
-                                        <p class="mb-">Bounce Rate</p>
-                                        <h5 class="font-weight-bold mb-0">58,605</h5>
-                                        <div class="color-border"></div>
-                                      </div>
-                                      <div class="item">
-                                        <p class="mb-">Page Views</p>
-                                        <h5 class="font-weight-bold mb-0">78,254</h5>
-                                        <div class="color-border"></div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-5">
-                                    <ul class="nav nav-pills nav-pills-custom justify-content-md-end" id="pills-tab-custom"
-                                      role="tablist">
-                                      <li class="nav-item">
-                                        <a class="nav-link active" id="pills-home-tab-custom" data-toggle="pill"
-                                          href="#pills-health" role="tab" aria-controls="pills-home" aria-selected="true">
-                                          Day
-                                        </a>
-                                      </li>
-                                      <li class="nav-item">
-                                        <a class="nav-link" id="pills-profile-tab-custom" data-toggle="pill" href="#pills-career"
-                                          role="tab" aria-controls="pills-profile" aria-selected="false">
-                                          Week
-                                        </a>
-                                      </li>
-                                      <li class="nav-item">
-                                        <a class="nav-link" id="pills-contact-tab-custom" data-toggle="pill" href="#pills-music"
-                                          role="tab" aria-controls="pills-contact" aria-selected="false">
-                                          Month
-                                        </a>
-                                      </li>
-                                    </ul>
-                                  </div>
                                 </div>
                                 <canvas id="audience-chart"></canvas>
                               </div>
@@ -103,6 +62,75 @@
                             </div>
                           </div>
                       </div>
+                      <!-- /order data bar graph -->
+                      
+                        <div class="row w-100 flex-grow">
+                          <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                              <div class="card-body">
+                                <p class="card-title">Regional Load</p>
+                                <p class="text-muted">Last update: 2 Hours ago</p>
+                                <div class="regional-chart-legend d-flex align-items-center flex-wrap mb-1"
+                                  id="regional-chart-legend"></div>
+                                <canvas height="280" id="regional-chart"></canvas>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card-body pb-0">
+                              <div class="d-flex align-items-center mb-4">
+                                <p class="card-title mb-0 mr-1">Today activity</p>
+                                <div class="badge badge-info badge-pill">2</div>
+                              </div>
+                              <div class="d-flex flex-wrap pt-2">
+                                <div class="mr-4 mb-lg-2 mb-xl-0">
+                                  <p>Time On Site</p>
+                                  <h4 class="font-weight-bold mb-0">77.15 %</h4>
+                                </div>
+                                <div>
+                                  <p>Page Views</p>
+                                  <h4 class="font-weight-bold mb-0">14.15 %</h4>
+                                </div>
+                              </div>
+                            </div>
+                            <canvas height="150" id="activity-chart"></canvas>
+                          </div>
+                          
+                          <div class="col-md-12 stretch-card">
+                            <div class="card">
+                              <div class="card-body pb-0">
+                                <p class="card-title">Server Status 247</p>
+                                <div class="d-flex justify-content-between flex-wrap">
+                                  <p class="text-muted">Last update: 2 Hours ago</p>
+                                  <div class="d-flex align-items-center flex-wrap server-status-legend mt-3 mb-3 mb-md-0">
+                                    <div class="item mr-3">
+                                      <div class="d-flex align-items-center">
+                                        <div class="color-bullet"></div>
+                                        <h5 class="font-weight-bold mb-0">128GB</h5>
+                                      </div>
+                                      <p class="mb-">Total Usage</p>
+                                    </div>
+                                    <div class="item mr-3">
+                                      <div class="d-flex align-items-center">
+                                        <div class="color-bullet"></div>
+                                        <h5 class="font-weight-bold mb-0">92%</h5>
+                                      </div>
+                                      <p class="mb-">Memory Usage</p>
+                                    </div>
+                                    <div class="item mr-3">
+                                      <div class="d-flex align-items-center">
+                                        <div class="color-bullet"></div>
+                                        <h5 class="font-weight-bold mb-0">16%</h5>
+                                      </div>
+                                      <p class="mb-">Disk Usage</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <canvas height="170" id="status-chart"></canvas>
+                            </div>
+                          </div>
+                        </div>
                 <!-- /add templates -->
                   </div>
               </div>

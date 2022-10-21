@@ -5,6 +5,7 @@
             let cancelleOrder = [130, 190, 250, 250, 190, 260];
             let orders = [100, 230, 340, 340, 260, 340];
             let line = [100, 230, 130, 140, 270, 140];
+            let month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
             let response;
             $.ajax({
                 url: `/admin/dashboard/getSalesData`,
@@ -17,7 +18,7 @@
                     var AudienceChart = new Chart(AudienceChartCanvas, {
                         type: 'bar',
                         data: {
-                            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                            labels: response.date,
                             datasets: [{
                                     type: 'line',
                                     fill: false,
