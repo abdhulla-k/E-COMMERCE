@@ -88,6 +88,8 @@ exports.getData = (req, res, next) => {
         let date = [];
         let income = [];
         let expences = [];
+        let profit = [];
+        let profitDate = [];
         let todayDate = new Date()
         let year = todayDate.getFullYear()
         let month = todayDate.getMonth()
@@ -176,6 +178,38 @@ exports.getData = (req, res, next) => {
                     expences.push(money.sum - ((money.sum / 100) * 10))
                 })
 
+                return Order.aggregate([{
+                    $unwind: "$orders"
+                }, {
+                    $match: {
+                        "orders.orderStatus": "placed"
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        sum: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $project: {
+                        sum: 1,
+                        _id: 0
+                    }
+                }, {
+                    $limit: 8
+                }])
+
+            })
+            .then(profitData => {
+                index = 0;
+                profitData.forEach(prfi => {
+                    profit.push((prfi.sum / 100) * 10);
+
+                    profitDate.push(`${dateOnly - index}-${month}-${year}`);
+                    index++;
+                })
+
                 // reverse all data arrays
                 allOrders.reverse();
                 cancelleOrder.reverse();
@@ -183,6 +217,8 @@ exports.getData = (req, res, next) => {
                 line.reverse();
                 income.reverse();
                 expences.reverse();
+                profitDate.reverse();
+                profit.reverse();
 
                 // give response
                 res.json({
@@ -191,7 +227,9 @@ exports.getData = (req, res, next) => {
                     line: line,
                     date: date,
                     income: income,
-                    expences: expences
+                    expences: expences,
+                    profit: profit,
+                    profitDate: profitDate
                 });
             })
     }
