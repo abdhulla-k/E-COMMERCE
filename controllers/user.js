@@ -969,7 +969,7 @@ exports.placeOrder = (req, res, next) => {
                                 let newOrder = {
                                     date: currentDate,
                                     time: time,
-                                    price: product.price,
+                                    price: Number(product.price),
                                     paymentMethod: paymentMethod,
                                     userName: userName,
                                     userId: req.session.userId,
@@ -1071,7 +1071,7 @@ exports.placeOrder = (req, res, next) => {
                                 let newOrder = {
                                     date: currentDate,
                                     time: time,
-                                    price: product.price,
+                                    price: Number(product.price),
                                     paymentMethod: paymentMethod,
                                     userId: req.session.userId,
                                     userOrderId: orderId,

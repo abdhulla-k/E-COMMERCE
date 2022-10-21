@@ -86,6 +86,8 @@ exports.getData = (req, res, next) => {
         let cancelleOrder = [];
         let line = [];
         let date = [];
+        let income = [];
+        let expences = [];
         let todayDate = new Date()
         let year = todayDate.getFullYear()
         let month = todayDate.getMonth()
@@ -145,16 +147,51 @@ exports.getData = (req, res, next) => {
                     date.push(`${dateOnly - index}-${month}-${year}`);
                     index++;
                 })
-                
-                allOrders.reverse()
-                cancelleOrder.reverse()
-                date.reverse()
+
+                return Order.aggregate([{
+                    $unwind: "$orders"
+                }, {
+                    $match: {
+                        "orders.orderStatus": "placed"
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        sum: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $project: {
+                        sum: 1,
+                        _id: 0
+                    }
+                }, {
+                    $limit: 4
+                }])
+            })
+            .then(incomeExpence => {
+                incomeExpence.forEach(money => {
+                    income.push(money.sum);
+                    expences.push(money.sum - ((money.sum / 100) * 10))
+                })
+
+                // reverse all data arrays
+                allOrders.reverse();
+                cancelleOrder.reverse();
+                date.reverse();
                 line.reverse();
+                income.reverse();
+                expences.reverse();
+
+                // give response
                 res.json({
                     cancelleOrder: cancelleOrder,
                     orders: allOrders,
                     line: line,
-                    date: date
+                    date: date,
+                    income: income,
+                    expences: expences
                 });
             })
     }

@@ -14,6 +14,102 @@
                     console.log(data);
                     response = data;
                     console.log("got response");
+
+                    // income and expences
+                    if ($("#regional-chart").length) {
+                        var regionalChartCanvas = $("#regional-chart").get(0).getContext("2d");
+                        var regionalChart = new Chart(regionalChartCanvas, {
+                            type: 'horizontalBar',
+                            data: {
+                                // labels: ["12", "8", "4", "0"],
+                                labels: response.date,
+                                datasets: [{
+                                        label: 'Income',
+                                        // data: [400, 360, 360, 360],
+                                        data: response.income,
+                                        backgroundColor: '#1cbccd'
+                                    },
+                                    {
+                                        label: 'Expenses',
+                                        // data: [320, 190, 180, 140],
+                                        data: response.expences,
+                                        backgroundColor: '#ffbf36'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                layout: {
+                                    padding: {
+                                        left: -7,
+                                        right: 0,
+                                        top: 0,
+                                        bottom: 0
+                                    }
+                                },
+                                scales: {
+                                    yAxes: [{
+                                        display: true,
+                                        gridLines: {
+                                            display: false,
+                                            drawBorder: false
+                                        },
+                                        ticks: {
+                                            display: true,
+                                            min: 0,
+                                            max: 400,
+                                            stepSize: 100,
+                                            fontColor: "#b1b0b0",
+                                            fontSize: 10,
+                                            padding: 10
+                                        },
+                                        barPercentage: 1,
+                                        categoryPercentage: .6,
+                                    }],
+                                    xAxes: [{
+                                        display: true,
+                                        stacked: false,
+                                        ticks: {
+                                            display: false,
+                                            beginAtZero: true,
+                                            fontColor: "#b1b0b0",
+                                            fontSize: 10
+                                        },
+                                        gridLines: {
+                                            display: true,
+                                            drawBorder: false,
+                                            lineWidth: 1,
+                                            color: "#f5f5f5",
+                                            zeroLineColor: "#f5f5f5"
+                                        }
+                                    }]
+                                },
+                                legend: {
+                                    display: false
+                                },
+                                elements: {
+                                    point: {
+                                        radius: 3,
+                                        backgroundColor: '#ff4c5b'
+                                    }
+                                },
+                                legendCallback: function (chart) {
+                                    var text = [];
+                                    text.push('<div class="item mr-4 d-flex align-items-center">');
+                                    text.push('<div class="item-box mr-2" style=" background-color: ' + chart.data.datasets[0].backgroundColor + ' "></div><p class="text-black mb-0"> ' + chart.data.datasets[0].label + '</p>');
+                                    text.push('</div>');
+                                    text.push('<div class="item d-flex align-items-center">');
+                                    text.push('<div class="item-box mr-2" style=" background-color: ' + chart.data.datasets[1].backgroundColor + '"></div><p class="text-black mb-0"> ' + chart.data.datasets[1].label + ' </p>');
+                                    text.push('</div>');
+                                    return text.join('');
+                                }
+                            },
+                        });
+                        document.querySelector('#regional-chart-legend').innerHTML = regionalChart.generateLegend();
+                    }
+
+                    // sales report
                     var AudienceChartCanvas = $("#audience-chart").get(0).getContext("2d");
                     var AudienceChart = new Chart(AudienceChartCanvas, {
                         type: 'bar',
@@ -267,96 +363,6 @@
                     }
                 }
             });
-        }
-
-        if ($("#regional-chart").length) {
-            var regionalChartCanvas = $("#regional-chart").get(0).getContext("2d");
-            var regionalChart = new Chart(regionalChartCanvas, {
-                type: 'horizontalBar',
-                data: {
-                    labels: ["12", "8", "4", "0"],
-                    datasets: [{
-                            label: 'Income',
-                            data: [400, 360, 360, 360],
-                            backgroundColor: '#1cbccd'
-                        },
-                        {
-                            label: 'Expenses',
-                            data: [320, 190, 180, 140],
-                            backgroundColor: '#ffbf36'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    layout: {
-                        padding: {
-                            left: -7,
-                            right: 0,
-                            top: 0,
-                            bottom: 0
-                        }
-                    },
-                    scales: {
-                        yAxes: [{
-                            display: true,
-                            gridLines: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                display: true,
-                                min: 0,
-                                max: 400,
-                                stepSize: 100,
-                                fontColor: "#b1b0b0",
-                                fontSize: 10,
-                                padding: 10
-                            },
-                            barPercentage: 1,
-                            categoryPercentage: .6,
-                        }],
-                        xAxes: [{
-                            display: true,
-                            stacked: false,
-                            ticks: {
-                                display: false,
-                                beginAtZero: true,
-                                fontColor: "#b1b0b0",
-                                fontSize: 10
-                            },
-                            gridLines: {
-                                display: true,
-                                drawBorder: false,
-                                lineWidth: 1,
-                                color: "#f5f5f5",
-                                zeroLineColor: "#f5f5f5"
-                            }
-                        }]
-                    },
-                    legend: {
-                        display: false
-                    },
-                    elements: {
-                        point: {
-                            radius: 3,
-                            backgroundColor: '#ff4c5b'
-                        }
-                    },
-                    legendCallback: function (chart) {
-                        var text = [];
-                        text.push('<div class="item mr-4 d-flex align-items-center">');
-                        text.push('<div class="item-box mr-2" style=" background-color: ' + chart.data.datasets[0].backgroundColor + ' "></div><p class="text-black mb-0"> ' + chart.data.datasets[0].label + '</p>');
-                        text.push('</div>');
-                        text.push('<div class="item d-flex align-items-center">');
-                        text.push('<div class="item-box mr-2" style=" background-color: ' + chart.data.datasets[1].backgroundColor + '"></div><p class="text-black mb-0"> ' + chart.data.datasets[1].label + ' </p>');
-                        text.push('</div>');
-                        return text.join('');
-                    }
-                },
-            });
-            document.querySelector('#regional-chart-legend').innerHTML = regionalChart.generateLegend();
         }
 
         if ($("#activity-chart").length) {
