@@ -13,9 +13,11 @@
     <!-- <script src="js/main.js"></script> -->
 
     <!-- Template Javascript -->
-    <script src="/js/Chart.min.js"></script>
-    <script src="/js/dashboard.js"></script>
-    <script src="/js/vendor.bundle.base.js"></script>
+    <% if(userType === "admin") { %>
+        <script src="/js/Chart.min.js"></script>
+        <script src="/js/dashboard.js"></script>
+        <script src="/js/vendor.bundle.base.js"></script>
+    <% } %>
 
     <% if(userType === "seller") { %>
         <!-- seller -->
