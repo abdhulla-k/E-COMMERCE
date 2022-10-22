@@ -8,6 +8,7 @@ let editnigProdId;
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
+let mongoose = require("mongoose")
 
 let loginErrorMessage;
 let signupErrorMessage;
@@ -165,6 +166,176 @@ exports.postSignup = (req, res, next) => {
             res.redirect("/seller/signup");
         }
     })
+}
+
+exports.getDashboardData = (req, res, next) => {
+    console.log("Hooooooooooooi! i reched")
+    if (req.session.sellerLoggedIn) {
+        let allOrders = 0;
+        let cancelleOrder = 0;
+        let date = [];
+        let income = [];
+        let expences = [];
+        let profit = [];
+        let profitDate = [];
+        let todayDate = new Date()
+        let year = todayDate.getFullYear()
+        let month = todayDate.getMonth()
+        let dateOnly = todayDate.getDate();
+
+        Orders.aggregate([{
+                $match: {
+                    sellerId: req.session.sellerId
+                }
+            }, {
+                $match: {
+                    sellerId: req.session.sellerId
+                }
+            }, {
+                $unwind: "$orders"
+            }, {
+                $group: {
+                    _id: '$orders.date',
+                    count: {
+                        $sum: 1
+                    }
+                }
+            }, {
+                $project: {
+                    count: 1,
+                    _id: 0
+                }
+            }, {
+                $limit: 7
+            }])
+            .then(data => {
+                data.forEach(a => {
+                    allOrders += a.count;
+                })
+                return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
+                    $unwind: "$orders"
+                }, {
+                    $match: {
+                        "orders.orderStatus": "cancelled"
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        count: {
+                            $sum: 1
+                        }
+                    }
+                }, {
+                    $project: {
+                        count: 1,
+                        _id: 0
+                    }
+                }, {
+                    $limit: 7
+                }])
+            })
+            .then(cancelledOrders => {
+                let index = 0;
+                cancelledOrders.forEach(a => {
+                    // calculate the existing orders
+                    cancelleOrder += a.count;
+
+                    // calculate last 5 days date
+                    date.push(`${dateOnly - index}-${month}-${year}`);
+                    index++;
+                })
+
+                return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
+                    $unwind: "$orders"
+                }, {
+                    $match: {
+                        "orders.orderStatus": "placed"
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        sum: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $project: {
+                        sum: 1,
+                        _id: 0
+                    }
+                }, {
+                    $limit: 4
+                }])
+            })
+            .then(incomeExpence => {
+                incomeExpence.forEach(money => {
+                    income.push(money.sum);
+                    expences.push(money.sum - ((money.sum / 100) * 60))
+                })
+
+                return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
+                    $unwind: "$orders"
+                }, {
+                    $match: {
+                        "orders.orderStatus": "placed"
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        sum: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $project: {
+                        sum: 1,
+                        _id: 0
+                    }
+                }, {
+                    $limit: 8
+                }])
+
+            })
+            .then(profitData => {
+                index = 0;
+                profitData.forEach(prfi => {
+                    profit.push((prfi.sum / 100) * 40);
+
+                    profitDate.push(`${dateOnly - index}-${month}-${year}`);
+                    index++;
+                })
+
+                // reverse all data arrays
+                date.reverse();
+                income.reverse();
+                expences.reverse();
+                profitDate.reverse();
+                profit.reverse();
+
+                // give response
+                res.json({
+                    cancelleOrder: cancelleOrder,
+                    orders: allOrders - cancelleOrder,
+                    date: date,
+                    income: income,
+                    expences: expences,
+                    profit: profit,
+                    profitDate: profitDate
+                });
+            })
+    }
 }
 
 exports.getAddProduct = (req, res, next) => {
@@ -424,7 +595,7 @@ exports.showOrders = (req, res, next) => {
                             userName: 0,
                             userId: 0,
                             orderStatus: 0,
-                            paymentMethod:0,
+                            paymentMethod: 0,
                             address: 0,
                             price: 0
                         }
@@ -436,9 +607,9 @@ exports.showOrders = (req, res, next) => {
                         foreignField: "_id.str",
                         as: "array"
                     }
-                },{
+                }, {
                     $unwind: "$array"
-                },{
+                }, {
                     $project: {
                         orders: {
                             productId: 1

@@ -97,7 +97,7 @@
                             type: 'horizontalBar',
                             data: {
                                 // labels: ["12", "8", "4", "0"],
-                                labels: response.date,
+                                labels: response.profitDate,
                                 datasets: [{
                                         label: 'Income',
                                         // data: [400, 360, 360, 360],

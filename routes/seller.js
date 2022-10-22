@@ -12,6 +12,8 @@ router.get('/signup', sellerController.getSignup);
 
 router.post('/postSignup', sellerController.postSignup);
 
+router.get("/dashboard/getData", sellerController.getDashboardData);
+
 router.get("/addProduct", sellerController.getAddProduct);
 
 router.post("/saveNewProduct", sellerController.postAddProduct);

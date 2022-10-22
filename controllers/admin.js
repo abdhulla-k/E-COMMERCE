@@ -218,7 +218,7 @@ exports.getData = (req, res, next) => {
                 income.reverse();
                 expences.reverse();
                 profitDate.reverse();
-                profit.reverse();
+                // profit.reverse();
 
                 // give response
                 res.json({
