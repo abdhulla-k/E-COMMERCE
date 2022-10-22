@@ -51,10 +51,11 @@ $(function () {
     };
     var doughnutPieData = {
         datasets: [{
-            data: [30, 40, 30],
+            // data: [30, 40, 30],
+            data: [],
             backgroundColor: [
-                'rgba(255, 99, 132, 0.5)',
-                'rgba(54, 162, 235, 0.5)',
+                'rgba(62, 235, 5)',
+                'rgba(252, 34, 0)',
                 'rgba(255, 206, 86, 0.5)',
                 'rgba(75, 192, 192, 0.5)',
                 'rgba(153, 102, 255, 0.5)',
@@ -72,9 +73,8 @@ $(function () {
 
         // These labels appear in the legend and in the tooltips when hovering different arcs
         labels: [
-            'Pink',
-            'Blue',
-            'Yellow',
+            'Orders',
+            'Cancelled Orders'
         ]
     };
     var doughnutPieOptions = {
@@ -202,16 +202,20 @@ $(function () {
                     data: data,
                     options: options
                 });
+
+                // pie chart
+                if ($("#pieChart").length) {
+                    doughnutPieData.datasets[0].data = [res.cancelleOrder, res.orders];
+                    var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+                    var pieChart = new Chart(pieChartCanvas, {
+                        type: 'pie',
+                        data: doughnutPieData,
+                        options: doughnutPieOptions
+                    });
+                }
             })
 
         })
-        // var barChartCanvas = $("#barChart").get(0).getContext("2d");
-        // // This will get the first returned node in the jQuery collection.
-        // var barChart = new Chart(barChartCanvas, {
-        //     type: 'bar',
-        //     data: data,
-        //     options: options
-        // });
     }
 
     if ($("#lineChart").length) {
@@ -232,14 +236,14 @@ $(function () {
         });
     }
 
-    if ($("#pieChart").length) {
-        var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'pie',
-            data: doughnutPieData,
-            options: doughnutPieOptions
-        });
-    }
+    // if ($("#pieChart").length) {
+    //     var pieChartCanvas = $("#pieChart").get(0).getContext("2d");
+    //     var pieChart = new Chart(pieChartCanvas, {
+    //         type: 'pie',
+    //         data: doughnutPieData,
+    //         options: doughnutPieOptions
+    //     });
+    // }
 
     if ($("#areaChart").length) {
         var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
