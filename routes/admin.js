@@ -5,6 +5,12 @@ const adminController = require("../controllers/admin");
 
 router.get('/', adminController.getLogin);
 
+// sales report
+router.get('/reports', adminController.getReport);
+
+// download sales report
+router.get('/sales/download', adminController.salesDownload);
+
 router.post('/postLogin', adminController.postLogin);
 
 router.get('/showUsers', adminController.showUsers);

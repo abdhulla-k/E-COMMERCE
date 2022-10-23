@@ -1,9 +1,18 @@
+const fs = require('fs');
+// Build paths
+const {
+    buildPathHtml,
+    buildPathPdf
+} = require('../util/build-path');
+
+
 const Category = require("../models/product_category");
 const User = require("../models/user");
 const Product = require("../models/product");
 const Order = require("../models/orders");
 
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs");
+const puppeteer = require('puppeteer');
 
 let categories;
 let loginErrorMessage;
@@ -232,6 +241,127 @@ exports.getData = (req, res, next) => {
                     profitDate: profitDate
                 });
             })
+    }
+}
+
+// sales report
+exports.getReport = (req, res, nect) => {
+    if (req.session.adminLoggedIn) {
+        let NetPrice = 0;
+        let data = [];
+
+        Order.aggregate([{
+                $unwind: "$orders"
+            }, {
+                $match: {
+                    "orders.orderStatus": "cancelled"
+                }
+            }, {
+                $group: {
+                    _id: null,
+                    sumPrice: {
+                        $sum: "$orders.price"
+                    },
+                    sellerId: {
+                        $first: "$sellerId"
+                    },
+                    sumQt: {
+                        $sum: "sellerId"
+                    }
+                }
+            }])
+            .then(data => {
+                NetPrice = data[0].sumPrice
+                return Order.aggregate([{
+                    $unwind: "$orders"
+                }, {
+                    $match: {
+                        "orders.orderStatus": "cancelled"
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        sum: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $limit: 30
+                }])
+            })
+            .then(data => {
+                data = data;
+
+                // render the file and show the report
+                res.render("admin/sales-report", {
+                    userType: "admin",
+                    report: data,
+                    total: NetPrice
+                });
+
+                //         // create a text file for show the table
+                //         const createRow = (item) => `
+                //     ${item._id}           Product soled out            ${item.sum}                     ${(item.sum * 10)/100}
+                //         `;
+
+                //         // create table headings
+                //         const createTable = (rows) => `
+                //     Date                 Particular                   Amount                 Profit
+                //     -------------------------------------------------------------------------------
+                //             ${rows}
+                //    -------------------------------------------------------------------------------
+                //    Total                                              ${NetPrice}                    ${parseInt(NetPrice - (NetPrice * 90) / 100)}
+                //         `;
+
+                //         // create the ejs file and insert table into that
+                //         const createHtml = (table) => `
+                //             ${table} 
+                //         `;
+
+                //         const doesFileExist = (filePath) => {
+                //             try {
+                //                 fs.statSync(filePath); // get information of the specified file path.
+                //                 return true;
+                //             } catch (error) {
+                //                 return false;
+                //             }
+                //         };
+
+                //         try {
+                //             /* Check if the file for `html` build exists in system or not */
+                //             if (doesFileExist(buildPathHtml)) {
+                //                 console.log('Deleting old build file');
+                //                 /* If the file exists delete the file from system */
+                //                 fs.unlinkSync(buildPathHtml);
+                //             }
+                //             /* generate rows */
+                //             const rows = data.map(createRow).join('');
+                //             /* generate table */
+                //             const table = createTable(rows);
+                //             /* generate html */
+                //             const html = createHtml(table);
+                //             /* write the generated html to file */
+                //             fs.writeFileSync(buildPathHtml, html);
+                //             console.log('Succesfully created an HTML table');
+
+                //         } catch (error) {
+                //             console.log('Error generating table', error);
+                //         }
+            })
+            .then(aggriVal => {
+                console.log("===============user orders=================")
+            })
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
+// download sales report
+exports.salesDownload = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        // res.download("./report.txt")
+    } else {
+        res.redirect("/admin/");
     }
 }
 
