@@ -10,12 +10,14 @@ const Category = require("../models/product_category");
 const User = require("../models/user");
 const Product = require("../models/product");
 const Order = require("../models/orders");
+const Coupon = require("../models/coupon");
 
 const bcrypt = require("bcryptjs");
 const puppeteer = require('puppeteer');
 
 let categories;
 let loginErrorMessage;
+let couponMessage;
 
 exports.getLogin = (req, res, next) => {
     Category.find({}, (err, data) => {
@@ -664,6 +666,69 @@ exports.postSaveCategory = (req, res, next) => {
             }
         })
     }
+}
+
+exports.showAllCoupons = (req, res, next) => {
+    Coupon.find({}, (err, data) => {
+        try {
+            if (!err) {
+                if (data) {
+                    res.render("admin/coupons", {
+                        userType: "admin",
+                        user: "",
+                        coupons: data
+                    });
+                }
+            }
+        } catch {
+            console.log("error found while getting coupons details!");
+            res.redirect("/admin/");
+        }
+    })
+}
+
+exports.showAddCoupon = (req, res, next) => {
+    res.render("admin/add-new-coupon", {
+        userType: "admin",
+        user: "",
+        message: couponMessage
+    });
+    couponMessage = ""
+}
+
+exports.addCoupon = (req, res, next) => {
+    const coupon = req.body.couponName;
+    const discountPercentage = Number(req.body.percentage);
+    const maxDiscount = Number(req.body.maxDiscount);
+    const minAmount = Number(req.body.maxAmount);
+
+    Coupon.find({
+        coupon: coupon
+    }, (err, data) => {
+        try {
+            if (data.length > 0) {
+                couponMessage = "coupon already exist"
+                res.redirect("/admin/showAddCoupon")
+            } else {
+                const newCoupon = new Coupon({
+                    coupon: coupon,
+                    discountPercentage: discountPercentage,
+                    maxDiscount: maxDiscount,
+                    minAmount: minAmount
+                })
+                console.log(coupon);
+                newCoupon.save()
+                    .then(data => {
+                        console.log(data)
+                        res.redirect("/admin/showAllCupons")
+                    })
+            }
+        } catch {
+            couponMessage = "something wring while adding new category! try again"
+            res.redirect("/admin/showAddCoupon")
+        }
+
+    })
 }
 
 exports.logout = (req, res, next) => {

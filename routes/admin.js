@@ -38,6 +38,12 @@ router.get('/addCategory', adminController.addCategory);
 
 router.post('/saveCategory', adminController.postSaveCategory);
 
+router.get("/showAllCupons", adminController.showAllCoupons);
+
+router.get('/showAddCoupon', adminController.showAddCoupon);
+
+router.post('/addNewCoupon', adminController.addCoupon);
+
 router.get('/logout', adminController.logout);
 
 
