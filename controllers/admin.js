@@ -669,66 +669,101 @@ exports.postSaveCategory = (req, res, next) => {
 }
 
 exports.showAllCoupons = (req, res, next) => {
-    Coupon.find({}, (err, data) => {
-        try {
-            if (!err) {
-                if (data) {
-                    res.render("admin/coupons", {
-                        userType: "admin",
-                        user: "",
-                        coupons: data
-                    });
+    if (req.session.adminLoggedIn) {
+        Coupon.find({}, (err, data) => {
+            try {
+                if (!err) {
+                    if (data) {
+                        res.render("admin/coupons", {
+                            userType: "admin",
+                            user: "",
+                            coupons: data
+                        });
+                    }
                 }
+            } catch {
+                console.log("error found while getting coupons details!");
+                res.redirect("/admin/");
             }
-        } catch {
-            console.log("error found while getting coupons details!");
-            res.redirect("/admin/");
-        }
-    })
+        })
+    } else {
+        res.redirect("/admin/")
+    }
 }
 
 exports.showAddCoupon = (req, res, next) => {
-    res.render("admin/add-new-coupon", {
-        userType: "admin",
-        user: "",
-        message: couponMessage
-    });
-    couponMessage = ""
+    if (req.session.adminLoggedIn) {
+        res.render("admin/add-new-coupon", {
+            userType: "admin",
+            user: "",
+            message: couponMessage
+        });
+        couponMessage = ""
+    } else {
+        res.redirect("/admin/")
+    }
 }
 
 exports.addCoupon = (req, res, next) => {
-    const coupon = req.body.couponName;
-    const discountPercentage = Number(req.body.percentage);
-    const maxDiscount = Number(req.body.maxDiscount);
-    const minAmount = Number(req.body.maxAmount);
+    if (req.session.adminLoggedIn) {
+        const coupon = req.body.couponName;
+        const discountPercentage = Number(req.body.percentage);
+        const maxDiscount = Number(req.body.maxDiscount);
+        const minAmount = Number(req.body.maxAmount);
 
-    Coupon.find({
-        coupon: coupon
-    }, (err, data) => {
-        try {
-            if (data.length > 0) {
-                couponMessage = "coupon already exist"
-                res.redirect("/admin/showAddCoupon")
-            } else {
-                const newCoupon = new Coupon({
-                    coupon: coupon,
-                    discountPercentage: discountPercentage,
-                    maxDiscount: maxDiscount,
-                    minAmount: minAmount
-                })
-                console.log(coupon);
-                newCoupon.save()
-                    .then(data => {
-                        console.log(data)
-                        res.redirect("/admin/showAllCupons")
+        Coupon.find({
+            coupon: coupon
+        }, (err, data) => {
+            try {
+                if (data.length > 0) {
+                    couponMessage = "coupon already exist"
+                    res.redirect("/admin/showAddCoupon")
+                } else {
+                    const newCoupon = new Coupon({
+                        coupon: coupon,
+                        discountPercentage: discountPercentage,
+                        maxDiscount: maxDiscount,
+                        minAmount: minAmount
                     })
+                    console.log(coupon);
+                    newCoupon.save()
+                        .then(data => {
+                            console.log(data)
+                            res.redirect("/admin/showAllCupons")
+                        })
+                }
+            } catch {
+                couponMessage = "something wring while adding new category! try again"
+                res.redirect("/admin/showAddCoupon")
             }
+
+        })
+    } else {
+        res.redirect("/admin/")
+    }
+}
+
+exports.deleteCoupon = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        const couponId = req.params.couponId;
+        try {
+            Coupon.findByIdAndRemove(couponId)
+                .then(data => {
+                    console.log(data)
+                    console.log("deleted");
+                    res.json("deleted")
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.redirect("/admin/showAddCoupon")
+                })
         } catch {
-            couponMessage = "something wring while adding new category! try again"
+            console.log("something wrong while removing coupon");
             res.redirect("/admin/showAddCoupon")
         }
-
-    })
+    } else {
+        res.redirect("/admin/")
+    }
 }
 
 exports.logout = (req, res, next) => {

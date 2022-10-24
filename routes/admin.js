@@ -44,6 +44,8 @@ router.get('/showAddCoupon', adminController.showAddCoupon);
 
 router.post('/addNewCoupon', adminController.addCoupon);
 
+router.get("/deleteCoupon/:couponId", adminController.deleteCoupon);
+
 router.get('/logout', adminController.logout);
 
 

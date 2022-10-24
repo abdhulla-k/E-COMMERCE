@@ -1,5 +1,6 @@
 <%- include( "../includes/head.ejs" ) %>
 <body>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- header -->
     <%- include( "../includes/admin/admin-navigation.ejs" ) %>
     <!-- /header -->
@@ -35,7 +36,7 @@
                             </div>
                           </div>
                         <% coupons.forEach(coupon => { %>
-                            <div class="card-body">
+                            <div class="card-body" id="<%= coupon.id %>">
                                 <div class="row border">
                                   <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                     <p class="text-muted mb-0"><%= coupon.coupon %></p>
@@ -53,6 +54,7 @@
                                     <a 
                                         class="btn btn-sm btn-danger"
                                         id=""
+                                        onclick="removeCoupon('<%= coupon.id %>')"
                                         >
                                         <i class="fa fa-times"></i>
                                     </a>
@@ -68,6 +70,26 @@
               </div>
         </div>
     </div>
+    <script>
+        function removeCoupon(id) {
+            const row = document.getElementById(id)
+            Swal.fire(
+                'Are you shure?',
+                'Do you want to delete the coupon',
+                'success'
+            ).then(confirm => {
+                if(confirm) {
+                    $.ajax({
+                        url: `/admin/deleteCoupon/${id}`,
+                        success(status) {
+                            row.remove();
+                        }
+                    })
+                }
+            })
+            
+        }
+    </script>
     <!-- Carousel End -->
     <%- include( "../includes/footer.ejs" ) %>
     
