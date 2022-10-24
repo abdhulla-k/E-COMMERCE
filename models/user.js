@@ -78,6 +78,17 @@ const ordersSchema = new Schema({
 
 })
 
+const applyedCoupon = new Schema({
+    year: {
+        type: Date,
+        required: true
+    },
+    coupon: {
+        type: String,
+        required: true
+    }
+})
+
 const userSchema = new Schema({
     name: {
         type: String,
@@ -100,7 +111,8 @@ const userSchema = new Schema({
         required: true
     },
     address: [addressScema],
-    orders: [ordersSchema]
+    orders: [ordersSchema],
+    couponsAppied: [applyedCoupon]
 })
 
 module.exports = mongoose.model( "User", userSchema );

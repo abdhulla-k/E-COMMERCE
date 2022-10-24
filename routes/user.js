@@ -28,6 +28,9 @@ router.get('/decreaseQt/:productId', userController.getDecreaseCartQuantity);
 
 router.get('/removeFromCart/:productId', userController.removeFromCart);
 
+// apply coupon on cart price
+router.post('/applyCoupon', userController.applyCoupon);
+
 router.get('/checkout', userController.getCheckout);
 
 router.post('/placeOrder', userController.placeOrder);

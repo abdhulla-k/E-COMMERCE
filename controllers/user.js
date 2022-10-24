@@ -3,10 +3,12 @@ const Categories = require("../models/product_category");
 const Cart = require("../models/cart");
 const Product = require("../models/product");
 const Order = require("../models/orders");
+const Coupon = require("../models/coupon");
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
 const Razorpay = require("razorpay");
+var mongoose = require('mongoose');
 
 const razorPrivatKey = require("../util/razor-pay");
 
@@ -867,6 +869,83 @@ exports.removeFromCart = (req, res, next) => {
     })
 }
 
+exports.applyCoupon = (req, res, next) => {
+    const coupon = req.body.coupon;
+    let cartTotal = Number(req.body.price);
+    // console.log(cartTotal);
+    Coupon.find({
+        coupon: coupon
+    }, (err, data) => {
+        if (!err) {
+            if (data.length > 0) {
+                User.aggregate([{
+                        '$match': {
+                            '_id': new mongoose.Types.ObjectId(req.session.userId)
+                        }
+                    }, {
+                        '$project': {
+                            'couponsAppied': 1
+                        }
+                    }, {
+                        '$unwind': {
+                            'path': '$couponsAppied'
+                        }
+                    }, {
+                        '$match': {
+                            "couponsAppied.coupon": coupon
+                        }
+                    }])
+                    .then(result => {
+                        if (result.length > 0) {
+                            console.log(result);
+                            console.log("this coupon is already used!");
+                            let responseData = {
+                                price: cartTotal,
+                                message: "this coupon is already used!"
+                            }
+                            res.json(responseData)
+                        } else {
+
+                            // success case;
+                            // user didn't used the coupon before;
+                            // Let him go ahead
+                            console.log(result);
+                            // save coupon in session
+                            req.session.coupon = coupon;
+                            cartTotal -= (cartTotal * data[0].discountPercentage) / 100;
+                            let responseData = {
+                                price: cartTotal,
+                                message: ""
+                            }
+                            res.json(responseData)
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                            console.log("error in finding coupondata");
+                            let responseData = {
+                                price: cartTotal,
+                                message: "something went wrong while applying coupon! try later"
+                            }
+                            res.json(responseData)
+                    })
+            } else {
+                let responseData = {
+                    price: cartTotal,
+                    message: "coupon not exist"
+                }
+                res.json(responseData)
+            }
+        } else {
+            res.json({
+                price: cartTotal,
+                message: "womething wring while checking coupon! please try later or contact us"
+            });
+        }
+    })
+
+}
+
 // /user/checkout?cartPrice
 exports.getCheckout = (req, res, next) => {
     if (req.session.userLoggedIn) {
@@ -924,6 +1003,25 @@ exports.placeOrder = (req, res, next) => {
                     }
                 });
             })
+        }
+
+        function saveCouponDetails() {
+            if (req.session.coupon) {
+                User.findByIdAndUpdate(req.session.userId, {
+                        $push: {
+                            couponsAppied: {
+                                year: currentDate,
+                                coupon: req.session.coupon
+                            }
+                        }
+                    })
+                    .then(data => {
+                        console.log(data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            }
         }
 
         if (req.body.addressId) {
@@ -996,6 +1094,7 @@ exports.placeOrder = (req, res, next) => {
                     }
                 })
                 .then(data => {
+                    saveCouponDetails();
                     if (req.body.paymentMethod !== 'cashOnDelivery') {
                         generateRazorPay(orderId, req.session.cartPrice)
                             .then(response => {
@@ -1097,6 +1196,7 @@ exports.placeOrder = (req, res, next) => {
                     }
                 })
                 .then(data => {
+                    saveCouponDetails();
                     if (req.body.paymentMethod !== 'cashOnDelivery') {
                         generateRazorPay(orderId, req.session.cartPrice)
                             .then(response => {
@@ -1250,13 +1350,19 @@ exports.cancelOrder = (req, res, next) => {
                                 }
                             }, {
                                 $addFields: {
-                                    'orders.orderStatus' : 'cancelled'
+                                    'orders.orderStatus': 'cancelled'
                                 }
                             }])
                         })
                         .then(data => {
                             console.log("cancelled")
-                            return Order.updateMany({'orders.userOrderId': orderId}, {$set: {"orders.$[].orderStatus": 'cancelled'}})
+                            return Order.updateMany({
+                                'orders.userOrderId': orderId
+                            }, {
+                                $set: {
+                                    "orders.$[].orderStatus": 'cancelled'
+                                }
+                            })
                         })
                         .then(data => {
                             console.log(data);

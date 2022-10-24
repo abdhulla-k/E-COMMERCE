@@ -161,10 +161,13 @@
             <div class="col-lg-3">
                 <form class="mb-30" action="">
                     <div class="input-group">
-                        <input type="text" class="form-control border-0 p-4" placeholder="Coupon Code">
+                        <input id="couponCodeInput" type="text" class="form-control border-0 p-4" placeholder="Coupon Code">
                         <div class="input-group-append">
-                            <button class="btn btn-primary">Apply Coupon</button>
+                            <button onclick="applyCoupon('<%=cartPrice%>')" type="button" class="btn btn-primary">Apply Coupon</button>
                         </div>
+                    </div>
+                    <div id="couponError" class="alert alert-danger hide" role="alert">
+                        something wrong while applying coupon
                     </div>
                 </form>
                 <h5 
@@ -191,7 +194,7 @@
                             <input hidden type="number" value="<%= cartPrice %>" id="cartPrice">
                         </div>
                         <% if(cart) { %>
-                            <a href="/user/checkout?cartPrice=<%=cartPrice%>" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
+                            <a href="/user/checkout?cartPrice=<%=cartPrice%>" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="proceed">
                                 Proceed To Checkout
                             </a>
                         <% } %>
@@ -210,6 +213,33 @@
 
     <!-- script of product quantity buttons -->
     <script>
+        function applyCoupon(cartPrice) {
+            const code = document.getElementById("couponCodeInput").value;
+            console.log(cartPrice);
+            $.ajax({
+                url: `/user/applyCoupon`,
+                method: "post",
+                data: {
+                    coupon: code,
+                    price: cartPrice
+                },
+                success: (response => {
+                    console.log(response)
+                    document.getElementById("cartPriceShow").innerHTML = response.price;
+
+                    // show error message if there is any message passed
+                    if(response.message) {
+                        document.getElementById("couponError").innerHTML = response.message;
+                        document.getElementById("couponError").classList.remove('hide');
+                        setTimeout(()=> {
+                            document.getElementById("couponError").classList.add("hide")
+                        }, 3000)
+                    }
+                    $("a").attr("href", `/user/checkout?cartPrice=${response.price}`);
+                })
+            })
+        }
+
         function increaseValue(id, price) {
             var value = parseInt(document.getElementById(id).value, 10);
             value = isNaN(value) ? 0 : value;
