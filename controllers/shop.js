@@ -6,11 +6,15 @@ let categories;
 
 exports.getShop = (req, res, next) => {
     if (categories) {
-        res.render("user/home", {
-            userType: "user",
-            user: req.session.userLoggedIn ? "user" : "",
-            categories: categories
-        });
+        Products.find({}).limit(10).then(data => {
+            res.render("user/home", {
+                userType: "user",
+                user: req.session.userLoggedIn ? "user" : "",
+                categories: categories,
+                latestProducts: data
+            })
+        })
+        
     } else {
         Category.find({}, (err, data) => {
             if (data) {
