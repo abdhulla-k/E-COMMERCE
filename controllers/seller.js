@@ -645,6 +645,73 @@ exports.showOrders = (req, res, next) => {
     }
 }
 
+exports.salesReport = (req, res, next) => {
+    if (req.session.sellerLoggedIn) {
+        let data = [];
+        Orders.aggregate([{
+                $match: {
+                    sellerId: req.session.sellerId
+                }
+            }, {
+                $unwind: "$orders"
+            }, {
+                $project: {
+                    orders: 1,
+                    _id: 0
+                }
+            }, {
+                $group: {
+                    _id: '$orders.date',
+                    sum: {
+                        $sum: "$orders.price"
+                    }
+                }
+            }, {
+                $limit: 30
+            }]).then(someData => {
+                data = someData;
+                return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
+                    $unwind: "$orders"
+                }, {
+                    $project: {
+                        orders: 1,
+                        _id: 0
+                    }
+                }, {
+                    $group: {
+                        _id: '$orders.date',
+                        sum: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $limit: 30
+                }, {
+                    $group: {
+                        _id: null,
+                        total: {
+                            $sum: "$sum"
+                        }
+                    }
+                }])
+            })
+            .then(total => {
+                res.render("seller/sales-report", {
+                    user: req.session.sellerLoggedIn ? "true" : "",
+                    userType: "seller",
+                    report: data,
+                    total: total
+                })
+            })
+    } else {
+        res.redirect("/seller/");
+    }
+}
+
 exports.logout = (req, res, next) => {
     req.session.sellerLoggedIn = false;
     res.redirect("/seller/");

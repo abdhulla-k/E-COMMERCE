@@ -1,0 +1,101 @@
+<%- include( "../includes/head.ejs" ) %>
+<body>
+    <!-- header -->
+    <%- include( "../includes/admin/admin-navigation.ejs" ) %>
+    <!-- /header -->
+    <!-- Carousel Start -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+              <%- include("../includes/seller/side-bar.ejs") %>
+      
+              <div class="col-lg-9 col-md-9">
+                <h4 class="section-title position-relative text-uppercase mb-3">
+                  <!-- <span class="bg-secondary pr-3">Sales Report Last month</span><a class="btn btn-warning" onclick="printDiv('myTable','Sales Report')">Download</a> -->
+                  <span class="bg-secondary pr-3">Sales Report Last month</span><a class="btn btn-warning" onclick="printDiv('myTable','Sales Report')">Download</a>
+                </h4>
+                <div class="row px-xl-5" id="myTable">
+                  <% if(report.length > 0) { %>
+                    <table class="table table-image">
+                      <thead>
+                        <tr>
+                          <th scope="col">Date</th>
+                          <th scope="col">Particular</th>
+                          <th scope="col">Price</th>
+                          <th scope="col">Profit</th>
+                      </thead>
+                      <tbody>
+                        <% report.forEach(order => { %>
+                          <tr>
+                            <td class="w-25">
+                              <%= order._id %>
+                            </td>
+                            <td class="w-25">
+                              <%= order.time %>
+                            </td>
+                            <td class="w-25">
+                              <%= order.sum %>
+                            </td>
+                            <td class="w-25">
+                              <%= (order.sum * 10) / 100 %>
+                            </td>
+                            <td class="w-25">
+                              <%= order.orderStatus %>
+                            </td>
+                          </tr>
+                        <% }) %>
+                        <br>
+                        <tr>
+                          <td class="w-25">
+                            Total
+                          </td>
+                          <td class="w-25">
+                            
+                          </td>
+                          <td class="w-25">
+                            <%= total[0].total %>
+                          </td>
+                          <td class="w-25">
+                            <%= (total[0].total * 10) / 100 %>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>  
+              <% } else { %>
+                <h3>No Data</h3>
+              <% } %>
+                </div>
+              </div>
+        </div>
+    </div>
+
+<script>
+  var doc = new jsPDF();
+
+function saveDiv(divId, title) {
+doc.fromHTML(`<html><head><title>${title}</title></head><body>` + document.getElementById("myTable").innerHTML + `</body></html>`);
+doc.save('div.pdf');
+}
+
+function printDiv(divId,
+ title) {
+
+ let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
+
+ mywindow.document.write(`<html><head><title>${title}</title>`);
+ mywindow.document.write('</head><body >');
+ mywindow.document.write(document.getElementById(divId).innerHTML);
+ mywindow.document.write('</body></html>');
+
+ mywindow.document.close(); // necessary for IE >= 10
+ mywindow.focus(); // necessary for IE >= 10*/
+
+ mywindow.print();
+ mywindow.close();
+
+ return true;
+}
+</script>
+    <!-- Carousel End -->
+    <%- include( "../includes/footer.ejs" ) %>
+      
+<%- include( "../includes/end.ejs" )%>  

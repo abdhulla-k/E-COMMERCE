@@ -32,6 +32,8 @@ router.get("/delete/:productId", sellerController.deleteProduct);
 
 router.get("/showOrders", sellerController.showOrders);
 
+router.get("/showSalesReport", sellerController.salesReport);
+
 router.get("/logout", sellerController.logout);
 
 module.exports = router;
