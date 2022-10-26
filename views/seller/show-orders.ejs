@@ -22,6 +22,7 @@
                                       <th scope="col">Price</th>
                                       <th scope="col">Status</th>
                                       <th scope="col">Address</th>
+                                      <th scope="col"></th>
                                   </thead>
                                   <tbody>
                                     <% orderDetails.forEach(order => { %>
@@ -38,7 +39,7 @@
                                         <td>
                                           <%= order.price %>
                                         </td>
-                                        <td>
+                                        <td id="<%= order._id %>">
                                           <%= order.orderStatus %>
                                         </td>
                                         <td class="w-25">
@@ -48,6 +49,20 @@
                                           state: <%= order.address.state %><br>
                                           country: <%= order.address.country %><br>
                                           zip: <%= order.address.zip %><br>
+                                        </td>
+                                        <td>
+                                          <!-- Example single danger button -->
+                                          <div class="btn-group">
+                                            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                              Status
+                                            </button>
+                                            <div class="dropdown-menu">
+                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'placed', '<%= order._id %>', '<%= order.productId %>')">Placed</a>
+                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'cancelled', '<%= order._id %>', '<%= order.productId %>')">Cancelled</a>
+                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'shipped', '<%= order._id %>', '<%= order.productId %>')">Shipped</a>
+                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'Delivered', '<%= order._id %>', '<%= order.productId %>')">Delivered</a>
+                                            </div>
+                                          </div>
                                         </td>
                                       </tr>
                                     <% }) %>
@@ -60,6 +75,29 @@
               </div>
         </div>
     </div>
+
+    <script>
+      function changeOrderStatus(orderId, userId, status, id, productId) {
+        // console.log(`user order id: ${orderId}, userId: ${userId}, id: ${id}`)
+        // console.log(`product id: ${productId}`)
+        if(orderId && userId && status) {
+          $.ajax({
+            url: `/seller/changeOrderStatus`,
+            method: "post",
+            data: {
+              userId: userId,
+              userOrderId: orderId,
+              orderStatus: status,
+              productId: productId
+            },
+            success:(data => {
+              console.log(document.getElementById(`${id}`).innerText);
+              document.getElementById(`${id}`).innerText = status;
+            })
+          })
+        }
+      }
+    </script>
     
     <!-- Carousel End -->
     <%- include( "../includes/footer.ejs" ) %>

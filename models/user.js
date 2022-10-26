@@ -46,6 +46,11 @@ const productsSchema = new Schema({
     price: {
         type: String,
         required: true
+    },
+    status: {
+        type: String,
+        required: false,
+        default: "placed"
     }
 })
 

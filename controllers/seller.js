@@ -621,7 +621,6 @@ exports.showOrders = (req, res, next) => {
                 }])
             })
             .then(result => {
-                console.log(result)
                 if (sellerOrders) {
                     res.render('seller/show-orders', {
                         user: req.session.sellerLoggedIn ? "true" : "",
@@ -643,6 +642,79 @@ exports.showOrders = (req, res, next) => {
     } else {
         res.redirect('/seller/');
     }
+}
+
+// to change the order status through ajax request
+exports.changeOrderStatus = (req, res, next) => {
+    // save all data coming through ajax request
+    const userId = req.body.userId;
+    const userOrderId = req.body.userOrderId;
+    const orderStatus = req.body.orderStatus;
+    const productId = req.body.productId;
+
+    // find order data of seller
+    Orders.find({
+            sellerId: req.session.sellerId
+        })
+        .then(result => {
+            console.log(result[0].id);
+            return Orders.findById(result[0].id)
+        })
+        .then(data => {
+            index = data.orders.findIndex(p => p.userOrderId === userOrderId);
+            console.log(index);
+
+            // change the order status from seller's orderlist
+            return Orders.updateOne({
+                sellerId: req.session.sellerId,
+                "orders.userOrderId": userOrderId
+            }, {
+                $set: {
+                    'orders.$.orderStatus': orderStatus
+                }
+            })
+        })
+        .then(data => {
+            console.log(data);
+            res.json("hi");
+
+            // find the user data to change the order status from the embeded data
+            return User.find({
+                _id: mongoose.Types.ObjectId(userId)
+            })
+        })
+        .then(userDat => {
+
+            // find the array index of this order
+            let orderIndex = userDat[0].orders.findIndex(order => {
+                return order._id == userOrderId;
+            })
+            if (orderIndex >= 0) {
+
+                // find the product array index from the product array to change only the specific product's status
+                let productIndex = userDat[0].orders[orderIndex].products.findIndex(product => {
+                    return product.productId == productId
+                })
+
+                // update or change the status of product
+                if (productIndex >= 0) {
+                    console.log(`product index: ${productIndex}`);
+                    return User.findOneAndUpdate({
+                        _id: mongoose.Types.ObjectId(userId)
+                    }, {
+                        [`orders.${orderIndex}.products.${productIndex}.status`] : orderStatus
+                    })
+                }
+            } else {
+                console.log('index is -1');
+            }
+        })
+        .then(status => {
+            conosle.log(status)
+        })
+        .catch(err => {
+            console.log(err);
+        })
 }
 
 exports.salesReport = (req, res, next) => {
