@@ -1,0 +1,95 @@
+<%- include( "../includes/head.ejs" ) %>
+<body>
+    <!-- header -->
+    <%- include( "../includes/admin/admin-navigation.ejs" ) %>
+    <!-- /header -->
+
+    <!-- Carousel Start -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+              <%- include("../includes/admin/admin-sidebar.ejs") %>
+
+              <div class="col-lg-9 col-md-9">
+                <h4 class="section-title position-relative text-uppercase mb-3">
+                  <span class="bg-secondary pr-3">Add New Banner</span>
+                </h4>
+                <div>
+                    <div 
+                        id="login-row" 
+                        class="row justify-content-center align-items-center"
+                        >
+                        <div 
+                            id="login-column" 
+                            class="col-md-6">
+                                <div 
+                                    id="login-box" 
+                                    class="col-md-12">
+                                        <form 
+                                            id="login-form" 
+                                            class="form" 
+                                            action="/admin/addNewBanner" 
+                                            enctype="multipart/form-data"
+                                            method="post">
+                                            <div class="form-group">
+                                                <label 
+                                                    for="email" 
+                                                    class="text-dark">
+                                                        Title:
+                                                </label>
+                                                <br>
+                                                <input 
+                                                    type="text" 
+                                                    name="title" 
+                                                    id="email" 
+                                                    class="form-control"
+                                                    required
+                                                >
+                                            </div>
+                                            <div class="form-group">
+                                                <label 
+                                                    for="email" 
+                                                    class="text-dark">
+                                                        Short discription:
+                                                </label>
+                                                <br>
+                                                <input 
+                                                    type="text" 
+                                                    name="description" 
+                                                    id="percentage" 
+                                                    class="form-control"
+                                                    required
+                                                >
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <div class="form-group">
+                                                    <label for="image">Chooe an Image</label>
+                                                    <input 
+                                                        type="file" 
+                                                        name="image" 
+                                                        class="form-control-file" 
+                                                        id="exampleFormControlFile1"
+                                                        >
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input 
+                                                    type="submit" 
+                                                    name="submit" 
+                                                    class="btn btn-warning btn-md" 
+                                                    value="submit"
+                                                >
+                                            </div>
+                                        </form>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+        </div>
+    </div>
+    <!-- Carousel End -->
+    <%- include( "../includes/footer.ejs" ) %>
+    
+<%- include( "../includes/end.ejs" )%>

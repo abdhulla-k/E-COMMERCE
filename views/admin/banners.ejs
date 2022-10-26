@@ -1,0 +1,98 @@
+<%- include( "../includes/head.ejs" ) %>
+<body>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- header -->
+    <%- include( "../includes/admin/admin-navigation.ejs" ) %>
+    <!-- /header -->
+
+    <!-- Carousel Start -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+              <%- include("../includes/admin/admin-sidebar.ejs") %>
+
+              <div class="col-lg-9 col-md-9">
+                <h4 class="section-title position-relative text-uppercase mb-3">
+                  <span class="bg-secondary pr-3">Banners</span><a href="/admin/showAddBanner" class="btn btn-warning">Add Banner</a>
+                </h4>
+                <div>
+                    <% if(bannerData.length > 0) { %>
+                      <table class="table table-image">
+                        <thead>
+                          <tr>
+                            <th scope="col">Image</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Description</th>
+                            <th scope="col"></th>
+                        </thead>
+                        <tbody>
+                          <% bannerData.forEach(banner => { %>
+                            <tr>
+                              <td class="w-25">
+                                <div class="card" style="width: 18rem;">
+                                  <img 
+                                    style="max-width: 130px;"
+                                    class="card-img-top" 
+                                    src="/images/<%=banner.image%>" 
+                                    alt="Card image cap"
+                                  >
+                                </div>
+                              </td>
+                              <td class="w-25">
+                                <%= banner.title %>
+                              </td>
+                              <td class="w-25">
+                                <%= banner.description %>
+                              </td>
+                              <td class="w-25">
+                              </td>
+                              <td>
+                                <a
+                                class="btn btn-outline-warning btn-square text-dark"
+                                style="margin-left: 5px; background-color: red;"
+                                onclick="removeBanner('<%= banner.id %>')"
+                                ><i class="fa fa-times"></i>
+                              </td>
+                            </tr>
+                          <% }) %>
+                        </tbody>
+                      </table>  
+                    <% } else { %>
+                        <h3>No Banners exist! add new Banner</h3>
+                    <% } %>
+                </div>
+              </div>
+        </div>
+    </div>
+    <script>
+        function removeBanner(id) {
+            const row = document.getElementById(id)
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                Swal.fire(
+                  'Deleted!',
+                  'Your file has been deleted.',
+                  'success'
+                ).then(data => {
+                  $.ajax({
+                        url: `/admin/deleteBanner/${id}`,
+                        success(status) {
+                            row.remove();
+                        }
+                    })
+                })
+              }
+            })
+        }
+    </script>
+    <!-- Carousel End -->
+    <%- include( "../includes/footer.ejs" ) %>
+    
+<%- include( "../includes/end.ejs" )%>

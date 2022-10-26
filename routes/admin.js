@@ -46,6 +46,13 @@ router.post('/addNewCoupon', adminController.addCoupon);
 
 router.get("/deleteCoupon/:couponId", adminController.deleteCoupon);
 
+// to show banners
+router.get("/showAllBanners", adminController.showBanners);
+
+router.get("/showAddBanner", adminController.showAddBanner);
+
+router.post("/addNewBanner", adminController.postBanner);
+
 router.get('/logout', adminController.logout);
 
 

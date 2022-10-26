@@ -11,6 +11,7 @@ const User = require("../models/user");
 const Product = require("../models/product");
 const Order = require("../models/orders");
 const Coupon = require("../models/coupon");
+const Banner = require("../models/banner");
 
 const bcrypt = require("bcryptjs");
 const puppeteer = require('puppeteer');
@@ -763,6 +764,59 @@ exports.deleteCoupon = (req, res, next) => {
         }
     } else {
         res.redirect("/admin/")
+    }
+}
+
+exports.showBanners = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        Banner.find({}, (err, data) => {
+            try {
+                if (!err) {
+                    if (data) {
+                        res.render("admin/banners", {
+                            userType: "admin",
+                            user: "",
+                            bannerData: data
+                        });
+                    }
+                }
+            } catch {
+                console.log("error found while getting banner details!");
+                res.redirect("/admin/");
+            }
+        })
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
+exports.showAddBanner = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        res.render("admin/add-new-banner", {
+            userType: "admin",
+            user: "",
+        });
+    } else {
+        res.redirect("/admin/");
+    }
+}
+
+exports.postBanner = (req, res, next) => {
+    if (req.session.adminLoggedIn) {
+        console.log(req.body);
+        console.log(req.files);
+        const newBanner = new Banner({
+            title: req.body.title,
+            description: req.body.description,
+            image: req.files[0].filename
+        })
+        newBanner.save()
+            .then(data => {
+                console.log(data);
+                res.redirect("/admin/showAllBanners");
+            })
+    } else {
+        res.redirect("/admin/");
     }
 }
 

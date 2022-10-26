@@ -1,20 +1,46 @@
 const Products = require("../models/product");
 const Category = require("../models/product_category");
+const Banner = require("../models/banner");
 
 let filterKey = [];
 let categories;
 
 exports.getShop = (req, res, next) => {
+    let products = [];
     if (categories) {
         Products.find({}).limit(10).then(data => {
-            res.render("user/home", {
-                userType: "user",
-                user: req.session.userLoggedIn ? "user" : "",
-                categories: categories,
-                latestProducts: data
+                products = data
+                return Banner.find({})
             })
-        })
-        
+            .then(banners => {
+                if (banners) {
+                    res.render("user/home", {
+                        userType: "user",
+                        user: req.session.userLoggedIn ? "user" : "",
+                        categories: categories,
+                        latestProducts: products,
+                        banners: banners
+                    })
+                } else {
+                    res.render("user/home", {
+                        userType: "user",
+                        user: req.session.userLoggedIn ? "user" : "",
+                        categories: categories,
+                        latestProducts: products,
+                        banners: []
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                res.render("user/home", {
+                    userType: "user",
+                    user: req.session.userLoggedIn ? "user" : "",
+                    categories: categories,
+                    latestProducts: products ? products : [],
+                    banners: banners ? banners : []
+                })
+            })
     } else {
         Category.find({}, (err, data) => {
             if (data) {
