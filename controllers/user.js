@@ -34,7 +34,7 @@ let waitingOtp;
 // rasor pay
 let instance = new Razorpay({
     key_id: razorPrivatKey.key_id,
-    key_secret: 'z3bFrnI5ldsLY3rx2u4iHKjV',
+    key_secret: razorPrivatKey.key_secret,
 });
 
 // save user data to signup and to save after otp verification
@@ -240,39 +240,15 @@ exports.postSignup = (req, res, next) => {
                                         password: hash,
                                         userType: signupData.userType
                                     })
-
-                                    // create otp 
-                                    let otpPromise = new Promise((res, rej) => {
-                                        let number = ''
-                                        let digits = "0123456789";
-                                        for (let i = 0; i < 2; i++) {
-                                            number += digits[Math.floor(Math.random() * 10)]
-                                        }
-                                        if (number) {
-                                            res(number);
-                                        } else {
-                                            rej("error in otp generation");
-                                        }
-                                    })
-
-                                    // use otpPromise to create an otp
-                                    otpPromise.then(generatedOtp => {
-                                            waitingOtp = generatedOtp;
-                                            console.log(generatedOtp);
-
-                                            // send created otp
-                                            client.messages
-                                                .create({
-                                                    body: generatedOtp,
-                                                    from: '+13854835372',
-                                                    to: '+916282679611'
-                                                })
-                                                .then(message => {
-                                                    otpErrormessage = "";
-                                                })
-                                                .done(
-                                                    console.log("done")
-                                                );
+                                    // send created otp
+                                    client.verify.v2.services(tiloPersonalData.varifyTocken)
+                                        .verifications
+                                        .create({
+                                            to: `+91${user.phoneNumber}`,
+                                            channel: 'sms'
+                                        })
+                                        .then(verification => {
+                                            console.log(verification.status)
 
                                             // destroy the othp after 30 seconds
                                             setTimeout(() => {
@@ -280,13 +256,12 @@ exports.postSignup = (req, res, next) => {
                                                 console.log(waitingOtp);
                                                 otpTimeError = "Time is over! try again!"
                                             }, 30000);
-
                                             // show the page to enter otp
                                             res.redirect("/user/otp")
                                         })
                                         .catch(err => {
-                                            console("error in otp createion");
-                                            res.redirect("/");
+                                            console.log(err);
+                                            otpErrormessage = "make sure the phone number is correct";
                                         })
                                 }
                             })
@@ -308,7 +283,6 @@ exports.postSignup = (req, res, next) => {
 
 // to show the page to enter otp
 exports.otpVerify = (req, res, next) => {
-    console.log(otpTimeError)
     if (categories) {
         res.render("user/otp", {
             errorMessage: otpErrormessage,
@@ -349,21 +323,41 @@ exports.otpVerify = (req, res, next) => {
 // check otp and save user data
 exports.postSignupOtp = (req, res, next) => {
 
-    if (waitingOtp == req.body.otp) {
-        // save the user
-        user.save()
-            .then(result => {
-                user = "";
-                res.redirect("/user/login");
+    try {
+        client.verify.v2.services(tiloPersonalData.varifyTocken)
+            .verificationChecks
+            .create({
+                to: `+91${user.phoneNumber}`,
+                code: `${req.body.otp}`
+            })
+            .then(verification_check => {
+                console.log(verification_check.status);
+                if (verification_check.status === 'approved') {
+                    // save the user
+                    user.save()
+                        .then(result => {
+                            user = "";
+                            res.redirect("/user/login");
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            signupErrorMessage = "we are very sory! trouble in creating user! try after sometime or contact us"
+                            res.redirect("/user/signup");
+                        })
+                } else {
+                    console.log("incorrect otp");
+                    otpErrormessage = "incorrect otp";
+                    res.redirect("/user/otp");
+                }
             })
             .catch(err => {
-                console.log(err);
-                signupErrorMessage = "we are very sory! trouble in creating user! try after sometime or contact us"
-                res.redirect("/user/signup");
+                conosle.log(err);
+                console.log("incorrect otp");
+                otpErrormessage = "incorrect otp";
+                res.redirect("/user/otp");
             })
-    } else {
-        console.log("incorrect otp");
-        otpErrormessage = "incorrect otp";
+    } catch {
+        console.log("some error while verifying otp");
         res.redirect("/user/otp");
     }
 }
@@ -922,12 +916,12 @@ exports.applyCoupon = (req, res, next) => {
                     })
                     .catch(err => {
                         console.log(err);
-                            console.log("error in finding coupondata");
-                            let responseData = {
-                                price: cartTotal,
-                                message: "something went wrong while applying coupon! try later"
-                            }
-                            res.json(responseData)
+                        console.log("error in finding coupondata");
+                        let responseData = {
+                            price: cartTotal,
+                            message: "something went wrong while applying coupon! try later"
+                        }
+                        res.json(responseData)
                     })
             } else {
                 let responseData = {
