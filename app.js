@@ -59,6 +59,16 @@ app.use( '/user', userRoute );
 app.use( '/seller', sellerRoute );
 app.use( '/admin', adminRoute );
 
+app.use(function(req, res, next) {
+    res.status(404);
+  
+    // respond with html page
+    if (req.accepts('html')) {
+      res.render('404', { url: req.url });
+      return;
+    }
+  });
+
 // connect with mongodb and make app listenable from browser
 mongoose.connect( "mongodb://localhost:27017/bigCart" ).then( data => {
     app.listen( 3000 );

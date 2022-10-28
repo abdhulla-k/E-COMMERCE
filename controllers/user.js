@@ -1327,6 +1327,7 @@ exports.orderDetails = (req, res, next) => {
                                 });
                                 // invoiceData.products = data;
                                 // console.log(data);
+                                invoiceData.products = [];
                                 for(i of data) {
                                     for(k of orderDetails.products) {
                                         if(i.id === k.productId) {
