@@ -1,4 +1,5 @@
-node_modules
-public/images
-public/invoice
+node_modules/
+public/images/
+public/invoice/
 tilo.js
+util/mongodb.js

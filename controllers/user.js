@@ -159,7 +159,6 @@ exports.postLogin = (req, res, next) => {
                 }
             )
         } else {
-            console.log("user not exist");
             loginErrorMessage = "user not exist!";
             res.redirect("login");
         }
@@ -284,7 +283,6 @@ exports.postSignup = (req, res, next) => {
                                             // destroy the othp after 30 seconds
                                             setTimeout(() => {
                                                 waitingOtp = "";
-                                                console.log(waitingOtp);
                                                 otpTimeError = "Time is over! try again!"
                                             }, 30000);
                                             // show the page to enter otp
@@ -322,6 +320,8 @@ exports.otpVerify = (req, res, next) => {
             user: '',
             otpTimeError: otpTimeError,
         });
+        otpTimeError = "";
+        otpErrormessage
     } else {
         CategoriesGet
             .then(categories => {

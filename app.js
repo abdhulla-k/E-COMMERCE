@@ -5,6 +5,9 @@ const session = require( "express-session" );
 const nocache = require( "nocache" );
 const bodyParser = require( "body-parser" );
 
+// mongodb data
+const mongodb = require("./util/mongodb");
+
 // requre and set multer
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -70,8 +73,8 @@ app.use(function(req, res, next) {
   });
 
 // connect with mongodb and make app listenable from browser
-mongoose.connect( "mongodb://localhost:27017/bigCart" ).then( data => {
-    app.listen( 3000 );
+mongoose.connect( `mongodb+srv://${mongodb.userName}:${mongodb.password}.fojetus.mongodb.net/?retryWrites=true&w=majority` ).then( data => {
+    app.listen( process.env.PORT || 3000 );
 }).catch( err => {
     console.log( err );
 })
