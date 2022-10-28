@@ -43,4 +43,6 @@ router.get('/myOrders/:orderId', userController.orderDetails);
 
 router.get('/cancelOrder/:orderId', userController.cancelOrder);
 
+router.get('/downloadInvoice', userController.downloadInvoice);
+
 module.exports = router;

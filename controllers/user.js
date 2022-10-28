@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const User = require("../models/user");
 const Categories = require("../models/product_category");
 const Cart = require("../models/cart");
@@ -7,8 +9,13 @@ const Coupon = require("../models/coupon");
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
+// import razore pay
 const Razorpay = require("razorpay");
-var mongoose = require('mongoose');
+// import mongoose
+const mongoose = require('mongoose');
+// import easyinvoice
+const easyinvoice = require('easyinvoice');
+
 
 const razorPrivatKey = require("../util/razor-pay");
 
@@ -23,6 +30,30 @@ let userData = {
     name: "",
     email: "",
     phoneNumber: "",
+};
+
+// data to create invoice of order
+let invoiceData = {
+    "client": {
+        "company": "Big Cart",
+        "address": "Street 456",
+        "zip": "Zip code",
+        "country": "Country Name"
+    },
+
+    "information": {
+        // Invoice number
+        "number": "2021.0001",
+        // Invoice data
+        date: "12-12-2021",
+    },
+
+    products: [],
+
+    "settings": {
+        "currency": "INR", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
+    },
+
 };
 
 let loginErrorMessage;
@@ -1276,7 +1307,7 @@ exports.orderDetails = (req, res, next) => {
                 if (data) {
                     let index = data.orders.findIndex(p => p.id === orderId)
                     if (index !== -1) {
-                        let orderDetails = data.orders[index]
+                        let orderDetails = data.orders[index];
                         let products = orderDetails.products.map(p => {
                             return p.productId;
                         })
@@ -1287,16 +1318,33 @@ exports.orderDetails = (req, res, next) => {
                                 }
                             })
                             .then(data => {
-                                console.log(data)
-                                console.log("=======================")
-                                console.log(products)
-                                console.log("=======================")
                                 res.render("user/order-details", {
                                     user: "true",
                                     userType: "user",
                                     categories: categories,
                                     orderDetails: orderDetails,
                                     products: data
+                                });
+                                // invoiceData.products = data;
+                                // console.log(data);
+                                for(i of data) {
+                                    for(k of orderDetails.products) {
+                                        if(i.id === k.productId) {
+                                            invoiceData.products.push( {
+                                                "quantity": k.quantity,
+                                                "description": i.title,
+                                                "price": i.price
+                                            },)
+                                        }
+                                    }
+                                  }
+                                easyinvoice.createInvoice(invoiceData, function (result) {
+                                    /*  
+                                        5.  The 'result' variable will contain our invoice as a base64 encoded PDF
+                                            Now let's save our invoice to our local filesystem so we can have a look!
+                                            We will be using the 'fs' library we imported above for this.
+                                    */
+                                    fs.writeFileSync("./public/invoice/invoice.pdf", result.pdf, 'base64');
                                 });
                             })
                     }
@@ -1321,6 +1369,10 @@ exports.orderDetails = (req, res, next) => {
     } else {
         res.redirect('/');
     }
+}
+
+exports.downloadInvoice = (req, res, next) => {
+    res.download("./public/invoice/invoice.pdf");
 }
 
 exports.cancelOrder = (req, res, next) => {
