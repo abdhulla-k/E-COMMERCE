@@ -17,12 +17,14 @@ const mongoose = require('mongoose');
 const easyinvoice = require('easyinvoice');
 
 
-const razorPrivatKey = require("../util/razor-pay");
+// const razorPrivatKey = require("../util/razor-pay");
 
 // import twilio to send otp
-const tiloPersonalData = require("../tilo");
-const accountSid = tiloPersonalData.accountSid;
-const authToken = tiloPersonalData.authToken;
+// const tiloPersonalData = require("../tilo");
+// const accountSid = tiloPersonalData.accountSid;
+const accountSid = process.env.ACCOUNT_SID;
+// const authToken = tiloPersonalData.authToken;
+const authToken = process.env.AUTH_TOCKEN;
 const client = require('twilio')(accountSid, authToken);
 
 // signup data
@@ -64,8 +66,8 @@ let waitingOtp;
 
 // rasor pay
 let instance = new Razorpay({
-    key_id: razorPrivatKey.key_id,
-    key_secret: razorPrivatKey.key_secret,
+    key_id: process.env.KEY_ID,
+    key_secret: process.env.KEY_SECRET,
 });
 
 // save user data to signup and to save after otp verification
@@ -271,7 +273,7 @@ exports.postSignup = (req, res, next) => {
                                         userType: signupData.userType
                                     })
                                     // send created otp
-                                    client.verify.v2.services(tiloPersonalData.varifyTocken)
+                                    client.verify.v2.services(process.env.VERIFY_TOCKEN)
                                         .verifications
                                         .create({
                                             to: `+91${user.phoneNumber}`,
@@ -355,7 +357,7 @@ exports.otpVerify = (req, res, next) => {
 exports.postSignupOtp = (req, res, next) => {
 
     try {
-        client.verify.v2.services(tiloPersonalData.varifyTocken)
+        client.verify.v2.services(process.env.VERIFY_TOCKEN)
             .verificationChecks
             .create({
                 to: `+91${user.phoneNumber}`,

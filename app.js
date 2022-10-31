@@ -6,7 +6,7 @@ const nocache = require( "nocache" );
 const bodyParser = require( "body-parser" );
 
 // mongodb data
-const mongodb = require("./util/mongodb");
+// const mongodb = require("./util/mongodb");
 
 // requre and set multer
 const multer = require("multer");
@@ -73,7 +73,7 @@ app.use(function(req, res, next) {
   });
 
 // connect with mongodb and make app listenable from browser
-mongoose.connect( `mongodb+srv://${mongodb.userName}:${mongodb.password}.fojetus.mongodb.net/?retryWrites=true&w=majority` ).then( data => {
+mongoose.connect( `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}.fojetus.mongodb.net/?retryWrites=true&w=majority` ).then( data => {
     app.listen( process.env.PORT || 3000 );
 }).catch( err => {
     console.log( err );
