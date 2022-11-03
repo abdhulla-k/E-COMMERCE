@@ -4,8 +4,49 @@
     <%- include( "../includes/navigation.ejs" ) %>
     <!-- /header -->
 
+    <style>
+        .hide {
+            visibility: hidden;
+            display: none;
+        }
+        @keyframes fadeIn {
+          from {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+        }
+        @keyframes fedOut {
+          from {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+        }
+        .animate {
+          animation: fadeIn 500ms ease-out backwards;
+        }
+        .out-animate {
+            animation: fedOut 500ms ease-in forwards;
+        }
+    </style>
+
     <!-- Carousel Start -->
     <div class="container-fluid mb-3">
+      <div 
+        style="position: absolute; z-index: 100; width: 100%; text-align: center;" 
+        class="hide alert alert-success" 
+        role="alert"
+        id="addedNotification"
+        >
+        address Added
+      </div>
         <div class="row px-xl-5">
               <%- include("../includes/user/user-sidebar.ejs") %>
 
@@ -13,13 +54,214 @@
                 <h5 class="section-title position-relative text-uppercase mb-3">
                   <span class="bg-secondary pr-3">My Profile</span>
                 </h5>
-                <div class="row px-xl-5">
-                        
+                    <div class="row">
+                        <div class="col-md-3 border-right">
+                            <div 
+                              class="d-flex flex-column align-items-center text-center p-3 py-5">
+                              <img 
+                                class="rounded-circle mt-5" 
+                                width="150px" 
+                                src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+                                  <span 
+                                    class="font-weight-bold">
+                                    <% if(!userDataError) { %>
+                                      <%= userData.name %>
+                                    <% } %> 
+                                  </span>
+                                  <span 
+                                    class="text-black-50">
+                                      <% if(!userDataError) { %>
+                                        <%= userData.email %>
+                                      <% } %> 
+                                    </span>
+                                    <span> </span>
+                            </div>
+                        </div>
+                        <div class="col-md-5 border-right">
+                            <div class="p-3 py-5">
+                                <div class="<% if(!userDataError) {%> hide <% } %> alert alert-danger" role="alert">
+                                  <%= userDataError %>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                      <label class="labels">Name</label>
+                                      <input 
+                                        type="text" 
+                                        disabled
+                                        class="form-control" 
+                                        placeholder="first name" 
+                                        value="<%= userData.name %>">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                      <label class="labels">Email</label>
+                                      <input 
+                                        type="text" 
+                                        disabled
+                                        class="form-control" 
+                                        value="<%= userData.email %>" 
+                                        placeholder="surname">
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                      <label class="labels">phone</label>
+                                      <input 
+                                        type="text" 
+                                        disabled
+                                        class="form-control" 
+                                        placeholder="country" 
+                                        value="<%= userData.phoneNumber %>">
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 py-5">
+                              <div class="row mt-3">
+                                <div class="col-md-12">
+                                  <label class="labels">home</label>
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    placeholder="enter your home name or flat number" 
+                                    id="home"
+                                    value="">
+                                </div>
+                                <div class="col-md-12">
+                                  <label class="labels">Street</label>
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    placeholder="enter your Street name" 
+                                    id="street"
+                                    value="">
+                                </div>
+                                <div class="col-md-12">
+                                  <label class="labels">District</label>
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="district"
+                                    placeholder="enter your district" 
+                                    value="">
+                                </div>
+                                <div class="col-md-12">
+                                  <label class="labels">City</label>
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="city"
+                                    placeholder="enter your city" 
+                                    value="">
+                                </div>
+                                <div class="col-md-12">
+                                  <label class="labels">State</label>
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="state"
+                                    placeholder="enter your state" 
+                                    value="">
+                                </div>
+                                <div class="col-md-12">
+                                  <label class="labels">Country</label>
+                                  <select 
+                                      name="country" 
+                                      id="country"
+                                      class="custom-select">
+                                      <option selected>United States</option>
+                                      <option>India</option>
+                                      <option>China</option>
+                                      <option>Pakistan</option>
+                                      <option>UK</option>
+                                      <option>Afghanistan</option>
+                                      <option>Albania</option>
+                                      <option>Algeria</option>
+                                  </select>
+                              </div>
+                                <div class="col-md-12"><label class="labels">Zip</label>
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="zip"
+                                    placeholder="enter your zip code" 
+                                    value="">
+                                </div>
+                              </div>
+                            <div class="mt-5 text-center">
+                              <a onclick="addAddress()" class="btn btn-primary profile-button">Add New Address</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
               </div>
         </div>
     </div>
     <!-- Carousel End -->
+
+    <script>
+      function addAddress() {
+          let addedNotification = document.querySelector('#addedNotification');
+          let home = document.getElementById('home').value;
+          let street = document.getElementById('street').value;
+          let district = document.getElementById('district').value;
+          let city = document.getElementById('city').value;
+          let state = document.getElementById('state').value;
+          let country = document.getElementById('country').value;
+          let zip = document.getElementById('zip').value;
+          if(home && street && district && city && state && country && zip) {
+            $.ajax({
+                url: `/user/addAddress`,
+                method: "post",
+                data: {
+                  home: home,
+                  street: street,
+                  district: district,
+                  city: city,
+                  state: state,
+                  country: country,
+                  zip:  zip,
+                },
+                success: (response) => {
+                  if(response === "saved") {
+                    document.querySelector('#addedNotification').innerHTML = "address added"
+                    addedNotification.classList.remove('hide')
+                    addedNotification.classList.remove('out-animate')
+                    addedNotification.classList.add('animate')
+                    setTimeout(() => {
+                      addedNotification.classList.remove('animate')
+                      addedNotification.classList.add('out-animate')
+                    }, 1000)
+                    setTimeout(() => {
+                        addedNotification.classList.add('hide')
+                    }, 2000)
+                  }
+                }
+            })
+          } else {
+            document.querySelector('#addedNotification').innerHTML = "make sure you filled all the data fields"
+            addedNotification.classList.remove('hide')
+            addedNotification.classList.remove('out-animate')
+            addedNotification.classList.remove('alert-success')
+            addedNotification.classList.add('animate')
+            addedNotification.classList.add('alert-danger')
+            setTimeout(() => {
+                addedNotification.classList.remove('animate')
+                addedNotification.classList.add('out-animate')
+            }, 1000)
+            setTimeout(() => {
+                addedNotification.classList.remove('alert-danger')
+                addedNotification.classList.add('hide')
+                addedNotification.classList.add('alert-success')
+            }, 2000)
+          }
+      }
+    </script>
+    
     <%- include( "../includes/footer.ejs" ) %>
     
 <%- include( "../includes/end.ejs" )%>

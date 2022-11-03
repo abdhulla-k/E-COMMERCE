@@ -25,16 +25,17 @@
                         <!-- get user address -->
                         <% let index = 0 %>
                         <% if(address) { %>
+                            <% address.reverse() %>
                                 <% for(address of address) { %>
                                     <% index++; %>
+
                                     <div class="card">
                                         <div class="card-header">
                                           Address: <%= index %>
                                         </div>
                                         <div class="card-body">
-                                          <h5 class="card-title"><%= address.home %></h5>
-                                          <p class="card-text"><%= address.street %>, <%= address.district %>, <%= address.state %></p>
-                                          <h4>zip: <%= address.zip %></h4>
+                                            home: <%= address.home %>, street: <%= address.street %>, district: <%= address.district %>, state: <%= address.state %>
+                                            zip: <%= address.zip %>
                                           <div class="form-check">
                                             <input class="form-check-input" type="radio" name="flexRadioDefault" id="<%= index %>">
                                             <label class="form-check-label" for="flexRadioDefault1">
@@ -44,6 +45,7 @@
                                           
                                         </div>
                                       </div>
+                                      <% if(index === 3) { break } %>
                                 <% } %>
                                 <div class="hide alert alert-danger" id="error" role="alert">
                                     make sure you filled all the fields and choosed a payment method
@@ -133,6 +135,8 @@
                                 make sure you choosed an address and payment method
                             </div>
                         <% }  %>
+
+                        <a href="/user/myAccount" class="btn btn-warning">Add new address</a>
                         <!-- /get user address -->
                     </div>
                     
@@ -415,6 +419,7 @@
         }
     </script>
     <!-- Checkout End -->
+
     <%- include( "../includes/footer.ejs" ) %>
     
 <%- include( "../includes/end.ejs" )%>

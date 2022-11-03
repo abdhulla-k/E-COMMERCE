@@ -16,11 +16,6 @@ const mongoose = require('mongoose');
 // import easyinvoice
 const easyinvoice = require('easyinvoice');
 
-
-// const razorPrivatKey = require("../util/razor-pay");
-
-// import twilio to send otp
-// const tiloPersonalData = require("../tilo");
 // const accountSid = tiloPersonalData.accountSid;
 const accountSid = process.env.ACCOUNT_SID;
 // const authToken = tiloPersonalData.authToken;
@@ -1245,21 +1240,36 @@ exports.placeOrder = (req, res, next) => {
 }
 
 exports.myAccount = (req, res, next) => {
+    function findUserData() {
+        User.findById(req.session.userId)
+            .then(userData => {
+                if (userData) {
+                    res.render("user/my-profile", {
+                        user: "true",
+                        userType: "user",
+                        userData: userData,
+                        categories: categories,
+                        userDataError: ""
+                    })
+                } else {
+                    res.render("user/my-profile", {
+                        user: "true",
+                        userType: "user",
+                        userData: [],
+                        userDataError: "error while fetching user data! try again later",
+                        categories: categories
+                    })
+                }
+            })
+    }
+
     if (req.session.userLoggedIn) {
         if (categories) {
-            res.render("user/my-profile", {
-                user: "true",
-                userType: "user",
-                categories: categories
-            })
+            findUserData();
         } else {
             CategoriesGet.then(categories => {
                     categories = categories
-                    res.render("user/my-profile", {
-                        user: "",
-                        userType: "user",
-                        categories: categories
-                    })
+                    findUserData();
                 })
                 .catch(err => {
                     console.log(err);
@@ -1269,6 +1279,36 @@ exports.myAccount = (req, res, next) => {
         }
     } else {
         res.redirect('/');
+    }
+}
+
+exports.addAddress = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+        let addressData = {
+            home: req.body.home,
+            street: req.body.street,
+            district: req.body.district,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            zip: req.body.zip
+        }
+        console.log(addressData);
+        User.findByIdAndUpdate({
+            _id: mongoose.Types.ObjectId(req.session.userId)
+        }, {
+            $push: {
+                address: {
+                    ...addressData
+                }
+            }
+        })
+        .then(savedAddress => {
+            res.json("saved");
+        })
+        .catch(err => {
+            res.json("addressError");
+        })
     }
 }
 
@@ -1330,17 +1370,17 @@ exports.orderDetails = (req, res, next) => {
                                 // invoiceData.products = data;
                                 // console.log(data);
                                 invoiceData.products = [];
-                                for(i of data) {
-                                    for(k of orderDetails.products) {
-                                        if(i.id === k.productId) {
-                                            invoiceData.products.push( {
+                                for (i of data) {
+                                    for (k of orderDetails.products) {
+                                        if (i.id === k.productId) {
+                                            invoiceData.products.push({
                                                 "quantity": k.quantity,
                                                 "description": i.title,
                                                 "price": i.price
-                                            },)
+                                            }, )
                                         }
                                     }
-                                  }
+                                }
                                 easyinvoice.createInvoice(invoiceData, function (result) {
                                     /*  
                                         5.  The 'result' variable will contain our invoice as a base64 encoded PDF

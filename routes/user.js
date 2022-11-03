@@ -37,6 +37,9 @@ router.post('/placeOrder', userController.placeOrder);
 
 router.get('/myAccount', userController.myAccount);
 
+// add new address
+router.post('/addAddress', userController.addAddress);
+
 router.get('/myOrders', userController.myOrders);
 
 router.get('/myOrders/:orderId', userController.orderDetails);
