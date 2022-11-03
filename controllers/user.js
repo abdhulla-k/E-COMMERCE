@@ -1322,7 +1322,7 @@ exports.myOrders = (req, res, next) => {
                             user: "true",
                             userType: "user",
                             categories: categories,
-                            orders: userData.orders
+                            orders: userData.orders.reverse()
                         })
                     })
                     .catch(err => {
