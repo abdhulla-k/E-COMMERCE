@@ -4,3 +4,4 @@ public/invoice/
 tilo.js
 util/mongodb.js
 util/razor-pay.js
+.env

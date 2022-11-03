@@ -5,6 +5,8 @@ const session = require( "express-session" );
 const nocache = require( "nocache" );
 const bodyParser = require( "body-parser" );
 
+require('dotenv').config();
+
 // mongodb data
 // const mongodb = require("./util/mongodb");
 
