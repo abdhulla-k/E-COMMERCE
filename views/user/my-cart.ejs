@@ -180,21 +180,25 @@
                     <div class="border-bottom pb-2">
                         <div class="d-flex justify-content-between mb-3">
                             <h6>Subtotal</h6>
-                            <h6>$0</h6>
+                            <h6>0</h6>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Coupon Dicount</h6>
+                            <h6 id="couponDiscount">0</h6>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium">$0</h6>
+                            <h6 class="font-weight-medium">0</h6>
                         </div>
                     </div>
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Total</h5>
-                            <h5 id="cartPriceShow" class="cartPrice">$<%= cartPrice %></h5>
+                            <h5 id="cartPriceShow" class="cartPrice"><%= cartPrice %></h5>
                             <input hidden type="number" value="<%= cartPrice %>" id="cartPrice">
                         </div>
                         <% if(cart) { %>
-                            <a href="/user/checkout?cartPrice=<%=cartPrice%>" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="proceed">
+                            <a href="/user/checkout?cartPrice=<%=cartPrice%>&discount=0" class="btn btn-block btn-primary font-weight-bold my-3 py-3" id="proceed">
                                 Proceed To Checkout
                             </a>
                         <% } %>
@@ -226,6 +230,7 @@
                 success: (response => {
                     console.log(response)
                     document.getElementById("cartPriceShow").innerHTML = response.price;
+                    document.getElementById("couponDiscount").innerHTML = response.discount;
 
                     // show error message if there is any message passed
                     if(response.message) {
@@ -235,7 +240,8 @@
                             document.getElementById("couponError").classList.add("hide")
                         }, 3000)
                     }
-                    $("a").attr("href", `/user/checkout?cartPrice=${response.price}`);
+                    // $("a").attr("href", `/user/checkout?cartPrice=${response.price}`);
+                    document.getElementById("proceed").href = `/user/checkout?cartPrice=${response.price}&discount=${response.discount}`
                 })
             })
         }
@@ -260,7 +266,7 @@
                 url: `/user/addToCart/${id}`,
                 method: "get"
             })
-            document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}`
+            document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}&discount=${response.discount}`
         }
 
         function decreaseValue(iD, price) {
@@ -287,7 +293,7 @@
                     url: `/user/decreaseQt/${iD}`,
                     method: "get"
                 })
-                document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}`
+                document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}&discount=${response.discount}`
             }
         }
 

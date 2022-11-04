@@ -923,7 +923,8 @@ exports.applyCoupon = (req, res, next) => {
                             console.log("this coupon is already used!");
                             let responseData = {
                                 price: cartTotal,
-                                message: "this coupon is already used!"
+                                message: "this coupon is already used!",
+                                discount: 0
                             }
                             res.json(responseData)
                         } else {
@@ -937,6 +938,7 @@ exports.applyCoupon = (req, res, next) => {
                             cartTotal -= (cartTotal * data[0].discountPercentage) / 100;
                             let responseData = {
                                 price: cartTotal,
+                                discount: (cartTotal * data[0].discountPercentage) / 100,
                                 message: ""
                             }
                             res.json(responseData)
@@ -947,21 +949,24 @@ exports.applyCoupon = (req, res, next) => {
                         console.log("error in finding coupondata");
                         let responseData = {
                             price: cartTotal,
-                            message: "something went wrong while applying coupon! try later"
+                            message: "something went wrong while applying coupon! try later",
+                            discount: 0
                         }
                         res.json(responseData)
                     })
             } else {
                 let responseData = {
                     price: cartTotal,
-                    message: "coupon not exist"
+                    message: "coupon not exist",
+                    discount: 0
                 }
                 res.json(responseData)
             }
         } else {
             res.json({
                 price: cartTotal,
-                message: "womething wring while checking coupon! please try later or contact us"
+                message: "womething wring while checking coupon! please try later or contact us",
+                discount: 0
             });
         }
     })
@@ -985,7 +990,8 @@ exports.getCheckout = (req, res, next) => {
                                 cartPrice: req.query.cartPrice,
                                 categories: categories ? categories : getCategories(),
                                 userType: "user",
-                                address: data.address.length > 0 ? data.address : ""
+                                address: data.address.length > 0 ? data.address : "",
+                                discount: req.query.discount
                             });
                         }
                     })
