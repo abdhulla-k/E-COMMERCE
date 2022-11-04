@@ -266,7 +266,7 @@
                 url: `/user/addToCart/${id}`,
                 method: "get"
             })
-            document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}&discount=${response.discount}`
+            document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}&discount=${document.getElementById("couponDiscount").innerHTML}`
         }
 
         function decreaseValue(iD, price) {
@@ -293,7 +293,7 @@
                     url: `/user/decreaseQt/${iD}`,
                     method: "get"
                 })
-                document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}&discount=${response.discount}`
+                document.getElementById("proceed").href = `/user/checkout?cartPrice=${document.getElementById("cartPriceShow").innerHTML}&discount=${document.getElementById("couponDiscount").innerHTML}`
             }
         }
 
