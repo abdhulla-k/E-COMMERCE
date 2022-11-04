@@ -1,0 +1,77 @@
+<%- include( "../includes/head.ejs" ) %>
+<body>
+    <!-- header -->
+    <%- include( "../includes/navigation.ejs" ) %>
+    <!-- /header -->
+
+    <!-- Carousel Start -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+              <%- include("../includes/seller/side-bar.ejs") %>
+
+              <div class="col-lg-9 col-md-9">
+                <h4 class="section-title position-relative text-uppercase mb-3">
+                  <span class="bg-secondary pr-3">Order Details</span>
+                </h4>
+                <div>
+                    <div style="width: 100%;" class="details-ctr card shadow-0 border  mb-4 ">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-2">
+                              <img src="/images/<%= product.images[0] %>"
+                                class="img-fluid" alt="Phone">
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <p class="text-muted mb-0 ">Qty: <%= orderDetails[0].orders.price / product.price %></p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <p class="text-muted mb-0 ">Price: <%= orderDetails[0].orders.price%></p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <p style="margin: 0px; padding: 0px;" class="text-muted mb-0 ">Status: <%= orderDetails[0].orders.orderStatus%></p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <p style="margin: 0px; padding: 0px;" class="text-muted mb-0 ">
+                                    <span style="text-decoration: underline; font-family: Arial, Helvetica, sans-serif;" class="text-dark">Address</span> <br>
+                                    home: <%= orderDetails[0].orders.address.home%><br>
+                                    street: <%= orderDetails[0].orders.address.street%><br>
+                                    district: <%= orderDetails[0].orders.address.district%><br>
+                                    state: <%= orderDetails[0].orders.address.state%><br>
+                                    country: <%= orderDetails[0].orders.address.country%><br>
+                                    zip: <%= orderDetails[0].orders.address.zip%><br>
+                                </p>
+                            </div>
+                            
+                          </div>
+                          <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                          <div class="row d-flex align-items-center">
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <p style="margin: 0px; padding: 0px;" class="text-muted mb-0 ">
+                                    Date:  <%= orderDetails[0].orders.date %><br>
+                                </p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <p style="margin: 0px; padding: 0px;" class="text-muted mb-0 ">
+                                    Time:  <%= orderDetails[0].orders.time %><br>
+                                </p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <p style="margin: 0px; padding: 0px;" class="text-muted mb-0 ">
+                                    Payment Method:  <%= orderDetails[0].orders.paymentMethod %><br>
+                                </p>
+                            </div>
+                            <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                <button class="btn btn-warning" onclick="history.back()">back</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+              </div>
+        </div>
+    </div>
+    <!-- Carousel End -->
+    
+    <%- include( "../includes/footer.ejs" ) %>
+    
+<%- include( "../includes/end.ejs" )%>

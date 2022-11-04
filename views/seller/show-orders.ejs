@@ -57,11 +57,37 @@
                                               Status
                                             </button>
                                             <div class="dropdown-menu">
-                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'placed', '<%= order._id %>', '<%= order.productId %>')">Placed</a>
-                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'cancelled', '<%= order._id %>', '<%= order.productId %>')">Cancelled</a>
-                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'shipped', '<%= order._id %>', '<%= order.productId %>')">Shipped</a>
-                                              <a style="cursor: pointer;" class="dropdown-item" onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'Delivered', '<%= order._id %>', '<%= order.productId %>')">Delivered</a>
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'placed', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Placed
+                                              </a>
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'cancelled', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Cancelled
+                                              </a>
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'shipped', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Shipped
+                                              </a>
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'Delivered', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Delivered
+                                              </a>
                                             </div>
+                                            <a 
+                                              style="margin-left: 5px;" 
+                                              class="btn btn-warning btn-square" 
+                                              href="/seller/orderDetails/<%= order._id%>?productId=<%= order.productId%>">
+                                                info
+                                            </a>                                           
                                           </div>
                                         </td>
                                       </tr>

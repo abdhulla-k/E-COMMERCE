@@ -626,7 +626,7 @@ exports.showOrders = (req, res, next) => {
                         user: req.session.sellerLoggedIn ? "true" : "",
                         userType: "seller",
                         categories: categories,
-                        orderDetails: sellerOrders[0].orders
+                        orderDetails: sellerOrders[0].orders.reverse()
                     })
                 }
             })
@@ -641,6 +641,59 @@ exports.showOrders = (req, res, next) => {
             })
     } else {
         res.redirect('/seller/');
+    }
+}
+
+exports.orderDetails = (req, res, next) => {
+    if(req.session.sellerLoggedIn) {
+        let productId = req.query.productId;
+    let orderId = req.params.orderId;
+    let orderDetails;
+    Orders.aggregate([{
+            $match: {
+                sellerId: req.session.sellerId
+            }
+        }, {
+            $unwind: "$orders"
+        }, {
+            $match: {
+                "orders._id": mongoose.Types.ObjectId(orderId)
+            }
+        }])
+        .then(data => {
+            orderDetails = data;
+            return Product.findById(productId);
+        })
+        .then(productDetails => {
+            if(productDetails) {
+                res.render("seller/order-detaisl", {
+                    orderDetails: orderDetails,
+                    product: productDetails,
+                    errorMessage: "",
+                    user: "true",
+                    userType: "seller"
+                });
+            } else {
+                res.render("seller/order-detaisl", {
+                    orderDetails: orderDetails,
+                    product: [],
+                    errorMessage: "something went wront!",
+                    user: "true",
+                    userType: "seller"
+                });
+            }
+        })
+        .catch(err => {
+            res.render("seller/order-detaisl", {
+                orderDetails: [],
+                product: {},
+                errorMessage: "something went wrong!",
+                user: "true",
+                userType: "seller"
+            });
+        })
+    } else {
+        res.redirect("/seller/");
     }
 }
 
@@ -702,7 +755,7 @@ exports.changeOrderStatus = (req, res, next) => {
                     return User.findOneAndUpdate({
                         _id: mongoose.Types.ObjectId(userId)
                     }, {
-                        [`orders.${orderIndex}.products.${productIndex}.status`] : orderStatus
+                        [`orders.${orderIndex}.products.${productIndex}.status`]: orderStatus
                     })
                 }
             } else {
@@ -710,7 +763,7 @@ exports.changeOrderStatus = (req, res, next) => {
             }
         })
         .then(status => {
-            conosle.log(status)
+            console.log(status)
         })
         .catch(err => {
             console.log(err);

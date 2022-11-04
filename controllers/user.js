@@ -1246,45 +1246,49 @@ exports.placeOrder = (req, res, next) => {
 }
 
 exports.myAccount = (req, res, next) => {
-    function findUserData() {
-        User.findById(req.session.userId)
-            .then(userData => {
-                if (userData) {
-                    res.render("user/my-profile", {
-                        user: "true",
-                        userType: "user",
-                        userData: userData,
-                        categories: categories,
-                        userDataError: ""
-                    })
-                } else {
-                    res.render("user/my-profile", {
-                        user: "true",
-                        userType: "user",
-                        userData: [],
-                        userDataError: "error while fetching user data! try again later",
-                        categories: categories
-                    })
-                }
-            })
-    }
-
-    if (req.session.userLoggedIn) {
-        if (categories) {
-            findUserData();
-        } else {
-            CategoriesGet.then(categories => {
-                    categories = categories
-                    findUserData();
-                })
-                .catch(err => {
-                    console.log(err);
-                    categories = [];
-                    res.redirect("/user/myAccount");
+    try {
+        function findUserData() {
+            User.findById(req.session.userId)
+                .then(userData => {
+                    if (userData) {
+                        res.render("user/my-profile", {
+                            user: "true",
+                            userType: "user",
+                            userData: userData,
+                            categories: categories,
+                            userDataError: ""
+                        })
+                    } else {
+                        res.render("user/my-profile", {
+                            user: "true",
+                            userType: "user",
+                            userData: [],
+                            userDataError: "error while fetching user data! try again later",
+                            categories: categories
+                        })
+                    }
                 })
         }
-    } else {
-        res.redirect('/');
+    
+        if (req.session.userLoggedIn) {
+            if (categories) {
+                findUserData();
+            } else {
+                CategoriesGet.then(categories => {
+                        categories = categories
+                        findUserData();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        categories = [];
+                        res.redirect("/");
+                    })
+            }
+        } else {
+            res.redirect('/');
+        }
+    } catch {
+        res.redirect("/");
     }
 }
 

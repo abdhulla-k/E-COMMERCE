@@ -32,6 +32,8 @@ router.get("/delete/:productId", sellerController.deleteProduct);
 
 router.get("/showOrders", sellerController.showOrders);
 
+router.get("/orderDetails/:orderId", sellerController.orderDetails);
+
 router.post("/changeOrderStatus", sellerController.changeOrderStatus);
 
 router.get("/showSalesReport", sellerController.salesReport);
