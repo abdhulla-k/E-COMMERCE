@@ -23,7 +23,6 @@
                                       <th scope="col">Price</th>
                                       <th scope="col">Status</th>
                                       <th scope="col">Address</th>
-                                      <th scope="col"></th>
                                   </thead>
                                   <tbody>
                                     <% orderDetails.forEach(order => { %>
@@ -53,38 +52,6 @@
                                           state: <%= order.address %><br>
                                           country: <%= order.address %><br>
                                           zip: <%= order.address %><br>
-                                        </td>
-                                        <td>
-                                          <!-- <div class="btn-group">
-                                            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                              Status
-                                            </button>
-                                            <div class="dropdown-menu">
-                                              <a 
-                                                style="cursor: pointer;" 
-                                                class="dropdown-item" 
-                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'placed', '<%= order._id %>', '<%= order.productId %>')">
-                                                  Placed
-                                              </a>
-                                              <a 
-                                                style="cursor: pointer;" 
-                                                class="dropdown-item" 
-                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'cancelled', '<%= order._id %>', '<%= order.productId %>')">
-                                                  Cancelled
-                                              </a>
-                                              <a 
-                                                style="cursor: pointer;" 
-                                                class="dropdown-item" 
-                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'shipped', '<%= order._id %>', '<%= order.productId %>')">
-                                                  Shipped
-                                              </a>
-                                              <a 
-                                                style="cursor: pointer;" 
-                                                class="dropdown-item" 
-                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'Delivered', '<%= order._id %>', '<%= order.productId %>')">
-                                                  Delivered
-                                              </a>
-                                            </div> -->
                                         </td>
                                       </tr>
                                     <% }) %>

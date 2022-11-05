@@ -11,17 +11,17 @@
 
               <div class="col-lg-9 col-md-9">
                 <h4 class="section-title position-relative text-uppercase mb-3">
-                  <span class="bg-secondary pr-3"><%= userDetails.name %></span>
+                  <span class="bg-secondary pr-3"><%= userData.name %></span>
                 </h4>
                 <div class="row px-xl-5">
                     <nav class="navbar navbar-expand-lg navbar-light bg-light">
                         <div class="collapse navbar-collapse" id="navbarNavDropdown">
                           <ul class="navbar-nav">
                             <li class="nav-item <% if(route === 'details') { %> active <% } %>">
-                              <a class="nav-link" href="/admin/user/<%= userDetails.id %>">Details <span class="sr-only">(current)</span></a>
+                              <a class="nav-link" href="/admin/user/<%= userData.id %>">Details <span class="sr-only">(current)</span></a>
                             </li>
                             <li class="nav-item <% if(route === 'orders') { %> active <% } %>">
-                              <a class="nav-link" href="/admin/user/orders/<%= userDetails.id %>">Orders</a>
+                              <a class="nav-link" href="/admin/user/orders/<%= userData.id %>">Orders</a>
                             </li>
                           </ul>
                         </div>
@@ -29,7 +29,7 @@
                   </div>
                   <% if(route === 'orders') { %>
                     <div class="row px-xl-5">
-                        <% if(userDetails.orders.length > 0) { %>
+                        <% if(userData.orders.length > 0) { %>
                               <table class="table table-image">
                                 <thead>
                                   <tr>
@@ -41,7 +41,7 @@
                                     <th scope="col"></th>
                                 </thead>
                                 <tbody>
-                                  <% userDetails.orders.forEach(order => { %>
+                                  <% userData.orders.forEach(order => { %>
                                     <tr>
                                       <td class="w-25">
                                         <%= order.date %>
@@ -62,7 +62,7 @@
                                           <a 
                                             style="background-color: rgb(255, 217, 0);" 
                                             class="btn btn-outline-dark btn-square" 
-                                            href="/admin/user/orders/details/<%= userDetails.id %>?orderId=<%= order.id %>">
+                                            href="/admin/user/orders/details/<%= userData.id %>?orderId=<%= order.id %>">
                                             info
                                           </a>
                                       </td>
@@ -83,7 +83,147 @@
                       </div>
                   <% } %>
                   <% if(route === 'details') { %>
-                    <h1>Details</h1>
+                    <div class="row">
+                      <div class="col-md-3 border-right">
+                          <div 
+                            class="d-flex flex-column align-items-center text-center p-3 py-5">
+                            <img 
+                              class="rounded-circle mt-5" 
+                              width="150px" 
+                              src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+                                <span 
+                                  class="font-weight-bold">
+                                  <% if(!userDataError) { %>
+                                    <%= userData.name %>
+                                  <% } %> 
+                                </span>
+                                <span 
+                                  class="text-black-50">
+                                    <% if(!userDataError) { %>
+                                      <%= userData.email %>
+                                    <% } %> 
+                                  </span>
+                                  <span> </span>
+                          </div>
+                      </div>
+                      <div class="col-md-5 border-right">
+                          <div class="p-3 py-5">
+                              <div class="<% if(!userDataError) {%> hide <% } %> alert alert-danger" role="alert">
+                                <%= userDataError %>
+                              </div>
+                              <div class="row mt-2">
+                                  <div class="col-md-6">
+                                    <label class="labels">Name</label>
+                                    <input 
+                                      type="text" 
+                                      disabled
+                                      class="form-control" 
+                                      placeholder="first name" 
+                                      value="<%= userData.name %>">
+                                  </div>
+
+                                  <div class="col-md-6">
+                                    <label class="labels">Email</label>
+                                    <input 
+                                      type="text" 
+                                      disabled
+                                      class="form-control" 
+                                      value="<%= userData.email %>" 
+                                      placeholder="surname">
+                                  </div>
+                              </div>
+                              
+                              <div class="row mt-3">
+                                  <div class="col-md-6">
+                                    <label class="labels">phone</label>
+                                    <input 
+                                      type="text" 
+                                      disabled
+                                      class="form-control" 
+                                      placeholder="country" 
+                                      value="<%= userData.phoneNumber %>">
+                                  </div>
+                              </div>
+                              
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="p-3 py-5">
+                            <h6>Address</h6>
+                            <div class="row mt-3">
+                              <div class="col-md-12">
+                                <label class="labels">home</label>
+                                <input 
+                                  disabled
+                                  type="text" 
+                                  class="form-control" 
+                                  placeholder="enter your home name or flat number" 
+                                  id="home"
+                                  value="<%= userData.address[0].home %>">
+                              </div>
+                              <div class="col-md-12">
+                                <label class="labels">Street</label>
+                                <input 
+                                  disabled
+                                  type="text" 
+                                  class="form-control" 
+                                  placeholder="enter your Street name" 
+                                  id="street"
+                                  value="<%= userData.address[0].street %>">
+                              </div>
+                              <div class="col-md-12">
+                                <label class="labels">District</label>
+                                <input 
+                                  disabled
+                                  type="text" 
+                                  class="form-control" 
+                                  id="district"
+                                  placeholder="enter your district" 
+                                  value="<%= userData.address[0].district %>">
+                              </div>
+                              <div class="col-md-12">
+                                <label class="labels">City</label>
+                                <input 
+                                  disabled
+                                  type="text" 
+                                  class="form-control" 
+                                  id="city"
+                                  placeholder="enter your city" 
+                                  value="<%= userData.address[0].city %>">
+                              </div>
+                              <div class="col-md-12">
+                                <label class="labels">State</label>
+                                <input 
+                                  disabled
+                                  type="text" 
+                                  class="form-control" 
+                                  id="state"
+                                  placeholder="enter your state" 
+                                  value="<%= userData.address[0].state %>">
+                              </div>
+                              <div class="col-md-12">
+                                <label class="labels">Country</label>
+                                <input 
+                                  disabled
+                                  type="text" 
+                                  class="form-control" 
+                                  id="state"
+                                  placeholder="enter your state" 
+                                  value="<%= userData.address[0].country %>">
+                              </div>
+                              <div class="col-md-12"><label class="labels">Zip</label>
+                                <input
+                                  disabled 
+                                  type="text" 
+                                  class="form-control" 
+                                  id="zip"
+                                  placeholder="enter your zip code" 
+                                  value="<%= userData.address[0].zip %>">
+                              </div>
+                            </div>
+                          
+                      </div>
+                  </div>
                   <% } %>
               </div>
         </div>
@@ -92,3 +232,36 @@
     <%- include( "../includes/footer.ejs" ) %>
     
 <%- include( "../includes/end.ejs" )%>
+
+<style>
+  .hide {
+      visibility: hidden;
+      display: none;
+  }
+  @keyframes fadeIn {
+    from {
+      transform: translateX(250px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0px);
+      opacity: 1;
+    }
+  }
+  @keyframes fedOut {
+    from {
+      transform: translateX(0px);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(250px);
+      opacity: 0;
+    }
+  }
+  .animate {
+    animation: fadeIn 500ms ease-out backwards;
+  }
+  .out-animate {
+      animation: fedOut 500ms ease-in forwards;
+  }
+</style>

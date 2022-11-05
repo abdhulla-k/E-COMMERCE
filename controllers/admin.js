@@ -248,7 +248,8 @@ exports.getData = (req, res, next) => {
 }
 
 exports.showAllOrders = (req, res, next) => {
-    Order.aggregate([{
+    if(req.session.adminLoggedIn) {
+        Order.aggregate([{
             $unwind: "$orders"
         }])
         .then(data => {
@@ -269,6 +270,9 @@ exports.showAllOrders = (req, res, next) => {
                 })   
             }
         })
+    } else {
+        res.redirect("/admin/");
+    }
 }
 
 // sales report
@@ -425,8 +429,9 @@ exports.showUserDetails = (req, res, next) => {
                 res.render("admin/user-details", {
                     userType: "admin",
                     user: "",
-                    userDetails: data,
-                    route: 'details'
+                    userData: data,
+                    route: 'details',
+                    userDataError: ''
                 });
             }
         })
@@ -447,7 +452,7 @@ exports.showUserOrders = (req, res, next) => {
                 res.render("admin/user-details", {
                     userType: "admin",
                     user: "",
-                    userDetails: data,
+                    userData: data,
                     route: 'orders'
                 });
             }
@@ -571,6 +576,7 @@ exports.showSerDetails = (req, res, next) => {
                     userType: "admin",
                     user: "",
                     userDetails: data,
+                    userDataError: '',
                     route: 'details'
                 });
             }
