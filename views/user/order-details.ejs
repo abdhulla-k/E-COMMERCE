@@ -321,10 +321,13 @@
                                         <p class="text-muted mb-0 small"></p>
                                       </div>
                                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                        <p class="text-muted mb-0 small"><%= k.quantity %></p>
+                                        <p class="text-muted mb-0 small">Product Price: <%= i.price %></p>
                                       </div>
                                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                        <p class="text-muted mb-0 small">Qty: <%= k.price %></p>
+                                        <p class="text-muted mb-0 small">Qty: <%= k.quantity %></p>
+                                      </div>
+                                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">Total Price: <%= k.price %></p>
                                       </div>
                                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                           <a
@@ -391,7 +394,7 @@
                                                                                   <% if(i.id === k.productId) { %>
                                                                                     <tr>
                                                                                       <td><%= i.title %></td>
-                                                                                      <td class="alignright"><%= i.price %></td>
+                                                                                      <td class="alignright"><%= i.price * k.quantity %></td>
                                                                                     </tr>
                                                                                   <% } %>
                                                                               <% } %>
