@@ -1068,7 +1068,8 @@ exports.placeOrder = (req, res, next) => {
                         address: address,
                         paymentMethod: paymentMethod,
                         products: [...cart[0].products],
-                        orderStatus: 'placed'
+                        orderStatus: 'placed',
+                        discount: Number(req.body.discount)
                     })
                     return Cart.updateOne({
                         userId: req.session.userId
@@ -1113,10 +1114,10 @@ exports.placeOrder = (req, res, next) => {
                                 })
                             })
                             .then(result => {
-                                console.log(result)
+                                // console.log(result)
                             })
                             .catch(err => {
-                                console.log(err)
+                                // console.log(err)
                                 res.redirect('/')
                             })
                     }

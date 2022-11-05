@@ -12,72 +12,494 @@
               <div class="col-lg-9 col-md-9">
                 <h4 class="section-title position-relative text-uppercase mb-3">
                   <span class="bg-secondary pr-3">Order Details</span>
-                </h4>
-                <div class="card" style="width: 100%;">
-                  <div class="card-body">
-                    <h5 class="card-title">Total Price: <%= orderDetails.price %></h5>
-                    <a 
+                  <a 
+                        onclick="showInvoice()" 
+                        class="btn btn-primary"
+                        id="details-togle">
+                          Get Invoice
+                      </a>
+
+                      <a 
                       href="/admin/user/cancelOrder/<%= orderDetails.id %>?userId=<%= userId %>" 
                       class="btn btn-primary <% if(orderDetails.orderStatus === 'cancelled') { %> disabled <% } %> ">
                         Cancel order
                     </a>
-                  </div>
-                  <% for(i of products) { %>
-                    <% for(k of orderDetails.products) { %>
-                        <% if(i.id === k.productId) { %>
-                            <div style="width: 100%;" class="card shadow-0 border  mb-4 ">
-                                <div class="card-body">
-                                  <div class="row">
-                                    <div class="col-md-2">
-                                      <img src="/images/<%=i.images[0]%>"
-                                        class="img-fluid" alt="Phone">
-                                    </div>
-                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                      <p class="text-muted mb-0"><%= i.title %></p>
-                                    </div>
-                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                      <p class="text-muted mb-0 small"></p>
-                                    </div>
-                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                      <p class="text-muted mb-0 small">Qty: <%= k.quantity %></p>
-                                    </div>
-                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                      <p class="text-muted mb-0 small">Price: <%= k.price %></p>
-                                    </div>
-                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                        <a
-                                        class="btn btn-outline-warning btn-square text-dark"
-                                        href="/admin/detail/<%= i.id %>"
-                                        >info</a>
-                                    </div>
-                                  </div>
-                                  <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
-                                  <div class="row d-flex align-items-center">
-                                    <div class="col-md-2">
-                                      <p class="text-muted mb-0 small">Track Order</p>
-                                    </div>
-                                    <div class="col-md-10">
-                                      <div class="progress" style="height: 6px; border-radius: 16px;">
-                                        <div class="progress-bar" role="progressbar"
-                                          style="width: 65%; border-radius: 16px; background-color: rgb(255, 230, 0);" aria-valuenow="65"
-                                          aria-valuemin="0" aria-valuemax="100"></div>
+
+                    <a 
+                        class="btn btn-warning hide" 
+                        onclick="printDiv('invoice-ctr','Invoice')"
+                        id="invoiceDownload">
+                          Download
+                    </a>
+                </h4>
+                <div class="details-ctr card" style="width: 100%;">
+                  <div id="details-ctr">
+                    <% for(i of products) { %>
+                      <% for(k of orderDetails.products) { %>
+                          <% if(i.id === k.productId) { %>
+                              <div style="width: 100%;" class="card shadow-0 border  mb-4 ">
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-md-2">
+                                        <img src="/images/<%=i.images[0]%>"
+                                          class="img-fluid" alt="Phone">
                                       </div>
-                                      <div class="d-flex justify-content-around mb-1">
-                                        <p class="text-muted mt-1 mb-0 small ms-xl-5">Out for delivary</p>
-                                        <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
+                                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0"><%= i.title %><br><span class="space">Discount Price: <%= orderDetails.discount %></span><br> Price: <%= orderDetails.price %></p>
+                                      </div>
+                                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small"></p>
+                                      </div>
+                                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">Qty: <%= k.quantity %></p>
+                                      </div>
+                                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 small">Price: <%= k.price %></p>
+                                      </div>
+                                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                          <a
+                                          class="btn btn-outline-warning btn-square text-dark"
+                                          href="/admin/detail/<%= i.id %>"
+                                          >info</a>
+                                      </div>
+                                    </div>
+                                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                                    <div class="row d-flex align-items-center">
+                                      <div class="col-md-2">
+                                        <p class="text-muted mb-0 small">Track Order</p>
+                                      </div>
+                                      <div class="col-md-10">
+                                        <div class="progress" style="height: 6px; border-radius: 16px;">
+                                          <div class="progress-bar" role="progressbar"
+                                            style="width: 65%; border-radius: 16px; background-color: rgb(255, 230, 0);" aria-valuenow="65"
+                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-around mb-1">
+                                          <p class="text-muted mt-1 mb-0 small ms-xl-5">Out for delivary</p>
+                                          <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                        <% } %>
-                    <% } %>
-                <% } %>
+                          <% } %>
+                      <% } %>
+                  <% } %>
+                  </div>
+
+                <!-- invoice -->
+              <div class="hide" id="invoice-ctr" style="width: 100%;">
+                <table class="body-wrap">
+                  <tbody>
+                    <tr>
+                      <td></td>
+                      <td>
+                          <div>
+                              <table class="main" width="100%" cellpadding="0" cellspacing="0">
+                                  <tbody><tr>
+                                      <td class="content-wrap aligncenter">
+                                          <table width="100%" cellpadding="0" cellspacing="0">
+                                              <tbody>
+                                                <tr>
+                                                  <td class="content-block" style="text-align: center;">
+                                                      <h2>Thanks for using Big Cart</h2>
+                                                  </td>
+                                                </tr>
+                                              <tr>
+                                                  <td class="content-block">
+                                                      <table class="invoice">
+                                                          <tbody>
+                                                            <tr>
+                                                              <!-- <td>Anna Smith<br>Invoice #12345<br>June 01 2015</td> -->
+                                                            </tr>
+                                                          <tr>
+                                                              <td>
+                                                                  <table class="invoice-items" cellpadding="0" cellspacing="0">
+                                                                      <tbody>
+                                                                        <% for(i of products) { %>
+                                                                          <% for(k of orderDetails.products) { %>
+                                                                              <% if(i.id === k.productId) { %>
+                                                                                <tr>
+                                                                                  <td><%= i.title %></td>
+                                                                                  <td class="alignright"><%= i.price * k.quantity %></td>
+                                                                                </tr>
+                                                                              <% } %>
+                                                                          <% } %>
+                                                                        <% } %>
+                                                                        <tr class="total">
+                                                                          <td class="alignright" width="80%">Discount</td>
+                                                                          <td class="alignright"><%= orderDetails.discount %></td>
+                                                                        </tr>
+                                                                        <tr class="total">
+                                                                          <td class="alignright" width="80%">Total</td>
+                                                                          <% if(orderDetails.discount) { %>
+                                                                            <td class="alignright">$ <%= orderDetails.price - orderDetails.discount %></td>
+                                                                          <% } else { %>
+                                                                            <td class="alignright">$ <%= orderDetails.price %></td>
+                                                                          <% } %>
+                                                                          
+                                                                        </tr>
+                                                                  </tbody></table>
+                                                              </td>
+                                                          </tr>
+                                                      </tbody></table>
+                                                  </td>
+                                              </tr>
+                                          </tbody>
+                                        </table>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                            </table>
+                      </td>
+                      <td></td>
+                  </tr>
+                </tbody>
+                </table>
+              </div>
+            </div>
+
+            
+            <!-- /invoice -->
                 </div>
               </div>
+
+              
         </div>
     </div>
     <!-- Carousel End -->
     <%- include( "../includes/footer.ejs" ) %>
     
 <%- include( "../includes/end.ejs" )%>
+
+<script>
+  function showInvoice() {
+    let txt = document.getElementById('details-togle').innerText
+    console.log(txt);
+    if(txt == "GET INVOICE") {
+      document.getElementById('invoice-ctr').classList.remove('hide');
+      document.getElementById('invoiceDownload').classList.remove('hide');
+      document.getElementById('details-ctr').classList.add('hide');
+      document.getElementById('details-togle').innerText = "Details";
+    } else {
+      document.getElementById('invoice-ctr').classList.add('hide');
+      document.getElementById('invoiceDownload').classList.add('hide');
+      document.getElementById('details-ctr').classList.remove('hide');
+      // document.getElementById('download-invoice').classList.remove('hide');
+      document.getElementById('details-togle').innerText = "Get Invoice";
+    }
+  }
+
+  var doc = new jsPDF();
+      
+      function saveDiv(divId, title) {
+      doc.fromHTML(`<html><head><title>${title}</title></head><body>` + document.getElementById("myTable").innerHTML + `</body></html>`);
+      doc.save('div.pdf');
+      }
+      
+      function printDiv(divId,
+       title) {
+      
+       let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
+      
+       mywindow.document.write(`<html><head><title>${title}</title>`);
+       mywindow.document.write('</head><body >');
+       mywindow.document.write(document.getElementById(divId).innerHTML);
+       mywindow.document.write('</body></html>');
+      
+       mywindow.document.close(); // necessary for IE >= 10
+       mywindow.focus(); // necessary for IE >= 10*/
+      
+       mywindow.print();
+       mywindow.close();
+      
+       return true;
+      }
+  
+</script>
+
+
+<!-- invoice style -->
+<style>
+  /* -------------------------------------
+  GLOBAL
+  A very basic CSS reset
+    ------------------------------------- */
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    body {
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: none;
+        width: 100% !important;
+        height: 100%;
+        line-height: 1.6;
+    }
+
+    /* Let's make sure all tables have defaults */
+    table td {
+        vertical-align: top;
+    }
+
+    /* -------------------------------------
+        BODY & CONTAINER
+    ------------------------------------- */
+    body {
+        background-color: #f6f6f6;
+    }
+
+    .space {
+      margin-left: 15px;
+    }
+
+    .body-wrap {
+        background-color: #f6f6f6;
+        width: 100%;
+    }
+
+    .container {
+        display: block !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        /* makes it centered */
+        clear: both !important;
+    }
+
+    .content {
+        max-width: 100%;
+        margin: 0 auto;
+        display: block;
+        padding: 20px;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    /* -------------------------------------
+        HEADER, FOOTER, MAIN
+    ------------------------------------- */
+    .main {
+        background: #fff;
+        border: 1px solid #e9e9e9;
+        border-radius: 3px;
+    }
+
+    .content-wrap {
+        padding: 20px;
+    }
+
+    .content-block {
+        padding: 0 0 20px;
+    }
+
+    .header {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .footer {
+        width: 100%;
+        clear: both;
+        color: #999;
+        padding: 20px;
+    }
+    .footer a {
+        color: #999;
+    }
+    .footer p, .footer a, .footer unsubscribe, .footer td {
+        font-size: 12px;
+    }
+
+    /* -------------------------------------
+        TYPOGRAPHY
+    ------------------------------------- */
+    h1, h2, h3 {
+        font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        color: #000;
+        margin: 40px 0 0;
+        line-height: 1.2;
+        font-weight: 400;
+    }
+
+    h1 {
+        font-size: 32px;
+        font-weight: 500;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    h3 {
+        font-size: 18px;
+    }
+
+    h4 {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    p, ul, ol {
+        margin-bottom: 10px;
+        font-weight: normal;
+    }
+    p li, ul li, ol li {
+        margin-left: 5px;
+        list-style-position: inside;
+    }
+
+    /* -------------------------------------
+        LINKS & BUTTONS
+    ------------------------------------- */
+
+
+    .btn- {
+        text-decoration: none;
+        color: #FFF;
+        background-color: #1ab394;
+        border: solid #1ab394;
+        border-width: 5px 10px;
+        line-height: 2;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        display: inline-block;
+        border-radius: 5px;
+        text-transform: capitalize;
+    }
+
+    /* -------------------------------------
+        OTHER STYLES THAT MIGHT BE USEFUL
+    ------------------------------------- */
+    .last {
+        margin-bottom: 0;
+    }
+
+    .first {
+        margin-top: 0;
+    }
+
+    .aligncenter {
+        text-align: center;
+    }
+
+    .alignright {
+        text-align: right;
+    }
+
+    .alignleft {
+        text-align: left;
+    }
+
+    .clear {
+        clear: both;
+    }
+
+    /* -------------------------------------
+        ALERTS
+        Change the class depending on warning email, good email or bad email
+    ------------------------------------- */
+    .alert {
+        font-size: 16px;
+        color: #fff;
+        font-weight: 500;
+        padding: 20px;
+        text-align: center;
+        border-radius: 3px 3px 0 0;
+    }
+    .alert a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 16px;
+    }
+    .alert.alert-warning {
+        background: #f8ac59;
+    }
+    .alert.alert-bad {
+        background: #ed5565;
+    }
+    .alert.alert-good {
+        background: #1ab394;
+    }
+
+    /* -------------------------------------
+        INVOICE
+        Styles for the billing table
+    ------------------------------------- */
+    .invoice {
+        margin: 40px auto;
+        text-align: left;
+        width: 80%;
+    }
+    .invoice td {
+        padding: 5px 0;
+    }
+    .invoice .invoice-items {
+        width: 100%;
+    }
+    .invoice .invoice-items td {
+        border-top: #eee 1px solid;
+    }
+    .invoice .invoice-items .total td {
+        border-top: 2px solid #333;
+        border-bottom: 2px solid #333;
+        font-weight: 700;
+    }
+
+    .br {
+      font-size: 1px solid;
+      width: 100%;
+      border-top: 2px solid #333;
+      border-bottom: 2px solid #333;
+      font-weight: 700;
+    }
+
+    /* -------------------------------------
+        RESPONSIVE AND MOBILE FRIENDLY STYLES
+    ------------------------------------- */
+    @media only screen and (max-width: 640px) {
+        h1, h2, h3, h4 {
+            font-weight: 600 !important;
+            margin: 20px 0 5px !important;
+        }
+      
+        h1 {
+            font-size: 22px !important;
+        }
+      
+        h2 {
+            font-size: 18px !important;
+        }
+      
+        h3 {
+            font-size: 16px !important;
+        }
+      
+        .container {
+            width: 100% !important;
+        }
+      
+        .content, .content-wrap {
+            padding: 10px !important;
+        }
+      
+        .invoice {
+            width: 100% !important;
+        }
+    }
+</style>

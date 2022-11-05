@@ -153,7 +153,7 @@
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <h6>Discount</h6>
-                            <h6><%= discount %></h6>
+                            <h6 id="discount-price"><%= discount %></h6>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
@@ -213,10 +213,10 @@
             let choose = false;
             let flag = false;
             let paymentMethod;
+            let discount = document.getElementById("discount-price").innerText;
             const showAlert = document.querySelector("#error");
             for(i = 1; i <= lengthAddress; i++) {
                 if(document.getElementById(String(i)).checked === true) {
-                    console.log(i);
                     choose = true;
                     break
                 }
@@ -254,8 +254,9 @@
                         method: "post",
                         data: {
                             "addressId": i,
-                            "paymentMethod": paymentMethod
-                        },
+                            "paymentMethod": paymentMethod,
+                            discount: discount
+                        }
                     })
                     let success = document.querySelector("#placed");
                     success.classList.remove("hide");
@@ -265,7 +266,8 @@
                     method: "post",
                     data: {
                         'addressId' : i,
-                        "paymentMethod": paymentMethod
+                        "paymentMethod": paymentMethod,
+                        discount: discount
                         },
                     success: (response => {
                         console.log(response);
@@ -287,6 +289,9 @@
             let country = document.getElementById("country").value;
             let zip = document.getElementById("zip").value;
 
+            let discount = document.getElementById("discount-price").innerText;
+            console.log(discount);
+
             let paymentMethod;
             let flag;
 
@@ -299,7 +304,7 @@
                 state: state,
                 city: city,
                 country: country,
-                zip: zip
+                zip: zip,
             }
             if(
                 home && 
@@ -344,7 +349,8 @@
                                     "state": address.state,
                                     "country": address.country,
                                     "zip": address.zip,
-                                    "paymentMethod": paymentMethod
+                                    "paymentMethod": paymentMethod,
+                                    discount: discount
                                 },
                             })
                             let success = document.querySelector("#placed")
@@ -361,7 +367,8 @@
                                     "state": address.state,
                                     "country": address.country,
                                     "zip": address.zip,
-                                    "paymentMethod": paymentMethod
+                                    "paymentMethod": paymentMethod,
+                                    discount: discount
                                 },
                             })
                             let success = document.querySelector("#placed")

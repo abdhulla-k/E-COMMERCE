@@ -79,6 +79,10 @@ const ordersSchema = new Schema({
         type: String,
         required: true
     },
+    discount: {
+        type: Number,
+        required: false
+    },
     products: [productsSchema]
 
 })
