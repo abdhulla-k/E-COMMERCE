@@ -247,6 +247,30 @@ exports.getData = (req, res, next) => {
     }
 }
 
+exports.showAllOrders = (req, res, next) => {
+    Order.aggregate([{
+            $unwind: "$orders"
+        }])
+        .then(data => {
+            console.log(data);
+            if (data) {
+                res.render("admin/all-orders", {
+                    orderDetails: data.reverse(),
+                    user: "ture",
+                    userType: "admin",
+                    errorMessage: "",
+                })
+            } else {
+                res.render("admin/orders", {
+                    orderDetails: [],
+                    user: "ture",
+                    userType: "admin",
+                    errorMessage: "something went wrong!"
+                })   
+            }
+        })
+}
+
 // sales report
 exports.getReport = (req, res, nect) => {
     if (req.session.adminLoggedIn) {

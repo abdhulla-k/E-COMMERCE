@@ -1,0 +1,127 @@
+<%- include( "../includes/head.ejs" ) %>
+<body>
+    <!-- header -->
+    <%- include( "../includes/admin/admin-navigation.ejs" ) %>
+    <!-- /header -->
+    <div class="container-fluid mb-3">
+        <div class="row px-xl-5">
+              <%- include("../includes/admin/admin-sidebar.ejs") %>
+
+              <div class="col-lg-9 col-md-9">
+                  <h4 class="section-title position-relative text-uppercase mb-3">
+                    <span class="bg-secondary pr-3">Orders</span>
+                  </h4>
+                        <div class="row px-xl-5">
+                          <% if(orderDetails.length > 0) { %>
+                                <table class="table table-image">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Name</th>
+                                      <th scope="col">Date</th>
+                                      <th scope="col">Time</th>
+                                      <th scope="col">Payment</th>
+                                      <th scope="col">Price</th>
+                                      <th scope="col">Status</th>
+                                      <th scope="col">Address</th>
+                                      <th scope="col"></th>
+                                  </thead>
+                                  <tbody>
+                                    <% orderDetails.forEach(order => { %>
+                                      <tr>
+                                        <td>
+                                          <%= order.orders.userName %>
+                                        </td>
+                                        <td>
+                                          <%= order.orders.date %>
+                                        </td>
+                                        <td>
+                                          <%= order.orders.time %>
+                                        </td>
+                                        <td>
+                                          <%= order.orders.paymentMethod %>
+                                        </td>
+                                        <td id="<%= order._id %>">
+                                          <%= order.orders.price %>
+                                        </td>
+                                        <td id="<%= order._id %>">
+                                          <%= order.orders.orderStatus %>
+                                        </td>
+                                        <td class="w-25">
+                                          home: <%= order.address %><br>
+                                          street: <%= order.address %><br>
+                                          district: <%= order.address %><br>
+                                          state: <%= order.address %><br>
+                                          country: <%= order.address %><br>
+                                          zip: <%= order.address %><br>
+                                        </td>
+                                        <td>
+                                          <!-- <div class="btn-group">
+                                            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                              Status
+                                            </button>
+                                            <div class="dropdown-menu">
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'placed', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Placed
+                                              </a>
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'cancelled', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Cancelled
+                                              </a>
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'shipped', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Shipped
+                                              </a>
+                                              <a 
+                                                style="cursor: pointer;" 
+                                                class="dropdown-item" 
+                                                onclick="changeOrderStatus('<%= order.userOrderId %>', '<%= order.userId %>', 'Delivered', '<%= order._id %>', '<%= order.productId %>')">
+                                                  Delivered
+                                              </a>
+                                            </div> -->
+                                        </td>
+                                      </tr>
+                                    <% }) %>
+                                  </tbody>
+                                </table>  
+                          <% } else { %>
+                            <h3>No orders</h3>
+                          <% } %>
+                        </div>
+              </div>
+        </div>
+    </div>
+
+    <script>
+      function changeOrderStatus(orderId, userId, status, id, productId) {
+        // console.log(`user order id: ${orderId}, userId: ${userId}, id: ${id}`)
+        // console.log(`product id: ${productId}`)
+        if(orderId && userId && status) {
+          $.ajax({
+            url: `/seller/changeOrderStatus`,
+            method: "post",
+            data: {
+              userId: userId,
+              userOrderId: orderId,
+              orderStatus: status,
+              productId: productId
+            },
+            success:(data => {
+              console.log(document.getElementById(`${id}`).innerText);
+              document.getElementById(`${id}`).innerText = status;
+            })
+          })
+        }
+      }
+    </script>
+    
+    <!-- Carousel End -->
+    <%- include( "../includes/footer.ejs" ) %>
+    
+<%- include( "../includes/end.ejs" )%>
