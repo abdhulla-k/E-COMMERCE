@@ -248,28 +248,28 @@ exports.getData = (req, res, next) => {
 }
 
 exports.showAllOrders = (req, res, next) => {
-    if(req.session.adminLoggedIn) {
+    if (req.session.adminLoggedIn) {
         Order.aggregate([{
-            $unwind: "$orders"
-        }])
-        .then(data => {
-            console.log(data);
-            if (data) {
-                res.render("admin/all-orders", {
-                    orderDetails: data.reverse(),
-                    user: "ture",
-                    userType: "admin",
-                    errorMessage: "",
-                })
-            } else {
-                res.render("admin/orders", {
-                    orderDetails: [],
-                    user: "ture",
-                    userType: "admin",
-                    errorMessage: "something went wrong!"
-                })   
-            }
-        })
+                $unwind: "$orders"
+            }])
+            .then(data => {
+                console.log(data);
+                if (data) {
+                    res.render("admin/all-orders", {
+                        orderDetails: data.reverse(),
+                        user: "ture",
+                        userType: "admin",
+                        errorMessage: "",
+                    })
+                } else {
+                    res.render("admin/orders", {
+                        orderDetails: [],
+                        user: "ture",
+                        userType: "admin",
+                        errorMessage: "something went wrong!"
+                    })
+                }
+            })
     } else {
         res.redirect("/admin/");
     }
@@ -589,20 +589,44 @@ exports.showSerDetails = (req, res, next) => {
 
 exports.showSerOrders = (req, res, next) => {
     if (req.session.adminLoggedIn) {
-        const userId = req.params.sellerId;
-        User.findById(userId, (err, data) => {
-            if (err) {
-                console.log(err);
-                res.redirect('/');
-            } else {
-                res.render("admin/seller-details", {
-                    userType: "admin",
-                    user: "",
-                    userDetails: data,
-                    route: 'orders'
-                });
-            }
-        })
+        try {
+            // sellerId
+            const sellerId = req.params.sellerId;
+
+            // get seller data
+            User.findById(sellerId, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    res.redirect('/');
+                } else {
+
+                    // get order details
+                    Order.find({
+                        sellerId: sellerId
+                    }, (err, result) => {
+                        if(!err) {
+                            res.render("admin/seller-details", {
+                                userType: "admin",
+                                user: "",
+                                userDetails: data,
+                                orders: result[0].orders.reverse(),
+                                route: 'orders'
+                            });
+                        } else {
+                            res.render("admin/seller-details", {
+                                userType: "admin",
+                                user: "",
+                                userDetails: data,
+                                orders: [],
+                                route: 'orders'
+                            });
+                        }
+                    })
+                }
+            })
+        } catch {
+            res.redirect("/admin/");
+        }
 
     } else {
         res.redirect("/admin/");

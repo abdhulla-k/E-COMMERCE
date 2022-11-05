@@ -32,7 +32,7 @@
                   </div>
                   <% if(route === 'orders') { %>
                     <div class="row px-xl-5">
-                        <% if(userDetails.orders.length > 0) { %>
+                        <% if(orders.length > 0) { %>
                               <table class="table table-image">
                                 <thead>
                                   <tr>
@@ -44,7 +44,7 @@
                                     <th scope="col"></th>
                                 </thead>
                                 <tbody>
-                                  <% userDetails.orders.forEach(order => { %>
+                                  <% orders.forEach(order => { %>
                                     <tr>
                                       <td class="w-25">
                                         <%= order.date %>
@@ -60,14 +60,6 @@
                                       </td>
                                       <td class="w-25">
                                         <%= order.orderStatus %>
-                                      </td>
-                                      <td>
-                                          <a 
-                                            style="background-color: rgb(255, 217, 0);" 
-                                            class="btn btn-outline-dark btn-square" 
-                                            href="/admin/user/order/<%= order.id %>">
-                                            info
-                                          </a>
                                       </td>
                                       <!-- <td>
                                         <a
