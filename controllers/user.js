@@ -1026,10 +1026,11 @@ exports.applyCoupon = (req, res, next) => {
                             // console.log(result);
                             // save coupon in session
                             req.session.coupon = coupon;
+                            let descountPrice = (cartTotal * data[0].discountPercentage) / 100;
                             cartTotal -= (cartTotal * data[0].discountPercentage) / 100;
                             let responseData = {
                                 price: cartTotal,
-                                discount: (cartTotal * data[0].discountPercentage) / 100,
+                                discount: descountPrice,
                                 message: ""
                             }
                             res.json(responseData)

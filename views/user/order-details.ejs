@@ -312,8 +312,10 @@
                                   <div class="card-body">
                                     <div class="row">
                                       <div class="col-md-2">
-                                        <img src="/images/<%=i.images[0]%>"
-                                          class="img-fluid" alt="Phone">
+                                        <a href="/detail/<%= i.id %>">
+                                          <img src="/images/<%=i.images[0]%>"
+                                          class="img-fluid" alt="<%= i.title %>">
+                                        </a>
                                       </div>
                                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                         <p class="text-muted mb-0"><%= i.title %></p>
@@ -330,12 +332,6 @@
                                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                         <p class="text-muted mb-0 small">Total Price: <%= k.price %></p>
                                         <% discount += Number(k.price) %>
-                                      </div>
-                                      <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                          <a
-                                          class="btn btn-outline-warning btn-square text-dark"
-                                          href="/detail/<%= i.id %>"
-                                          >info</a>
                                       </div>
                                     </div>
                                     <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">

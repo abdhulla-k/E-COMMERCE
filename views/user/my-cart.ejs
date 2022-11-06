@@ -219,13 +219,14 @@
     <script>
         function applyCoupon(cartPrice) {
             const code = document.getElementById("couponCodeInput").value;
-            console.log(cartPrice);
+            let TotalPrice = document.getElementById("cartPrice").value;
+            console.log(TotalPrice);
             $.ajax({
                 url: `/user/applyCoupon`,
                 method: "post",
                 data: {
                     coupon: code,
-                    price: cartPrice
+                    price: TotalPrice
                 },
                 success: (response => {
                     console.log(response)

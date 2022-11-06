@@ -399,7 +399,7 @@
                                                                             <tr class="total">
                                                                               <td class="alignright" width="80%">Total</td>
                                                                               <td></td>
-                                                                              <td class="alignright"><%= product.price %></td>
+                                                                              <td class="alignright"><%= product.price * (orderDetails[0].orders.price / product.price) %></td>
                                                                             </tr>
                                                                       </tbody></table>
                                                                   </td>
