@@ -1023,7 +1023,7 @@ exports.applyCoupon = (req, res, next) => {
                             // success case;
                             // user didn't used the coupon before;
                             // Let him go ahead
-                            console.log(result);
+                            // console.log(result);
                             // save coupon in session
                             req.session.coupon = coupon;
                             cartTotal -= (cartTotal * data[0].discountPercentage) / 100;
@@ -1036,8 +1036,8 @@ exports.applyCoupon = (req, res, next) => {
                         }
                     })
                     .catch(err => {
-                        console.log(err);
-                        console.log("error in finding coupondata");
+                        // console.log(err);
+                        // console.log("error in finding coupondata");
                         let responseData = {
                             price: cartTotal,
                             message: "something went wrong while applying coupon! try later",
@@ -1067,7 +1067,8 @@ exports.applyCoupon = (req, res, next) => {
 // /user/checkout?cartPrice
 exports.getCheckout = (req, res, next) => {
     if (req.session.userLoggedIn) {
-        req.session.cartPrice = req.query.cartPrice;
+        req.session.cartPrice = Number(req.query.cartPrice);
+        console.log(`cart price: ${req.query.cartPrice},  type: ${typeof(req.session.cartPrice)}`);
         User.findById(req.session.userId)
             .then(data => {
                 if (data) {
@@ -1109,7 +1110,7 @@ exports.placeOrder = (req, res, next) => {
         function generateRazorPay(id, totalPrice) {
             return new Promise((resolve, reject) => {
                 var options = {
-                    amount: Number(totalPrice) * 100, // amount in the smallest currency unit
+                    amount: parseInt(totalPrice) * 100, // amount in the smallest currency unit
                     currency: "INR",
                     receipt: id
                 };
@@ -1117,7 +1118,6 @@ exports.placeOrder = (req, res, next) => {
                     if (err) {
                         console.log(err)
                     } else {
-                        console.log(order);
                         resolve(order);
                     }
                 });
@@ -1135,7 +1135,7 @@ exports.placeOrder = (req, res, next) => {
                         }
                     })
                     .then(data => {
-                        console.log(data);
+                        // console.log(data);
                     })
                     .catch(err => {
                         console.log(err);
@@ -1307,7 +1307,7 @@ exports.placeOrder = (req, res, next) => {
                                 })
                             })
                             .then(result => {
-                                console.log(result)
+                                // console.log(result)
                             })
                             .catch(err => {
                                 console.log(err)
