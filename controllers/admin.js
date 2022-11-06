@@ -249,27 +249,33 @@ exports.getData = (req, res, next) => {
 
 exports.showAllOrders = (req, res, next) => {
     if (req.session.adminLoggedIn) {
-        Order.aggregate([{
-                $unwind: "$orders"
-            }])
-            .then(data => {
-                console.log(data);
-                if (data) {
+        try {
+            User.aggregate([{
+                    $match: {
+                        userType: "user"
+                    }
+                }, {
+                    $unwind: "$orders"
+                }, {
+                    $project: {
+                        couponsAppied: 0,
+                        address: 0
+                    }
+                }])
+                .then(data => {
                     res.render("admin/all-orders", {
                         orderDetails: data.reverse(),
                         user: "ture",
                         userType: "admin",
                         errorMessage: "",
                     })
-                } else {
-                    res.render("admin/orders", {
-                        orderDetails: [],
-                        user: "ture",
-                        userType: "admin",
-                        errorMessage: "something went wrong!"
-                    })
-                }
-            })
+                })
+                .catch(err => {
+                    res.redirect('/admin/');
+                })
+        } catch {
+            res.redirect("/admin/");
+        }
     } else {
         res.redirect("/admin/");
     }
@@ -604,7 +610,7 @@ exports.showSerOrders = (req, res, next) => {
                     Order.find({
                         sellerId: sellerId
                     }, (err, result) => {
-                        if(!err) {
+                        if (!err) {
                             res.render("admin/seller-details", {
                                 userType: "admin",
                                 user: "",
