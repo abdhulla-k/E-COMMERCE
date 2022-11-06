@@ -1068,7 +1068,7 @@ exports.applyCoupon = (req, res, next) => {
 exports.getCheckout = (req, res, next) => {
     if (req.session.userLoggedIn) {
         req.session.cartPrice = Number(req.query.cartPrice);
-        console.log(`cart price: ${req.query.cartPrice},  type: ${typeof(req.session.cartPrice)}`);
+        // console.log(`cart price: ${req.query.cartPrice},  type: ${typeof(req.session.cartPrice)}`);
         User.findById(req.session.userId)
             .then(data => {
                 if (data) {
