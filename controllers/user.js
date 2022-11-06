@@ -6,6 +6,7 @@ const Cart = require("../models/cart");
 const Product = require("../models/product");
 const Order = require("../models/orders");
 const Coupon = require("../models/coupon");
+const Wishlist = require("../models/watch-list");
 
 // import bcryptjs third party module
 const bcrypt = require("bcryptjs");
@@ -388,6 +389,96 @@ exports.postSignupOtp = (req, res, next) => {
         console.log("some error while verifying otp");
         res.redirect("/user/otp");
     }
+}
+
+exports.showWishlist = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+        try {
+            // get user watchlist
+            Wishlist.aggregate([{
+                    $unwind: "$products"
+                }, {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(req.session.userId)
+                    }
+                }, {
+                    $lookup: {
+                        from: "products",
+                        localField: "products",
+                        foreignField: "_id",
+                        as: "product_details"
+                    }
+                }])
+                .then(data => {
+                    if (data) {
+                        res.render("user/wishlist", {
+                            user: "true",
+                            userType: "user",
+                            wishlist: data,
+                            categories: []
+                        })
+                    }
+                })
+                .catch(err => {
+                    res.render("user/wishlist", {
+                        user: "true",
+                        userType: "user",
+                        wishlist: "empty",
+                        categories: []
+                    })
+                })
+        } catch {
+            res.redirect("/");
+        }
+    } else {
+        res.redirect("/user/login");
+    }
+}
+
+exports.addToWishList = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+        try {
+            // save to wishlist
+            Wishlist.findByIdAndUpdate(req.session.userId, {
+                    $push: {
+                        'products': mongoose.Types.ObjectId(req.params.productId)
+                    }
+                }, {
+                    upsert: true
+                })
+                .catch(err => {
+                })
+        } catch {
+            res.redirect("/");
+        }
+    } else {
+        res.redirect("/user/login");
+    }
+}
+
+exports.removeFromWishlist = (req, res, next) => {
+    if (req.session.userLoggedIn) {
+        try {
+            // remove from whatch list
+            const productId = req.params.prodId;
+            Wishlist.updateOne({
+                    _id: mongoose.Types.ObjectId(req.session.userId)
+                }, {
+                    $pullAll: {
+                        products: [mongoose.Types.ObjectId(productId)]
+                    }
+                })
+                .then(data => {
+                })
+                .catch(err => {
+                })
+        } catch {
+            res.redirect("/user/showWishlist");
+        }
+    } else {
+        res.redirect("/user/login");
+    }
+
 }
 
 exports.showCart = (req, res, next) => {
@@ -1270,7 +1361,7 @@ exports.myAccount = (req, res, next) => {
                     }
                 })
         }
-    
+
         if (req.session.userLoggedIn) {
             if (categories) {
                 findUserData();
@@ -1306,20 +1397,20 @@ exports.addAddress = (req, res, next) => {
         }
         console.log(addressData);
         User.findByIdAndUpdate({
-            _id: mongoose.Types.ObjectId(req.session.userId)
-        }, {
-            $push: {
-                address: {
-                    ...addressData
+                _id: mongoose.Types.ObjectId(req.session.userId)
+            }, {
+                $push: {
+                    address: {
+                        ...addressData
+                    }
                 }
-            }
-        })
-        .then(savedAddress => {
-            res.json("saved");
-        })
-        .catch(err => {
-            res.json("addressError");
-        })
+            })
+            .then(savedAddress => {
+                res.json("saved");
+            })
+            .catch(err => {
+                res.json("addressError");
+            })
     }
 }
 

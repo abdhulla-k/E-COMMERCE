@@ -109,7 +109,11 @@
                                                 onclick="addToCart('<%= product.id %>' , '<%= user %>')">
                                                     <i class="fa fa-shopping-cart"></i>
                                             </a>
-                                            <a class="btn btn-outline-dark btn-square" href="/user/addToWishlist"><i class="far fa-heart"></i></a>
+                                            <a 
+                                                class="btn btn-outline-dark btn-square" 
+                                                onclick="addToWishlist('<%= product.id %>', '<%= user %>')">
+                                                <i class="far fa-heart"></i>
+                                            </a>
                                             <a class="btn btn-outline-dark btn-square" href="/detail/<%= product.id %>">info</a>
                                         </div>
                                     </div>
@@ -146,6 +150,32 @@
 
     <!-- cart update ajax -->
     <script>
+        function addToWishlist(productId, user) {
+            let addedNotification = document.querySelector('#addedNotification')
+            if(user) {
+                addedNotification.innerHTML = "product added to withlist!"
+                addedNotification.classList.add("alert-success")
+                $.ajax({
+                    url: `/user/addToWishlist/${productId}`
+                })
+            } else {
+                addedNotification.innerHTML = "your not logged in!"
+                addedNotification.classList.add("alert-warning")
+            }
+            addedNotification.classList.remove('hide')
+            addedNotification.classList.remove('out-animate')
+            addedNotification.classList.add('animate')
+            
+            setTimeout(() => {
+                addedNotification.classList.remove('animate')
+                addedNotification.classList.add('out-animate')
+            }, 1000)
+            setTimeout(() => {
+                addedNotification.classList.add('hide')
+            }, 2000)
+           
+        }
+
         function addToCart(productId, user) {
             console.log(user)
             let addedNotification = document.querySelector('#addedNotification')

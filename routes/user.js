@@ -18,6 +18,13 @@ router.post('/postSignupOtp', userController.postSignupOtp);
 
 router.get('/logout', userController.userLogout);
 
+// add product to wishlist
+router.get('/addToWishlist/:productId', userController.addToWishList);
+
+router.get('/showWishlist', userController.showWishlist);
+
+router.get('/removeFromWishlist/:prodId',userController.removeFromWishlist);
+
 router.get('/cart', userController.showCart);
 
 router.post('/addToCart', userController.addToCart);

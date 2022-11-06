@@ -1,0 +1,142 @@
+<%- include( "../includes/head.ejs" ) %>
+    <!-- header -->
+    <%- include( "../includes/navigation.ejs" ) %>
+    <!-- /header -->
+
+    <style>
+        .hide {
+            visibility: hidden;
+        }
+        @keyframes fadeIn {
+          from {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+        }
+        @keyframes fedOut {
+          from {
+            transform: translateX(0px);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(250px);
+            opacity: 0;
+          }
+        }
+        .animate {
+          animation: fadeIn 500ms ease-out backwards;
+        }
+        .out-animate {
+            animation: fedOut 500ms ease-in forwards;
+        }
+    </style>
+    <div 
+        style="position: absolute; z-index: 100; width: 100%; text-align: center;" 
+        class="hide alert alert-danger" 
+        role="alert"
+        id="remove"
+        >
+        removed from wishlist
+    </div>
+
+    <!-- Cart Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-lg-12 table-responsive mb-5">
+                <!-- cart element table -->
+                <table class="table table-light table-borderless table-hover text-center mb-0">
+                    <% if(wishlist !== "empty") { %>
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Images</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                                <% for(product of wishlist) { %>
+                                        <!-- cart table row -->
+                                        <tr>
+                                            <!-- table colemn for images -->
+                                            <td class="align-middle">
+                                                <img 
+                                                    src="/images/<%= product.product_details[0].images[0] %>" 
+                                                    alt="" 
+                                                    style="width: 50px;"
+                                                >
+                                            </td>
+                                            <!-- /table colemn for images -->
+    
+                                            <!-- table colemn for product name -->
+                                            <td class="align-middle">
+                                                <%= product.product_details[0].title %>
+                                            </td>
+                                            <!-- /table colemn for product name -->
+    
+                                            <!-- table colemn for product price -->
+                                            <td class="align-middle">
+                                                <%= product.product_details[0].title %>
+                                            </td>
+                                            <!-- /table colemn for product price -->
+    
+                                            <!-- table colemn for delet product from cart button -->
+                                            <td class="align-middle">
+                                                <a 
+                                                    class="btn btn-sm btn-danger"
+                                                    id="<%= product.products %>"
+                                                    onclick="removeFromWishlist(id)"
+                                                    >
+                                                    <i class="fa fa-times"></i>
+                                                </a>
+                                                <a id="relodMyCart" href="/user/showWishlist" hidden>remove relode</a>
+                                            </td>
+                                            <!-- /table colemsn for delet product from cart button -->
+                                        </tr>
+                                        <!-- / cart table row -->
+                                <% } %>
+                        </tbody>
+                    <% } else { %>
+                        <h1>Your cart is empty! Add some products</h1>
+                    <% } %>
+                </table>
+                <!-- /cart element table -->
+            </div>
+            
+        </div>
+    </div>
+    <!-- Cart End -->
+
+    <!-- script of product quantity buttons -->
+    <script>
+        
+
+        function removeFromWishlist(id) {
+            let remove = document.querySelector('#remove')
+            remove.classList.remove('hide')
+            remove.classList.remove('out-animate')
+            remove.classList.add('animate')
+            $.ajax({
+                url: `/user/removeFromWishlist/${id}`
+            })
+            setTimeout(() => {
+                remove.classList.remove('animate')
+                remove.classList.add('out-animate')
+                document.getElementById("relodMyCart").click();
+            }, 1000)
+            setTimeout(() => {
+                remove.classList.add('hide')
+            }, 2000)
+            
+        }
+    </script>
+    <!-- /script of product quantity buttons -->
+
+    
+    <%- include( "../includes/footer.ejs" ) %>
+    
+<%- include( "../includes/end.ejs" )%>
