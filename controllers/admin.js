@@ -25,13 +25,103 @@ exports.getLogin = (req, res, next) => {
         if (data) {
             categories = data;
             if (req.session.adminLoggedIn) {
-                req.session.imageNames = [];
-                res.render("admin/admin-dashboard", {
-                    user: req.session.sellerLoggedIn ? "true" : "",
-                    userType: "admin",
-                    categories: categories,
-                    route: "/admin-dashboard"
-                });
+                let categoryData;
+                Order.aggregate([{
+                        $unwind: "$orders"
+                    }, {
+                        $lookup: {
+                            from: "products",
+                            localField: "orders.productId",
+                            foreignField: "_id",
+                            as: "product"
+                        }
+                    }, {
+                        $unwind: "$product"
+                    }, {
+                        $lookup: {
+                            from: "categories",
+                            localField: "product.category",
+                            foreignField: "_id",
+                            as: "category"
+                        }
+                    }, {
+                        $unwind: "$category"
+                    }, {
+                        $group: {
+                            _id: '$category.categoryName',
+                            count: {
+                                $sum: 1
+                            }
+                        }
+                    }, {
+                        $sort: {
+                            count: 1
+                        }
+                    }])
+                    .then(data => {
+                        // save data
+                        categoryData = data;
+
+                        return Order.aggregate([{
+                            $unwind: "$orders"
+                        }, {
+                            $lookup: {
+                                from: "products",
+                                localField: "orders.productId",
+                                foreignField: "_id",
+                                as: "product"
+                            }
+                        }, {
+                            $unwind: "$product"
+                        }, {
+                            $lookup: {
+                                from: "categories",
+                                localField: "product.category",
+                                foreignField: "_id",
+                                as: "category"
+                            }
+                        }, {
+                            $unwind: "$category"
+                        }, {
+                            $group: {
+                                _id: '$category.categoryName',
+                                count: {
+                                    $sum: 1
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id: null,
+                                sumOfCount: {
+                                    $sum: "$count"
+                                }
+                            }
+                        }])
+                    })
+                    .then(sum => {
+                        // console.log(categoryData);
+                        // console.log(sum);
+                        req.session.imageNames = [];
+                        res.render("admin/admin-dashboard", {
+                            user: req.session.adminLoggedIn ? "true" : "",
+                            userType: "admin",
+                            categories: categories,
+                            route: "/admin-dashboard",
+                            categorySales: categoryData,
+                            onePercentage: sum[0].sumOfCount / 100
+                        });
+                    })
+                    .catch(err => {
+                        req.session.imageNames = [];
+                        res.render("admin/admin-dashboard", {
+                            user: req.session.adminLoggedIn ? "true" : "",
+                            userType: "admin",
+                            categories: categories,
+                            route: "/admin-dashboard",
+                            categorySales: [],
+                            sum: 0
+                        });
+                    })
             } else {
                 res.render("admin/login", {
                     user: "",

@@ -1195,7 +1195,7 @@ exports.placeOrder = (req, res, next) => {
                                     userOrderId: orderId,
                                     orderStatus: 'placed',
                                     address: address,
-                                    productId: product.productId
+                                    productId: mongoose.Types.ObjectId(product.productId)
                                 }
                                 return Order.updateOne({
                                     sellerId: productData.user

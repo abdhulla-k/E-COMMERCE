@@ -375,7 +375,7 @@ exports.postAddProduct = (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         quantity: req.body.quantity,
-        category: req.body.category,
+        category: mongoose.Types.ObjectId(req.body.category),
         user: req.session.sellerId,
         images: imagesName
     })

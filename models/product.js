@@ -20,7 +20,7 @@ const productSchema = new Schema({
         required: true
     },
     category: {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true
     },
     user: {

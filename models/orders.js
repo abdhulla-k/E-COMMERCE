@@ -39,7 +39,7 @@ const orders = new Schema({
         required: true
     },
     productId: {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true
     }
 
