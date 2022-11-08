@@ -183,25 +183,18 @@ exports.postLogin = (req, res, next) => {
 
 // To share data to admin dashboard
 exports.getData = (req, res, next) => {
-    console.log('reached');
     if (req.session.adminLoggedIn) {
         let counter = 0;
         let date7days = [];
+        let date44 = [];
         let onlinPayment = [0, 0, 0, 0, 0, 0, 0];
         let cod = [0, 0, 0, 0, 0, 0, 0];
+        let orderAll = new Array(44).fill(0);
         let notCancelledOrder = new Array(44).fill(0);
         let cancelleOrder = new Array(44).fill(0);
-        let line = [];
-        let date = [];
         let income = [0, 0, 0, 0, 0, 0, 0];
         let expences = [0, 0, 0, 0, 0, 0, 0];
         let profit = new Array(8).fill(0);
-        let profitDate = [];
-        let todayDate = new Date()
-        let year = todayDate.getFullYear()
-        let month = todayDate.getMonth()
-        let dateOnly = todayDate.getDate();
-        let arrayT = new Array(44).fill(0);
         // function to find the last 7 days date
         async function Last7Days(a) {
             const past7Days = await [...Array(a).keys()].map(index => {
@@ -376,23 +369,41 @@ exports.getData = (req, res, next) => {
                 return Last7Days(44)
             })
             .then(date50 => {
-                console.log("======================cancelled orders==========================");
-                console.log(income)
-                console.log("======================non cancelled orders==========================");
-                console.log(expences)
-                res.json({
-                    date50: date50,
-                    date: date7days,
-                    onlinePayment: onlinPayment,
-                    cod: cod,
-                    cancelleOrder: cancelleOrder,
-                    orders: notCancelledOrder,
-                    line: line,
-                    income: income,
-                    expences: expences,
-                    profit: profit,
-                    profitDate: profitDate
-                });
+                date44 = date50;
+                return Order.aggregate([{
+                    $unwind: "$orders"
+                }, {
+                    $group: {
+                        _id : "$orders.date",
+                        count: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $limit: 44
+                }])
+            })
+            .then(ordersAl => {
+                let flag = false;
+                counter = 0;
+                ordersAl.forEach(cancel => {
+                    orderAll[counter] = cancel.count;
+                    counter++;
+                    if(counter === ordersAl.length) {
+                        res.json({
+                            date50: date44,
+                            date: date7days,
+                            onlinePayment: onlinPayment,
+                            cod: cod,
+                            cancelleOrder: cancelleOrder,
+                            orders: notCancelledOrder,
+                            income: income,
+                            expences: expences,
+                            profit: profit,
+                            orderAll: orderAll
+                        });
+                    }
+                })
             })
     }
 }

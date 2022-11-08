@@ -38,22 +38,8 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="col-md-6 stretch-card">
-                              <div class="card">
-                                <div class="card-body">
-                                  <div class="d-flex align-items-center justify-content-between flex-wrap">
-                                    <p class="card-title">Total Orders</p>
-                                    <p class="text-success font-weight-medium">20.15 %</p>
-                                  </div>
-                                  <div class="d-flex align-items-center flex-wrap mb-3">
-                                    <h5 class="font-weight-normal mb-0 mb-md-1 mb-lg-0 mr-3">$22.736</h5>
-                                    <p class="text-muted mb-0">Avg Sessions</p>
-                                  </div>
-                                  <canvas id="balance-chart" height="130"></canvas>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-md-6 stretch-card">
+                            
+                            <div class="col-md-12 stretch-card">
                               <div class="card">
                                 <div class="card-body">
                                   <div class="d-flex align-items-center justify-content-between flex-wrap">
@@ -72,8 +58,11 @@
                         </div>
                         <!-- /left side graphs -->
 
+                        <!-- right side graphs -->
                         <div class="col-12 col-xl-6 grid-margin stretch-card">
                           <div class="row w-100 flex-grow">
+
+                            <!-- income and expences -->
                             <div class="col-md-6 grid-margin stretch-card">
                               <div class="card">
                                 <div class="card-body">
@@ -85,68 +74,45 @@
                                 </div>
                               </div>
                             </div>
+                            <!-- /income and expences -->
+
+                            <!-- orders and cancelled orders graph -->
                             <div class="col-md-6 grid-margin stretch-card">
                               <div class="card">
                                 <div class="card-body pb-0">
                                   <div class="d-flex align-items-center mb-4">
                                     <p class="card-title mb-0 mr-1">orders and cancelled orders</p>
-                                    <div class="badge badge-info badge-pill">2</div>
                                   </div>
                                   <div class="d-flex flex-wrap pt-2">
-                                    <!-- <div class="mr-4 mb-lg-2 mb-xl-0">
-                                      <p>Time On Site</p>
-                                      <h4 class="font-weight-bold mb-0">77.15 %</h4>
-                                    </div>
-                                    <div>
-                                      <p>Page Views</p>
-                                      <h4 class="font-weight-bold mb-0">14.15 %</h4>
-                                    </div> -->
                                   </div>
                                 </div>
-                                <canvas height="210" id="activity-chart"></canvas>
+                                <canvas height="290" id="activity-chart"></canvas>
                               </div>
                             </div>
+                            <!-- /orders and cancelled orders graph -->
+
+                            <!-- to show all order details -->
                             <div class="col-md-12 stretch-card">
-                              <div class="card">
-                                <div class="card-body pb-0">
-                                  <p class="card-title">Server Status 247</p>
-                                  <div class="d-flex justify-content-between flex-wrap">
-                                    <p class="text-muted">Last update: 2 Hours ago</p>
-                                    <div class="d-flex align-items-center flex-wrap server-status-legend mt-3 mb-3 mb-md-0">
-                                      <div class="item mr-3">
-                                        <div class="d-flex align-items-center">
-                                          <div class="color-bullet"></div>
-                                          <h5 class="font-weight-bold mb-0">128GB</h5>
-                                        </div>
-                                        <p class="mb-">Total Usage</p>
-                                      </div>
-                                      <div class="item mr-3">
-                                        <div class="d-flex align-items-center">
-                                          <div class="color-bullet"></div>
-                                          <h5 class="font-weight-bold mb-0">92%</h5>
-                                        </div>
-                                        <p class="mb-">Memory Usage</p>
-                                      </div>
-                                      <div class="item mr-3">
-                                        <div class="d-flex align-items-center">
-                                          <div class="color-bullet"></div>
-                                          <h5 class="font-weight-bold mb-0">16%</h5>
-                                        </div>
-                                        <p class="mb-">Disk Usage</p>
-                                      </div>
+                                <div class="card">
+                                  <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                      <p class="card-title mb-0 mr-1">All order details</p>
                                     </div>
+                                    <div class="d-flex align-items-center flex-wrap mb-3">
+                                    </div>
+                                    <canvas id="balance-chart" height="150"></canvas>
                                   </div>
                                 </div>
-                                <canvas height="191" id="status-chart"></canvas>
-                              </div>
                             </div>
+                            <!-- /to show all order details -->
                           </div>
                         </div>
+                        <!-- /right side graphs -->
                       </div>
                       <!-- /all graphs -->
 
                       <!-- category wase order details -->
-                      <div class="row">
+                      <div class="row" style="width: 100%;">
                         <div class="col-lg-12 grid-margin stretch-card">
                           <div class="card">
                             <div class="card-body">
