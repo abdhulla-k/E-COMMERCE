@@ -183,7 +183,11 @@ exports.postLogin = (req, res, next) => {
 
 // To share data to admin dashboard
 exports.getData = (req, res, next) => {
+    console.log('reached');
     if (req.session.adminLoggedIn) {
+        let counter = 0;
+        let onlinPayment = [0, 0, 0, 0, 0, 0, 0];
+        let cod = [0, 0, 0, 0, 0, 0, 0];
         let allOrders = [];
         let cancelleOrder = [];
         let line = [];
@@ -197,27 +201,78 @@ exports.getData = (req, res, next) => {
         let month = todayDate.getMonth()
         let dateOnly = todayDate.getDate();
 
+        // function to find the last 7 days date
+        async function Last7Days() {
+            const past7Days = await [...Array(7).keys()].map(index => {
+                const date = new Date();
+                date.setDate(date.getDate() - index);
+                currentVal = date.getFullYear() + ' - ' + date.getMonth() + ' - ' + date.getDate();
+
+                return currentVal;
+            });
+            return past7Days
+        }
+
         Order.aggregate([{
-                $unwind: "$orders"
-            }, {
-                $group: {
-                    _id: '$orders.date',
-                    count: {
-                        $sum: 1
+                    $unwind: "$orders"
+                },
+                {
+                    $match: {
+                        "orders.paymentMethod": "googlePay"
                     }
+                },
+                {
+                    $group: {
+                        _id: '$orders.date',
+                        onlinePayment: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $limit: 7
                 }
-            }, {
-                $project: {
-                    count: 1,
-                    _id: 0
-                }
-            }, {
-                $limit: 6
-            }])
-            .then(data => {
-                data.forEach(a => {
-                    allOrders.push(a.count)
+            ])
+            .then(online => {
+                console.log(online)
+
+                counter = 0;
+                online.forEach(a => {
+                    onlinPayment[counter] = a.onlinePayment;
+                    counter++;
                 })
+                // console.log(onlinPayment)
+                return Order.aggregate([{
+                        $unwind: "$orders"
+                    },
+                    {
+                        $match: {
+                            "orders.paymentMethod": 'cashOnDelivery'
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: '$orders.date',
+                            cod: {
+                                $sum: 1
+                            },
+                        }
+                    },
+                    {
+                        $limit: 7
+                    }
+                ])
+
+            })
+            .then(result => {
+                console.log(result)
+                counter = 0;
+                result.forEach(a => {
+                    cod[counter] = a.cod;
+                    counter++;
+                })
+                // console.log(cod)
+
                 return Order.aggregate([{
                     $unwind: "$orders"
                 }, {
@@ -311,23 +366,31 @@ exports.getData = (req, res, next) => {
                     profitDate.push(`${dateOnly - index}-${month}-${year}`);
                     index++;
                 })
+                // get the last 7 days date
+                return Last7Days()
 
                 // reverse all data arrays
-                allOrders.reverse();
-                cancelleOrder.reverse();
-                date.reverse();
-                line.reverse();
-                income.reverse();
-                expences.reverse();
-                profitDate.reverse();
-                profit.reverse();
+                // allOrders.reverse();
+                // cancelleOrder.reverse();
+                // date.reverse();
+                // line.reverse();
+                // income.reverse();
+                // expences.reverse();
+                // profitDate.reverse();
+                // profit.reverse();
 
                 // give response
+            })
+            .then(date => {
+                console.log("date")
+                console.log(date)
                 res.json({
+                    date: date,
+                    onlinePayment: onlinPayment,
+                    cod: cod,
                     cancelleOrder: cancelleOrder,
                     orders: allOrders,
                     line: line,
-                    date: date,
                     income: income,
                     expences: expences,
                     profit: profit,

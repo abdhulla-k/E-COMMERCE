@@ -1,89 +1,179 @@
 (function($) {
     'use strict';
     $(function() {
-  
-      if ($("#audience-chart").length) {
-        var AudienceChartCanvas = $("#audience-chart").get(0).getContext("2d");
-        var AudienceChart = new Chart(AudienceChartCanvas, {
-          type: 'bar',
-          data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-            datasets: [
-              {
-                type: 'line',
-                fill: false,
-                data: [100, 230, 130, 140, 270, 140],
-                borderColor: '#ff4c5b'
+      $.ajax({
+        url: "/admin/dashboard/getSalesData",
+        method: "get",
+        success: data => {
+          console.log(data)
+
+          if ($("#audience-chart").length) {
+            var AudienceChartCanvas = $("#audience-chart").get(0).getContext("2d");
+            var AudienceChart = new Chart(AudienceChartCanvas, {
+              type: 'bar',
+              data: {
+                labels: data.date,
+                datasets: [
+                  // {
+                  //   type: 'line',
+                  //   fill: false,
+                  //   data: data.onlinePayment,
+                  //   borderColor: '#ff4c5b'
+                  // },
+                  {
+                    label: 'Offline Sales',
+                    data: data.onlinePayment,
+                    backgroundColor: '#6640b2'
+                  },
+                  {
+                    label: 'Online Sales',
+                    data: data.cod,
+                    backgroundColor: '#1cbccd'
+                  }
+                ]
               },
-              {
-                label: 'Offline Sales',
-                data: [100, 230, 340, 340, 260, 340],
-                backgroundColor: '#6640b2'
-              },
-              {
-                label: 'Online Sales',
-                data: [130, 190, 250, 250, 190, 260],
-                backgroundColor: '#1cbccd'
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            layout: {
-              padding: {
-                left: 0,
-                right: 0,
-                top: 20,
-                bottom: 0
-              }
-            },
-            scales: {
-              yAxes: [{
-                display: true,
-                gridLines: {
-                  display: true,
-                  drawBorder: false,
-                  color: "#f8f8f8",
-                  zeroLineColor: "#f8f8f8"
+              options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: {
+                  padding: {
+                    left: 0,
+                    right: 0,
+                    top: 20,
+                    bottom: 0
+                  }
                 },
-                ticks: {
-                  display: true,
-                  min: 0,
-                  max: 400,
-                  stepSize: 100,
-                  fontColor: "#b1b0b0",
-                  fontSize: 10,
-                  padding: 10
-                }
-              }],
-              xAxes: [{
-                stacked: false,
-                ticks: {
-                  beginAtZero: true,
-                  fontColor: "#b1b0b0",
-                  fontSize: 10
+                scales: {
+                  yAxes: [{
+                    display: true,
+                    gridLines: {
+                      display: true,
+                      drawBorder: false,
+                      color: "#f8f8f8",
+                      zeroLineColor: "#f8f8f8"
+                    },
+                    ticks: {
+                      display: true,
+                      min: 0,
+                      max: 25,
+                      stepSize: 5,
+                      fontColor: "#b1b0b0",
+                      fontSize: 10,
+                      padding: 10
+                    }
+                  }],
+                  xAxes: [{
+                    stacked: false,
+                    ticks: {
+                      beginAtZero: true,
+                      fontColor: "#b1b0b0",
+                      fontSize: 10
+                    },
+                    gridLines: {
+                      color: "rgba(0, 0, 0, 0)",
+                      display: false
+                    },
+                    barPercentage: .9,
+                    categoryPercentage: .7,
+                  }]
                 },
-                gridLines: {
-                  color: "rgba(0, 0, 0, 0)",
+                legend: {
                   display: false
                 },
-                barPercentage: .9,
-                categoryPercentage: .7,
-              }]
-            },
-            legend: {
-              display: false
-            },
-            elements: {
-              point: {
-                radius: 3,
-                backgroundColor: '#ff4c5b'
-              }
-            }
-          },
-        });
-      }
+                elements: {
+                  point: {
+                    radius: 3,
+                    backgroundColor: '#ff4c5b'
+                  }
+                }
+              },
+            });
+          }
+        }
+      })
+  
+      // if ($("#audience-chart").length) {
+      //   var AudienceChartCanvas = $("#audience-chart").get(0).getContext("2d");
+      //   var AudienceChart = new Chart(AudienceChartCanvas, {
+      //     type: 'bar',
+      //     data: {
+      //       labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      //       datasets: [
+      //         {
+      //           type: 'line',
+      //           fill: false,
+      //           data: [100, 230, 130, 140, 270, 140],
+      //           borderColor: '#ff4c5b'
+      //         },
+      //         {
+      //           label: 'Offline Sales',
+      //           data: [100, 230, 340, 340, 260, 340],
+      //           backgroundColor: '#6640b2'
+      //         },
+      //         {
+      //           label: 'Online Sales',
+      //           data: [130, 190, 250, 250, 190, 260],
+      //           backgroundColor: '#1cbccd'
+      //         }
+      //       ]
+      //     },
+      //     options: {
+      //       responsive: true,
+      //       maintainAspectRatio: true,
+      //       layout: {
+      //         padding: {
+      //           left: 0,
+      //           right: 0,
+      //           top: 20,
+      //           bottom: 0
+      //         }
+      //       },
+      //       scales: {
+      //         yAxes: [{
+      //           display: true,
+      //           gridLines: {
+      //             display: true,
+      //             drawBorder: false,
+      //             color: "#f8f8f8",
+      //             zeroLineColor: "#f8f8f8"
+      //           },
+      //           ticks: {
+      //             display: true,
+      //             min: 0,
+      //             max: 400,
+      //             stepSize: 100,
+      //             fontColor: "#b1b0b0",
+      //             fontSize: 10,
+      //             padding: 10
+      //           }
+      //         }],
+      //         xAxes: [{
+      //           stacked: false,
+      //           ticks: {
+      //             beginAtZero: true,
+      //             fontColor: "#b1b0b0",
+      //             fontSize: 10
+      //           },
+      //           gridLines: {
+      //             color: "rgba(0, 0, 0, 0)",
+      //             display: false
+      //           },
+      //           barPercentage: .9,
+      //           categoryPercentage: .7,
+      //         }]
+      //       },
+      //       legend: {
+      //         display: false
+      //       },
+      //       elements: {
+      //         point: {
+      //           radius: 3,
+      //           backgroundColor: '#ff4c5b'
+      //         }
+      //       }
+      //     },
+      //   });
+      // }
   
       if ($("#balance-chart").length) {
         var areaData = {
