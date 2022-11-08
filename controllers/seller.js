@@ -320,6 +320,11 @@ exports.getDashboardData = (req, res, next) => {
 
                 // find cod
                 return Orders.aggregate([{
+                        $match: {
+                            sellerId: req.session.sellerId
+                        }
+                    },
+                    {
                         $unwind: "$orders"
                     },
                     {
@@ -351,6 +356,10 @@ exports.getDashboardData = (req, res, next) => {
 
                 // find all orders
                 return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
                     $unwind: "$orders"
                 }, {
                     $group: {
@@ -375,6 +384,10 @@ exports.getDashboardData = (req, res, next) => {
 
                 // find income and expences here
                 return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
                     $unwind: "$orders"
                 }, {
                     $match: {
@@ -408,6 +421,10 @@ exports.getDashboardData = (req, res, next) => {
 
                 // find cancelled orders
                 return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
                     $unwind: "$orders"
                 }, {
                     $match: {
@@ -447,6 +464,10 @@ exports.getDashboardData = (req, res, next) => {
             .then(date50 => {
                 date44 = date50;
                 return Orders.aggregate([{
+                    $match: {
+                        sellerId: req.session.sellerId
+                    }
+                }, {
                     $unwind: "$orders"
                 }, {
                     $group: {
