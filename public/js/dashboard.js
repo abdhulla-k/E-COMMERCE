@@ -7,6 +7,78 @@
         success: data => {
           console.log(data)
 
+          // orders and cancelled orders chart
+          if ($("#activity-chart").length) {
+            var activityChartCanvas = $("#activity-chart").get(0).getContext("2d");
+            var activityChart = new Chart(activityChartCanvas, {
+              type: 'bar',
+              data: {
+                labels: data.date50,
+                datasets: [{
+                    label: 'Cancelled Order',
+                    data: data.cancelleOrder,
+                    backgroundColor: '#ffbf36'
+                  },
+                  {
+                    label: 'Non Cancelled orders',
+                    data: data.orders,
+                    backgroundColor: '#6640b2'
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: {
+                  padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                  }
+                },
+                scales: {
+                  yAxes: [{
+                    display: false,
+                    gridLines: {
+                      display: false,
+                      drawBorder: false
+                    },
+                    ticks: {
+                      display: false,
+                      min: 0,
+                      max: 15,
+                      stepSize: 3,
+                      fontColor: "#fff"
+                    }
+                  }],
+                  xAxes: [{
+                    display: false,
+                    stacked: true,
+                    ticks: {
+                      beginAtZero: true,
+                      fontColor: "#fff"
+                    },
+                    gridLines: {
+                      color: "rgba(0, 0, 0, 0)",
+                      display: false
+                    },
+                    barPercentage: .8,
+                    categoryPercentage: .9,
+                  }]
+                },
+                legend: {
+                  display: false
+                },
+                elements: {
+                  point: {
+                    radius: 0
+                  }
+                }
+              }
+            });
+          }
+
           // income and expences chart
           if ($("#regional-chart").length) {
             var regionalChartCanvas = $("#regional-chart").get(0).getContext("2d");
@@ -531,76 +603,76 @@
       //   document.querySelector('#regional-chart-legend').innerHTML = regionalChart.generateLegend();
       // }
   
-      if ($("#activity-chart").length) {
-        var activityChartCanvas = $("#activity-chart").get(0).getContext("2d");
-        var activityChart = new Chart(activityChartCanvas, {
-          type: 'bar',
-          data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
-            datasets: [{
-                label: 'Profit',
-                data: [320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300, 320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300, 320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300, 320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300],
-                backgroundColor: '#ffbf36'
-              },
-              {
-                label: 'Target',
-                data: [540, 500, 600, 540, 535, 470, 490, 510, 540, 535, 500, 540, 500, 450, 570, 535, 470, 490, 510, 540, 535, 500, 540, 500, 470, 500, 535, 470, 490, 510, 540, 535, 500, 540, 500, 490, 590, 505, 470, 490, 510, 540, 535, 500],
-                backgroundColor: '#6640b2'
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            layout: {
-              padding: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-              }
-            },
-            scales: {
-              yAxes: [{
-                display: false,
-                gridLines: {
-                  display: false,
-                  drawBorder: false
-                },
-                ticks: {
-                  display: false,
-                  min: 0,
-                  max: 600,
-                  stepSize: 100,
-                  fontColor: "#fff"
-                }
-              }],
-              xAxes: [{
-                display: false,
-                stacked: true,
-                ticks: {
-                  beginAtZero: true,
-                  fontColor: "#fff"
-                },
-                gridLines: {
-                  color: "rgba(0, 0, 0, 0)",
-                  display: false
-                },
-                barPercentage: .8,
-                categoryPercentage: .9,
-              }]
-            },
-            legend: {
-              display: false
-            },
-            elements: {
-              point: {
-                radius: 0
-              }
-            }
-          }
-        });
-      }
+      // if ($("#activity-chart").length) {
+      //   var activityChartCanvas = $("#activity-chart").get(0).getContext("2d");
+      //   var activityChart = new Chart(activityChartCanvas, {
+      //     type: 'bar',
+      //     data: {
+      //       labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+      //       datasets: [{
+      //           label: 'Profit',
+      //           data: [320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300, 320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300, 320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300, 320, 300, 340, 320, 315, 270, 290, 310, 340, 335, 300],
+      //           backgroundColor: '#ffbf36'
+      //         },
+      //         {
+      //           label: 'Target',
+      //           data: [540, 500, 600, 540, 535, 470, 490, 510, 540, 535, 500, 540, 500, 450, 570, 535, 470, 490, 510, 540, 535, 500, 540, 500, 470, 500, 535, 470, 490, 510, 540, 535, 500, 540, 500, 490, 590, 505, 470, 490, 510, 540, 535, 500],
+      //           backgroundColor: '#6640b2'
+      //         }
+      //       ]
+      //     },
+      //     options: {
+      //       responsive: true,
+      //       maintainAspectRatio: true,
+      //       layout: {
+      //         padding: {
+      //           left: 0,
+      //           right: 0,
+      //           top: 0,
+      //           bottom: 0
+      //         }
+      //       },
+      //       scales: {
+      //         yAxes: [{
+      //           display: false,
+      //           gridLines: {
+      //             display: false,
+      //             drawBorder: false
+      //           },
+      //           ticks: {
+      //             display: false,
+      //             min: 0,
+      //             max: 600,
+      //             stepSize: 100,
+      //             fontColor: "#fff"
+      //           }
+      //         }],
+      //         xAxes: [{
+      //           display: false,
+      //           stacked: true,
+      //           ticks: {
+      //             beginAtZero: true,
+      //             fontColor: "#fff"
+      //           },
+      //           gridLines: {
+      //             color: "rgba(0, 0, 0, 0)",
+      //             display: false
+      //           },
+      //           barPercentage: .8,
+      //           categoryPercentage: .9,
+      //         }]
+      //       },
+      //       legend: {
+      //         display: false
+      //       },
+      //       elements: {
+      //         point: {
+      //           radius: 0
+      //         }
+      //       }
+      //     }
+      //   });
+      // }
   
       if ($("#status-chart").length) {
         var areaData = {
