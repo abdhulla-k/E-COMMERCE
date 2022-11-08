@@ -20,11 +20,106 @@ exports.getLogin = (req, res, next) => {
             categories = data;
             if (req.session.sellerLoggedIn) {
                 req.session.imageNames = [];
-                res.render("seller/seller-dashboard", {
-                    user: req.session.sellerLoggedIn ? "true" : "",
-                    userType: "seller",
-                    categories: categories
-                });
+                let categoryData;
+                Orders.aggregate([{
+                        $match: {
+                            sellerId: req.session.sellerId
+                        }
+                    }, {
+                        $unwind: "$orders"
+                    }, {
+                        $lookup: {
+                            from: "products",
+                            localField: "orders.productId",
+                            foreignField: "_id",
+                            as: "product"
+                        }
+                    }, {
+                        $unwind: "$product"
+                    }, {
+                        $lookup: {
+                            from: "categories",
+                            localField: "product.category",
+                            foreignField: "_id",
+                            as: "category"
+                        }
+                    }, {
+                        $unwind: "$category"
+                    }, {
+                        $group: {
+                            _id: '$category.categoryName',
+                            count: {
+                                $sum: 1
+                            }
+                        }
+                    }, {
+                        $sort: {
+                            count: 1
+                        }
+                    }])
+                    .then(data => {
+                        // save data
+                        categoryData = data;
+
+                        return Orders.aggregate([{
+                            $unwind: "$orders"
+                        }, {
+                            $lookup: {
+                                from: "products",
+                                localField: "orders.productId",
+                                foreignField: "_id",
+                                as: "product"
+                            }
+                        }, {
+                            $unwind: "$product"
+                        }, {
+                            $lookup: {
+                                from: "categories",
+                                localField: "product.category",
+                                foreignField: "_id",
+                                as: "category"
+                            }
+                        }, {
+                            $unwind: "$category"
+                        }, {
+                            $group: {
+                                _id: '$category.categoryName',
+                                count: {
+                                    $sum: 1
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id: null,
+                                sumOfCount: {
+                                    $sum: "$count"
+                                }
+                            }
+                        }])
+                    })
+                    .then(sum => {
+                        // console.log(categoryData);
+                        // console.log(sum);
+                        req.session.imageNames = [];
+                        res.render("seller/seller-dashboard", {
+                            user: "ture",
+                            userType: "seller",
+                            categories: categories,
+                            categorySales: categoryData,
+                            onePercentage: sum[0].sumOfCount / 100
+                        });
+                    })
+                    .catch(err => {
+                        req.session.imageNames = [];
+                        res.render("seller/seller-dashboard", {
+                            user: "true",
+                            userType: "seller",
+                            categories: categories,
+                            categorySales: [],
+                            sum: 0
+                        });
+                    })
+
             } else {
                 res.render("seller/seller-login", {
                     user: "",
@@ -168,92 +263,118 @@ exports.postSignup = (req, res, next) => {
     })
 }
 
+// To share data to admin dashboard
 exports.getDashboardData = (req, res, next) => {
-    console.log("Hooooooooooooi! i reched")
     if (req.session.sellerLoggedIn) {
-        let allOrders = 0;
-        let cancelleOrder = 0;
-        let date = [];
-        let income = [];
-        let expences = [];
-        let profit = [];
-        let profitDate = [];
-        let todayDate = new Date()
-        let year = todayDate.getFullYear()
-        let month = todayDate.getMonth()
-        let dateOnly = todayDate.getDate();
+        let counter = 0;
+        let date7days = [];
+        let date44 = [];
+        let onlinPayment = [0, 0, 0, 0, 0, 0, 0];
+        let cod = [0, 0, 0, 0, 0, 0, 0];
+        let orderAll = new Array(44).fill(0);
+        let notCancelledOrder = new Array(44).fill(0);
+        let cancelleOrder = new Array(44).fill(0);
+        let income = [0, 0, 0, 0, 0, 0, 0];
+        let expences = [0, 0, 0, 0, 0, 0, 0];
+        let profit = new Array(8).fill(0);
+        // function to find the last 7 days date
+        async function Last7Days(a) {
+            const past7Days = await [...Array(a).keys()].map(index => {
+                const date = new Date();
+                date.setDate(date.getDate() - index);
+                currentVal = date.getFullYear() + ' - ' + date.getMonth() + ' - ' + date.getDate();
 
+                return currentVal;
+            });
+            return past7Days
+        }
+
+        // find the online payment data
         Orders.aggregate([{
-                $match: {
-                    sellerId: req.session.sellerId
-                }
-            }, {
-                $match: {
-                    sellerId: req.session.sellerId
-                }
-            }, {
-                $unwind: "$orders"
-            }, {
-                $group: {
-                    _id: '$orders.date',
-                    count: {
-                        $sum: 1
-                    }
-                }
-            }, {
-                $project: {
-                    count: 1,
-                    _id: 0
-                }
-            }, {
-                $limit: 7
-            }])
-            .then(data => {
-                data.forEach(a => {
-                    allOrders += a.count;
-                })
-                return Orders.aggregate([{
-                    $match: {
-                        sellerId: req.session.sellerId
-                    }
-                }, {
                     $unwind: "$orders"
-                }, {
+                },
+                {
                     $match: {
-                        "orders.orderStatus": "cancelled"
+                        "orders.paymentMethod": "googlePay"
                     }
-                }, {
+                },
+                {
                     $group: {
                         _id: '$orders.date',
+                        onlinePayment: {
+                            $sum: 1
+                        }
+                    }
+                },
+                {
+                    $limit: 7
+                }
+            ])
+            .then(online => {
+                // got online payment result here
+                counter = 0;
+                online.forEach(a => {
+                    onlinPayment[counter] = a.onlinePayment;
+                    counter++;
+                })
+
+                // find cod
+                return Orders.aggregate([{
+                        $unwind: "$orders"
+                    },
+                    {
+                        $match: {
+                            "orders.paymentMethod": 'cashOnDelivery'
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: '$orders.date',
+                            cod: {
+                                $sum: 1
+                            },
+                        }
+                    },
+                    {
+                        $limit: 7
+                    }
+                ])
+
+            })
+            .then(result => {
+                // got cod result here
+                counter = 0;
+                result.forEach(a => {
+                    cod[counter] = a.cod;
+                    counter++;
+                })
+
+                // find all orders
+                return Orders.aggregate([{
+                    $unwind: "$orders"
+                }, {
+                    $group: {
+                        _id: "$orders.date",
                         count: {
                             $sum: 1
                         }
                     }
                 }, {
-                    $project: {
-                        count: 1,
-                        _id: 0
-                    }
-                }, {
-                    $limit: 7
+                    $limit: 44
                 }])
             })
-            .then(cancelledOrders => {
-                let index = 0;
-                cancelledOrders.forEach(a => {
-                    // calculate the existing orders
-                    cancelleOrder += a.count;
+            .then(orders => {
 
-                    // calculate last 5 days date
-                    date.push(`${dateOnly - index}-${month}-${year}`);
-                    index++;
+                // get all order details here. count
+                let counter = 0;
+                orders.forEach(a => {
+                    // save the order count
+                    notCancelledOrder[counter] = a.count;
+                    counter++;
                 })
 
+                // find income and expences here
                 return Orders.aggregate([{
-                    $match: {
-                        sellerId: req.session.sellerId
-                    }
-                }, {
                     $unwind: "$orders"
                 }, {
                     $match: {
@@ -272,30 +393,31 @@ exports.getDashboardData = (req, res, next) => {
                         _id: 0
                     }
                 }, {
-                    $limit: 4
+                    $limit: 7
                 }])
             })
             .then(incomeExpence => {
+                // get income and expences details here
+                counter = 0;
                 incomeExpence.forEach(money => {
-                    income.push(money.sum);
-                    expences.push(money.sum - ((money.sum / 100) * 60))
+                    income[counter] = money.sum;
+                    expences[counter] = money.sum - ((money.sum / 100) * 10);
+                    profit[counter] = (money.sum / 100) * 10;
+                    counter++;
                 })
 
+                // find cancelled orders
                 return Orders.aggregate([{
-                    $match: {
-                        sellerId: req.session.sellerId
-                    }
-                }, {
                     $unwind: "$orders"
                 }, {
                     $match: {
-                        "orders.orderStatus": "placed"
+                        "orders.orderStatus": "cancelled"
                     }
                 }, {
                     $group: {
                         _id: '$orders.date',
                         sum: {
-                            $sum: "$orders.price"
+                            $sum: 1
                         }
                     }
                 }, {
@@ -308,32 +430,56 @@ exports.getDashboardData = (req, res, next) => {
                 }])
 
             })
-            .then(profitData => {
-                index = 0;
-                profitData.forEach(prfi => {
-                    profit.push((prfi.sum / 100) * 40);
-
-                    profitDate.push(`${dateOnly - index}-${month}-${year}`);
-                    index++;
+            .then(cancelledOrders => {
+                // cancelled orders data here
+                counter = 0;
+                cancelledOrders.forEach(cancel => {
+                    cancelleOrder[counter] = cancel.sum;
+                    notCancelledOrder[counter] -= cancel.sum;
+                    counter++;
                 })
-
-                // reverse all data arrays
-                date.reverse();
-                income.reverse();
-                expences.reverse();
-                profitDate.reverse();
-                profit.reverse();
-
-                // give response
-                res.json({
-                    cancelleOrder: cancelleOrder,
-                    orders: allOrders - cancelleOrder,
-                    date: date,
-                    income: income,
-                    expences: expences,
-                    profit: profit,
-                    profitDate: profitDate
-                });
+                return Last7Days(7)
+            })
+            .then(date => {
+                date7days = date
+                return Last7Days(44)
+            })
+            .then(date50 => {
+                date44 = date50;
+                return Orders.aggregate([{
+                    $unwind: "$orders"
+                }, {
+                    $group: {
+                        _id: "$orders.date",
+                        count: {
+                            $sum: "$orders.price"
+                        }
+                    }
+                }, {
+                    $limit: 44
+                }])
+            })
+            .then(ordersAl => {
+                let flag = false;
+                counter = 0;
+                ordersAl.forEach(cancel => {
+                    orderAll[counter] = cancel.count;
+                    counter++;
+                    if (counter === ordersAl.length) {
+                        res.json({
+                            date50: date44,
+                            date: date7days,
+                            onlinePayment: onlinPayment,
+                            cod: cod,
+                            cancelleOrder: cancelleOrder,
+                            orders: notCancelledOrder,
+                            income: income,
+                            expences: expences,
+                            profit: profit,
+                            orderAll: orderAll
+                        });
+                    }
+                })
             })
     }
 }
@@ -645,53 +791,53 @@ exports.showOrders = (req, res, next) => {
 }
 
 exports.orderDetails = (req, res, next) => {
-    if(req.session.sellerLoggedIn) {
+    if (req.session.sellerLoggedIn) {
         let productId = req.query.productId;
-    let orderId = req.params.orderId;
-    let orderDetails;
-    Orders.aggregate([{
-            $match: {
-                sellerId: req.session.sellerId
-            }
-        }, {
-            $unwind: "$orders"
-        }, {
-            $match: {
-                "orders._id": mongoose.Types.ObjectId(orderId)
-            }
-        }])
-        .then(data => {
-            orderDetails = data;
-            return Product.findById(productId);
-        })
-        .then(productDetails => {
-            if(productDetails) {
+        let orderId = req.params.orderId;
+        let orderDetails;
+        Orders.aggregate([{
+                $match: {
+                    sellerId: req.session.sellerId
+                }
+            }, {
+                $unwind: "$orders"
+            }, {
+                $match: {
+                    "orders._id": mongoose.Types.ObjectId(orderId)
+                }
+            }])
+            .then(data => {
+                orderDetails = data;
+                return Product.findById(productId);
+            })
+            .then(productDetails => {
+                if (productDetails) {
+                    res.render("seller/order-detaisl", {
+                        orderDetails: orderDetails,
+                        product: productDetails,
+                        errorMessage: "",
+                        user: "true",
+                        userType: "seller"
+                    });
+                } else {
+                    res.render("seller/order-detaisl", {
+                        orderDetails: orderDetails,
+                        product: [],
+                        errorMessage: "something went wront!",
+                        user: "true",
+                        userType: "seller"
+                    });
+                }
+            })
+            .catch(err => {
                 res.render("seller/order-detaisl", {
-                    orderDetails: orderDetails,
-                    product: productDetails,
-                    errorMessage: "",
+                    orderDetails: [],
+                    product: {},
+                    errorMessage: "something went wrong!",
                     user: "true",
                     userType: "seller"
                 });
-            } else {
-                res.render("seller/order-detaisl", {
-                    orderDetails: orderDetails,
-                    product: [],
-                    errorMessage: "something went wront!",
-                    user: "true",
-                    userType: "seller"
-                });
-            }
-        })
-        .catch(err => {
-            res.render("seller/order-detaisl", {
-                orderDetails: [],
-                product: {},
-                errorMessage: "something went wrong!",
-                user: "true",
-                userType: "seller"
-            });
-        })
+            })
     } else {
         res.redirect("/seller/");
     }
