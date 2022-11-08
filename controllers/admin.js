@@ -192,8 +192,8 @@ exports.getData = (req, res, next) => {
         let cancelleOrder = [];
         let line = [];
         let date = [];
-        let income = [];
-        let expences = [];
+        let income = [0, 0, 0, 0, 0, 0, 0];
+        let expences = [0, 0, 0, 0, 0, 0, 0];
         let profit = [];
         let profitDate = [];
         let todayDate = new Date()
@@ -326,13 +326,15 @@ exports.getData = (req, res, next) => {
                         _id: 0
                     }
                 }, {
-                    $limit: 4
+                    $limit: 7
                 }])
             })
             .then(incomeExpence => {
+                counter = 0;
                 incomeExpence.forEach(money => {
-                    income.push(money.sum);
-                    expences.push(money.sum - ((money.sum / 100) * 10))
+                    income[counter] = money.sum;
+                    expences[counter] = money.sum - ((money.sum / 100) * 10);
+                    counter++;
                 })
 
                 return Order.aggregate([{
@@ -368,22 +370,12 @@ exports.getData = (req, res, next) => {
                 })
                 // get the last 7 days date
                 return Last7Days()
-
-                // reverse all data arrays
-                // allOrders.reverse();
-                // cancelleOrder.reverse();
-                // date.reverse();
-                // line.reverse();
-                // income.reverse();
-                // expences.reverse();
-                // profitDate.reverse();
-                // profit.reverse();
-
-                // give response
             })
             .then(date => {
-                console.log("date")
-                console.log(date)
+                // console.log("-----------------------income------------------")
+                // console.log(income)
+                // console.log("-----------------------expence------------------")
+                // console.log(expences)
                 res.json({
                     date: date,
                     onlinePayment: onlinPayment,
