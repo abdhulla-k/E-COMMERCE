@@ -26,7 +26,7 @@
                                             <div class="p-3" style="max-width: 700px;">
                                                 <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown"><%= banner.title %></h1>
                                                 <p class="mx-md-5 px-5 animate__animated animate__bounceIn"><%= banner.description %></p>
-                                                <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                                <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="/showProducts">Shop Now</a>
                                             </div>
                                         </div>
                                     </div>
@@ -117,34 +117,39 @@
     <!-- Categories Start -->
     <div class="container-fluid pt-5">
         <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Categories</span></h2>
-        <div class="row px-xl-5 pb-3">
+        <div class="row px-xl-5 pb-3" id="category-click">
             <% categories.forEach(category => { %>
-                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                        <div class="cat-item d-flex align-items-center mb-4">
-                            <form 
-                                action="/filterProducts" 
-                                method="post">
-                                <input 
-                                    type="hidden" 
-                                    name="<%= category.categoryName %>" 
-                                    value="<%= category.id %>"
-                                >
-                                
-                                <button 
-                                    class="btn nav-item nav-link" 
-                                    type="submit">
+                <a href="/showProducts"></a>
+                    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                        
+                            <div class="cat-item d-flex align-items-center mb-4">
+                                <form 
+                                    action="/filterProducts" 
+                                    method="post">
+                                    <input 
+                                        type="hidden" 
+                                        name="<%= category.categoryName %>" 
+                                        value="<%= category.id %>"
+                                    >
+                                    
+                                    <a href="/showProducts" style="text-decoration: none;">
+                                        <button 
+                                        class="btn nav-item nav-link" 
+                                        type="submit">
+                                        <h6><%= category.categoryName %></h6>
+                                    </button>
+                                    </a>
+                                </form>
+                                <div class="flex-fill pl-3" class="overflow-hidden" style="width: 100px; height: 100px;">
+                                    <img class="img-fluid" src="img/cat-1.jpg" alt="">
+                                </div>
+                                <!-- <div >
                                     <h6><%= category.categoryName %></h6>
-                                </button>
-                            </form>
-                            <div class="flex-fill pl-3" class="overflow-hidden" style="width: 100px; height: 100px;">
-                                <img class="img-fluid" src="img/cat-1.jpg" alt="">
+                                    <small class="text-body">100 Products</small>
+                                </div> -->
                             </div>
-                            <!-- <div >
-                                <h6><%= category.categoryName %></h6>
-                                <small class="text-body">100 Products</small>
-                            </div> -->
                         </div>
-                </div>
+                    </a>
             <% }) %>
         </div>
     </div>
@@ -152,6 +157,12 @@
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+    <script>
+        const categoryClick = document.getElementById('category-click');
+        categoryClick.addEventListener('click', () => {
+            document.location.href = '/showProducts';
+        })
+    </script>
     <%- include( "../includes/footer.ejs" ) %>
     
 <%- include( "../includes/end.ejs" )%>
