@@ -5,7 +5,7 @@ const {
     buildPathPdf
 } = require('../util/build-path');
 
-
+console.log
 const Category = require("../models/product_category");
 const User = require("../models/user");
 const Product = require("../models/product");
@@ -159,7 +159,6 @@ exports.postLogin = (req, res, next) => {
                         if (err) {
                             throw err
                         } else if (!isMatch) {
-                            console.log("password does not match");
                             loginErrorMessage = "wrong email or password";
                             res.redirect("/admin/");
                         } else {
@@ -170,7 +169,6 @@ exports.postLogin = (req, res, next) => {
                     }
                 )
             } else {
-                console.log("seller not exist");
                 loginErrorMessage = "admin not exist with this cridentials!";
                 res.redirect("/admin/");
             }
@@ -361,10 +359,6 @@ exports.getData = (req, res, next) => {
                 return Last7Days(7)
             })
             .then(date => {
-                // console.log("-----------------------income------------------")
-                // console.log(income)
-                // console.log("-----------------------expence------------------")
-                // console.log(expences)
                 date7days = date
                 return Last7Days(44)
             })
@@ -547,7 +541,6 @@ exports.getReport = (req, res, nect) => {
                 //         }
             })
             .then(aggriVal => {
-                console.log("===============user orders=================")
             })
     } else {
         res.redirect("/admin/");
@@ -590,7 +583,6 @@ exports.showUserDetails = (req, res, next) => {
         const userId = req.params.userId;
         User.findById(userId, (err, data) => {
             if (err) {
-                console.log(err);
                 res.redirect('/');
             } else {
                 res.render("admin/user-details", {

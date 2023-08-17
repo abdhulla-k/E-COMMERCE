@@ -75,7 +75,7 @@ app.use(function(req, res, next) {
   });
 
 // connect with mongodb and make app listenable from browser
-mongoose.connect( `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}.fojetus.mongodb.net/?retryWrites=true&w=majority` ).then( data => {
+mongoose.connect(process.env.MONGODB_URL ? process.env.MONGODB_URL : '').then( data => {
     app.listen( process.env.PORT || 3000 );
 }).catch( err => {
     console.log( err );

@@ -290,7 +290,6 @@
             let zip = document.getElementById("zip").value;
 
             let discount = document.getElementById("discount-price").innerText;
-            console.log(discount);
 
             let paymentMethod;
             let flag;
@@ -386,7 +385,7 @@
 
         function raszorpayPayment(order) {
             var options = {
-                "key": "rzp_test_dVMkRm1acV7F3j", // Enter the Key ID generated from the Dashboard
+                "key": "rzp_test_UH4ZzIgoWEm5gO", // Enter the Key ID generated from the Dashboard
                 "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                 "currency": "INR",
                 "name": "Big Cart",

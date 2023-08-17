@@ -21,7 +21,7 @@ const easyinvoice = require('easyinvoice');
 const accountSid = process.env.ACCOUNT_SID;
 // const authToken = tiloPersonalData.authToken;
 const authToken = process.env.AUTH_TOCKEN;
-const client = require('twilio')(accountSid, authToken);
+// const client = require('twilio')(accountSid, authToken);
 
 // signup data
 let userData = {
@@ -111,9 +111,9 @@ exports.getLogin = (req, res, next) => {
             loginErrorMessage = "";
         } else {
             CategoriesGet.then(data => {
-                    categories = data
-                    res.redirect('/user/login');
-                })
+                categories = data
+                res.redirect('/user/login');
+            })
                 .catch(err => {
                     console.log(err);
                     res.redirect('user/login');
@@ -189,26 +189,26 @@ exports.getSignup = (req, res, next) => {
             }
         } else {
             CategoriesGet.then(categories => {
-                    categories = categories;
-                    res.render("user/user-signup", {
-                        user: "",
-                        errorMessage: signupErrorMessage,
-                        categories: categories,
-                        userType: 'user',
-                        signupData: {
-                            name: userData.name ? userData.name : '',
-                            email: userData.email ? userData.email : '',
-                            phoneNumber: userData.phoneNumber ? userData.phoneNumber : ''
-                        }
-                    });
-                    signupErrorMessage = "";
-                    // get rid the previous data
-                    userData = {
-                        name: "",
-                        email: "",
-                        phoneNumber: "",
+                categories = categories;
+                res.render("user/user-signup", {
+                    user: "",
+                    errorMessage: signupErrorMessage,
+                    categories: categories,
+                    userType: 'user',
+                    signupData: {
+                        name: userData.name ? userData.name : '',
+                        email: userData.email ? userData.email : '',
+                        phoneNumber: userData.phoneNumber ? userData.phoneNumber : ''
                     }
-                })
+                });
+                signupErrorMessage = "";
+                // get rid the previous data
+                userData = {
+                    name: "",
+                    email: "",
+                    phoneNumber: "",
+                }
+            })
                 .catch(err => {
                     console.log(err);
                     res.redirect("/user/signup");
@@ -268,28 +268,38 @@ exports.postSignup = (req, res, next) => {
                                         password: hash,
                                         userType: signupData.userType
                                     })
-                                    // send created otp
-                                    client.verify.v2.services(process.env.VERIFY_TOCKEN)
-                                        .verifications
-                                        .create({
-                                            to: `+91${user.phoneNumber}`,
-                                            channel: 'sms'
-                                        })
-                                        .then(verification => {
-                                            console.log(verification.status)
-
-                                            // destroy the othp after 30 seconds
-                                            setTimeout(() => {
-                                                waitingOtp = "";
-                                                otpTimeError = "Time is over! try again!"
-                                            }, 30000);
-                                            // show the page to enter otp
-                                            res.redirect("/user/otp")
+                                    user.save()
+                                        .then(result => {
+                                            user = "";
+                                            res.redirect("/user/login");
                                         })
                                         .catch(err => {
                                             console.log(err);
-                                            otpErrormessage = "make sure the phone number is correct";
+                                            signupErrorMessage = "we are very sory! trouble in creating user! try after sometime or contact us"
+                                            res.redirect("/user/signup");
                                         })
+                                    // send created otp
+                                    // client.verify.v2.services(process.env.VERIFY_TOCKEN)
+                                    //     .verifications
+                                    //     .create({
+                                    //         to: `+91${user.phoneNumber}`,
+                                    //         channel: 'sms'
+                                    //     })
+                                    //     .then(verification => {
+                                    //         console.log(verification.status)
+
+                                    //         // destroy the othp after 30 seconds
+                                    //         setTimeout(() => {
+                                    //             waitingOtp = "";
+                                    //             otpTimeError = "Time is over! try again!"
+                                    //         }, 30000);
+                                    //         // show the page to enter otp
+                                    //         res.redirect("/user/otp")
+                                    //     })
+                                    //     .catch(err => {
+                                    //         console.log(err);
+                                    //         otpErrormessage = "make sure the phone number is correct";
+                                    //     })
                                 }
                             })
                         }
@@ -396,19 +406,19 @@ exports.showWishlist = (req, res, next) => {
         try {
             // get user watchlist
             Wishlist.aggregate([{
-                    $unwind: "$products"
-                }, {
-                    $match: {
-                        _id: mongoose.Types.ObjectId(req.session.userId)
-                    }
-                }, {
-                    $lookup: {
-                        from: "products",
-                        localField: "products",
-                        foreignField: "_id",
-                        as: "product_details"
-                    }
-                }])
+                $unwind: "$products"
+            }, {
+                $match: {
+                    _id: mongoose.Types.ObjectId(req.session.userId)
+                }
+            }, {
+                $lookup: {
+                    from: "products",
+                    localField: "products",
+                    foreignField: "_id",
+                    as: "product_details"
+                }
+            }])
                 .then(data => {
                     if (data) {
                         res.render("user/wishlist", {
@@ -440,12 +450,12 @@ exports.addToWishList = (req, res, next) => {
         try {
             // save to wishlist
             Wishlist.findByIdAndUpdate(req.session.userId, {
-                    $push: {
-                        'products': mongoose.Types.ObjectId(req.params.productId)
-                    }
-                }, {
-                    upsert: true
-                })
+                $push: {
+                    'products': mongoose.Types.ObjectId(req.params.productId)
+                }
+            }, {
+                upsert: true
+            })
                 .catch(err => {
                 })
         } catch {
@@ -462,12 +472,12 @@ exports.removeFromWishlist = (req, res, next) => {
             // remove from whatch list
             const productId = req.params.prodId;
             Wishlist.updateOne({
-                    _id: mongoose.Types.ObjectId(req.session.userId)
-                }, {
-                    $pullAll: {
-                        products: [mongoose.Types.ObjectId(productId)]
-                    }
-                })
+                _id: mongoose.Types.ObjectId(req.session.userId)
+            }, {
+                $pullAll: {
+                    products: [mongoose.Types.ObjectId(productId)]
+                }
+            })
                 .then(data => {
                 })
                 .catch(err => {
@@ -992,22 +1002,22 @@ exports.applyCoupon = (req, res, next) => {
         if (!err) {
             if (data.length > 0) {
                 User.aggregate([{
-                        '$match': {
-                            '_id': new mongoose.Types.ObjectId(req.session.userId)
-                        }
-                    }, {
-                        '$project': {
-                            'couponsAppied': 1
-                        }
-                    }, {
-                        '$unwind': {
-                            'path': '$couponsAppied'
-                        }
-                    }, {
-                        '$match': {
-                            "couponsAppied.coupon": coupon
-                        }
-                    }])
+                    '$match': {
+                        '_id': new mongoose.Types.ObjectId(req.session.userId)
+                    }
+                }, {
+                    '$project': {
+                        'couponsAppied': 1
+                    }
+                }, {
+                    '$unwind': {
+                        'path': '$couponsAppied'
+                    }
+                }, {
+                    '$match': {
+                        "couponsAppied.coupon": coupon
+                    }
+                }])
                     .then(result => {
                         if (result.length > 0) {
                             console.log(result);
@@ -1098,6 +1108,7 @@ exports.getCheckout = (req, res, next) => {
 }
 
 exports.placeOrder = (req, res, next) => {
+    console.log('hi');
     if (req.session.userLoggedIn) {
         let paymentMethod = req.body.paymentMethod;
         let currentDate = new Date().toJSON().slice(0, 10);
@@ -1109,12 +1120,16 @@ exports.placeOrder = (req, res, next) => {
         let orderId;
 
         function generateRazorPay(id, totalPrice) {
+            console.log('razore promise')
             return new Promise((resolve, reject) => {
                 var options = {
                     amount: parseInt(totalPrice) * 100, // amount in the smallest currency unit
                     currency: "INR",
                     receipt: id
                 };
+                console.log(options);
+                console.log(options);
+                console.log(instance);
                 instance.orders.create(options, function (err, order) {
                     if (err) {
                         console.log(err)
@@ -1128,13 +1143,13 @@ exports.placeOrder = (req, res, next) => {
         function saveCouponDetails() {
             if (req.session.coupon) {
                 User.findByIdAndUpdate(req.session.userId, {
-                        $push: {
-                            couponsAppied: {
-                                year: currentDate,
-                                coupon: req.session.coupon
-                            }
+                    $push: {
+                        couponsAppied: {
+                            year: currentDate,
+                            coupon: req.session.coupon
                         }
-                    })
+                    }
+                })
                     .then(data => {
                         // console.log(data);
                     })
@@ -1145,6 +1160,7 @@ exports.placeOrder = (req, res, next) => {
         }
 
         if (req.body.addressId) {
+            console.log('address exists')
             User.findById(req.session.userId)
                 .then(user => {
                     address = user.address[req.body.addressId - 1]
@@ -1255,8 +1271,8 @@ exports.placeOrder = (req, res, next) => {
             })
 
             Cart.find({
-                    userId: req.session.userId
-                })
+                userId: req.session.userId
+            })
                 .then(cart => {
                     orders.push({
                         date: currentDate,
@@ -1368,9 +1384,9 @@ exports.myAccount = (req, res, next) => {
                 findUserData();
             } else {
                 CategoriesGet.then(categories => {
-                        categories = categories
-                        findUserData();
-                    })
+                    categories = categories
+                    findUserData();
+                })
                     .catch(err => {
                         console.log(err);
                         categories = [];
@@ -1398,14 +1414,14 @@ exports.addAddress = (req, res, next) => {
         }
         console.log(addressData);
         User.findByIdAndUpdate({
-                _id: mongoose.Types.ObjectId(req.session.userId)
-            }, {
-                $push: {
-                    address: {
-                        ...addressData
-                    }
+            _id: mongoose.Types.ObjectId(req.session.userId)
+        }, {
+            $push: {
+                address: {
+                    ...addressData
                 }
-            })
+            }
+        })
             .then(savedAddress => {
                 res.json("saved");
             })
@@ -1418,21 +1434,21 @@ exports.addAddress = (req, res, next) => {
 exports.myOrders = (req, res, next) => {
     if (req.session.userLoggedIn) {
         CategoriesGet.then(categories => {
-                categories = categories;
-                User.findById(req.session.userId)
-                    .then(userData => {
-                        res.render("user/my-orders", {
-                            user: "true",
-                            userType: "user",
-                            categories: categories,
-                            orders: userData.orders.reverse()
-                        })
+            categories = categories;
+            User.findById(req.session.userId)
+                .then(userData => {
+                    res.render("user/my-orders", {
+                        user: "true",
+                        userType: "user",
+                        categories: categories,
+                        orders: userData.orders.reverse()
                     })
-                    .catch(err => {
-                        console.log(err);
-                        res.redirect("/");
-                    })
-            })
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.redirect("/");
+                })
+        })
             .catch(err => {
                 console.log(err);
                 categories = [];
@@ -1458,10 +1474,10 @@ exports.orderDetails = (req, res, next) => {
                         })
 
                         Product.find({
-                                _id: {
-                                    $in: products
-                                }
-                            })
+                            _id: {
+                                $in: products
+                            }
+                        })
                             .then(data => {
                                 res.render("user/order-details", {
                                     user: "true",
@@ -1480,7 +1496,7 @@ exports.orderDetails = (req, res, next) => {
                                                 "quantity": k.quantity,
                                                 "description": i.title,
                                                 "price": i.price
-                                            }, )
+                                            },)
                                         }
                                     }
                                 }
@@ -1503,9 +1519,9 @@ exports.orderDetails = (req, res, next) => {
             orderDetails(req, res, next)
         } else {
             CategoriesGet.then(categories => {
-                    categories = categories
-                    orderDetails(req, res, next);
-                })
+                categories = categories
+                orderDetails(req, res, next);
+            })
                 .catch(err => {
                     console.log(err);
                     categories = [];
