@@ -8,7 +8,7 @@ let categories;
 exports.getShop = (req, res, next) => {
     let products = [];
     if (categories) {
-        Products.find({}).limit(10).then(data => {
+        Products.find({}).limit(4).then(data => {
                 products = data
                 return Banner.find({})
             })
