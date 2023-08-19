@@ -148,6 +148,12 @@
                                 <a href="/user/myAccount" class="nav-item nav-link">My Account</a>
                             <% } %>
 
+                            <% if(userType === 'seller') { %>
+                                <a href="/seller/logout" class="nav-item nav-link btn text-white px-0 ml-3">
+                                    Logout
+                                </a>
+                            <% } %>
+
                         <%} else { %>
 
                             <div class="nav-item dropdown">
@@ -169,9 +175,9 @@
                     <% if( user ) { %>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                             <% if(userType === 'seller') { %>
-                                <a href="/seller/logout" class="btn text-white px-0 ml-3">
+                                <!-- <a href="/seller/logout" class="btn text-white px-0 ml-3">
                                     Logout
-                                </a>
+                                </a> -->
                             <% } else { %>
                                 <a 
                                     href="/user/showWishlist" 
