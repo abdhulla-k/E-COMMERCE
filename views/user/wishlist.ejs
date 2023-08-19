@@ -65,7 +65,7 @@
                                             <!-- table colemn for images -->
                                             <td class="align-middle">
                                                 <img 
-                                                    src="/images/<%= product.product_details[0].images[0] %>" 
+                                                    src="/images/<%= product?.product_details[0]?.images[0] %>" 
                                                     alt="" 
                                                     style="width: 50px;"
                                                 >
@@ -74,13 +74,13 @@
     
                                             <!-- table colemn for product name -->
                                             <td class="align-middle">
-                                                <%= product.product_details[0].title %>
+                                                <%= product?.product_details[0]?.title %>
                                             </td>
                                             <!-- /table colemn for product name -->
     
                                             <!-- table colemn for product price -->
                                             <td class="align-middle">
-                                                <%= product.product_details[0].title %>
+                                                <%= product?.product_details[0]?.title %>
                                             </td>
                                             <!-- /table colemn for product price -->
     
@@ -94,6 +94,9 @@
                                                     <i class="fa fa-times"></i>
                                                 </a>
                                                 <a id="relodMyCart" href="/user/showWishlist" hidden>remove relode</a>
+                                                <a class="btn btn-sm btn-warning" id="relodMyCart" href="/detail/<%= product?.product_details[0]?._id %>">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
                                             </td>
                                             <!-- /table colemsn for delet product from cart button -->
                                         </tr>
