@@ -1407,7 +1407,7 @@ exports.myAccount = (req, res, next) => {
         }
 
         if (req.session.userLoggedIn) {
-            if (categories) {
+            if (categories.length) {
                 findUserData();
             } else {
                 CategoriesGet.then(categories => {
