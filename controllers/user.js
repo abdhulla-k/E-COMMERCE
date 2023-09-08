@@ -140,22 +140,30 @@ exports.postLogin = (req, res, next) => {
             req.session.userId = data[0].id
 
             // compare password if a user exist with the given email
-            bcrypt.compare(
-                loginData.password,
-                data[0].password,
-                (err, isMatch) => {
-                    if (err) {
-                        throw err
-                    } else if (!isMatch) {
-                        console.log("password does not match");
-                        loginErrorMessage = "wrong email or password";
-                        res.redirect("login");
-                    } else {
-                        req.session.userLoggedIn = true;
-                        res.redirect("/");
-                    }
-                }
-            )
+            // bcrypt.compare(
+            //     loginData.password,
+            //     data[0].password,
+            //     (err, isMatch) => {
+            //         if (err) {
+            //             throw err
+            //         } else if (!isMatch) {
+            //             console.log("password does not match");
+            //             loginErrorMessage = "wrong email or password";
+            //             res.redirect("login");
+            //         } else {
+            //             req.session.userLoggedIn = true;
+            //             res.redirect("/");
+            //         }
+            //     }
+            // )
+            if (loginData.password === data[0].password) {
+                req.session.userLoggedIn = true;
+                res.redirect("/");
+            } else {
+                console.log("password does not match");
+                loginErrorMessage = "wrong email or password";
+                res.redirect("login");
+            }
         } else {
             loginErrorMessage = "user not exist!";
             res.redirect("login");
