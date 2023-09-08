@@ -251,59 +251,78 @@ exports.postSignup = (req, res, next) => {
                 if (data.length === 0) {
 
                     // bcrypt the password
-                    bcrypt.genSalt(saltRound, (saltError, salt) => {
-                        if (saltError) {
-                            throw saltError
-                        } else {
-                            bcrypt.hash(signupData.password, salt, (hashError, hash) => {
-                                if (hashError) {
-                                    throw hashError
-                                } else {
+                    // bcrypt.genSalt(saltRound, (saltError, salt) => {
+                    //     if (saltError) {
+                    //         throw saltError
+                    //     } else {
+                    //         bcrypt.hash(signupData.password, salt, (hashError, hash) => {
+                    //             if (hashError) {
+                    //                 throw hashError
+                    //             } else {
 
-                                    // create User object or document
-                                    user = new User({
-                                        name: signupData.name,
-                                        email: signupData.email,
-                                        phoneNumber: signupData.phoneNumber,
-                                        password: hash,
-                                        userType: signupData.userType
-                                    })
-                                    user.save()
-                                        .then(result => {
-                                            user = "";
-                                            res.redirect("/user/login");
-                                        })
-                                        .catch(err => {
-                                            console.log(err);
-                                            signupErrorMessage = "we are very sory! trouble in creating user! try after sometime or contact us"
-                                            res.redirect("/user/signup");
-                                        })
-                                    // send created otp
-                                    // client.verify.v2.services(process.env.VERIFY_TOCKEN)
-                                    //     .verifications
-                                    //     .create({
-                                    //         to: `+91${user.phoneNumber}`,
-                                    //         channel: 'sms'
-                                    //     })
-                                    //     .then(verification => {
-                                    //         console.log(verification.status)
+                    //                 // create User object or document
+                    //                 user = new User({
+                    //                     name: signupData.name,
+                    //                     email: signupData.email,
+                    //                     phoneNumber: signupData.phoneNumber,
+                    //                     password: hash,
+                    //                     userType: signupData.userType
+                    //                 })
+                    //                 user.save()
+                    //                     .then(result => {
+                    //                         user = "";
+                    //                         res.redirect("/user/login");
+                    //                     })
+                    //                     .catch(err => {
+                    //                         console.log(err);
+                    //                         signupErrorMessage = "we are very sory! trouble in creating user! try after sometime or contact us"
+                    //                         res.redirect("/user/signup");
+                    //                     })
+                    //                 // send created otp
+                    //                 // client.verify.v2.services(process.env.VERIFY_TOCKEN)
+                    //                 //     .verifications
+                    //                 //     .create({
+                    //                 //         to: `+91${user.phoneNumber}`,
+                    //                 //         channel: 'sms'
+                    //                 //     })
+                    //                 //     .then(verification => {
+                    //                 //         console.log(verification.status)
 
-                                    //         // destroy the othp after 30 seconds
-                                    //         setTimeout(() => {
-                                    //             waitingOtp = "";
-                                    //             otpTimeError = "Time is over! try again!"
-                                    //         }, 30000);
-                                    //         // show the page to enter otp
-                                    //         res.redirect("/user/otp")
-                                    //     })
-                                    //     .catch(err => {
-                                    //         console.log(err);
-                                    //         otpErrormessage = "make sure the phone number is correct";
-                                    //     })
-                                }
-                            })
-                        }
+                    //                 //         // destroy the othp after 30 seconds
+                    //                 //         setTimeout(() => {
+                    //                 //             waitingOtp = "";
+                    //                 //             otpTimeError = "Time is over! try again!"
+                    //                 //         }, 30000);
+                    //                 //         // show the page to enter otp
+                    //                 //         res.redirect("/user/otp")
+                    //                 //     })
+                    //                 //     .catch(err => {
+                    //                 //         console.log(err);
+                    //                 //         otpErrormessage = "make sure the phone number is correct";
+                    //                 //     })
+                    //             }
+                    //         })
+                    //     }
+                    // })
+
+                    // create User object or document
+                    user = new User({
+                        name: signupData.name,
+                        email: signupData.email,
+                        phoneNumber: signupData.phoneNumber,
+                        password: signupData.password,
+                        userType: signupData.userType
                     })
+                    user.save()
+                        .then(result => {
+                            user = "";
+                            res.redirect("/user/login");
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            signupErrorMessage = "we are very sory! trouble in creating user! try after sometime or contact us"
+                            res.redirect("/user/signup");
+                        })
                 } else {
                     signupErrorMessage = "user already exist";
                     console.log("emil exist");
