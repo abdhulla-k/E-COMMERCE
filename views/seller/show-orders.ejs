@@ -85,7 +85,7 @@
                                             <a 
                                               style="margin-left: 5px;" 
                                               class="btn btn-warning btn-square" 
-                                              href="/seller/orderDetails/<%= order._id%>?productId=<%= order.productId%>">
+                                              href="/shope/seller/orderDetails/<%= order._id%>?productId=<%= order.productId%>">
                                                 info
                                             </a>                                           
                                           </div>
@@ -108,7 +108,7 @@
         // console.log(`product id: ${productId}`)
         if(orderId && userId && status) {
           $.ajax({
-            url: `/seller/changeOrderStatus`,
+            url: `/shope/seller/changeOrderStatus`,
             method: "post",
             data: {
               userId: userId,

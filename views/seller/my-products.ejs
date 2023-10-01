@@ -14,7 +14,7 @@
           <span class="bg-secondary pr-3">Filter by Categories</span>
         </h5>
         <div class="bg-light p-4 mb-30">
-          <form action="/seller/filteredProducts" method="post">
+          <form action="/shope/seller/filteredProducts" method="post">
             <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
               <input 
                 style="margin-bottom: 6px;"
@@ -73,7 +73,7 @@
                             <img 
                               style="max-width: 130px;"
                               class="card-img-top" 
-                              src="/images/<%=product.images[0]%>" 
+                              src="/shope/images/<%=product.images[0]%>" 
                               alt="Card image cap"
                             >
                           </div>
@@ -83,7 +83,7 @@
                         <td>
                           <a
                             class="btn btn-outline-warning btn-square text-dark"
-                            href="/seller/detail/<%= product.id %>"
+                            href="/shope/seller/detail/<%= product.id %>"
                             >info</a>
                         </td>
                       </tr>

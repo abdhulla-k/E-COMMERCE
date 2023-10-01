@@ -54,7 +54,7 @@
                   <span class="bg-secondary pr-3">Filter by Categories</span>
                 </h5>
                 <div class="bg-light p-4 mb-30">
-                  <form action="/filterProducts" method="post">
+                  <form action="/shope/filterProducts" method="post">
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input 
                           style="margin-bottom: 6px;"
@@ -105,7 +105,7 @@
                                         <img
                                             style="max-height: 420px !important"
                                             class="img-fluid w-100 h-420"
-                                            src="/images/<%=product.images[0]%>"
+                                            src="/shope/images/<%=product.images[0]%>"
                                             alt="">
                                         <div class="product-action">
                                             <a 
@@ -118,7 +118,7 @@
                                                 onclick="addToWishlist('<%= product.id %>', '<%= user %>')">
                                                 <i class="far fa-heart"></i>
                                             </a>
-                                            <a class="btn btn-outline-dark btn-square" href="/detail/<%= product.id %>">info</a>
+                                            <a class="btn btn-outline-dark btn-square" href="/shope/detail/<%= product.id %>">info</a>
                                         </div>
                                     </div>
                                     <div class="text-center py-4">
@@ -194,7 +194,7 @@
             addedNotification.classList.remove('out-animate')
             addedNotification.classList.add('animate')
             $.ajax({
-                url: `/user/addToCart/${productId}`,
+                url: `/shope/user/addToCart/${productId}`,
                 method: "get"
             })
             setTimeout(() => {

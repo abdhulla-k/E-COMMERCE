@@ -12,7 +12,7 @@
 
               <div class="col-lg-9 col-md-9">
                 <h4 class="section-title position-relative text-uppercase mb-3">
-                  <span class="bg-secondary pr-3">Coupons</span><a href="/admin/showAddCoupon" class="btn btn-warning">Add Coupon</a>
+                  <span class="bg-secondary pr-3">Coupons</span><a href="/shope/admin/showAddCoupon" class="btn btn-warning">Add Coupon</a>
                 </h4>
                 <div>
                     <% if(coupons.length > 0) { %>
@@ -89,7 +89,7 @@
                   'success'
                 ).then(data => {
                   $.ajax({
-                        url: `/admin/deleteCoupon/${id}`,
+                        url: `/shope/admin/deleteCoupon/${id}`,
                         success(status) {
                             row.remove();
                         }

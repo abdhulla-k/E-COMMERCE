@@ -14,13 +14,13 @@
           <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
               <div class="carousel-item active">
-                <img style="max-height: 755px;" class="d-block w-100" src="/images/<%=productDetails.images[0]%>" alt="First slide">
+                <img style="max-height: 755px;" class="d-block w-100" src="/shope/images/<%=productDetails.images[0]%>" alt="First slide">
               </div>
               <div class="carousel-item">
-                <img style="max-height: 755px;" class="d-block w-100" src="/images/<%=productDetails.images[1]%>" alt="Second slide">
+                <img style="max-height: 755px;" class="d-block w-100" src="/shope/images/<%=productDetails.images[1]%>" alt="Second slide">
               </div>
               <div class="carousel-item">
-                <img style="max-height: 755px;" class="d-block w-100" src="/images/<%=productDetails.images[2]%>" alt="Third slide">
+                <img style="max-height: 755px;" class="d-block w-100" src="/shope/images/<%=productDetails.images[2]%>" alt="Third slide">
               </div>
             </div>
             <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -60,7 +60,7 @@
             <div class="d-flex align-items-center mb-4 pt-2">
               <% if(userType === 'user') { %>
                 <!-- add to cart button and form -->
-                <form action="/user/addToCart" method="post" class="d-flex my-2">
+                <form action="/shope/user/addToCart" method="post" class="d-flex my-2">
 
                   <!-- counting button -->
                   <div class="input-group quantity mr-3" style="width: 130px">
@@ -112,13 +112,13 @@
               <!-- edit and delete buttons -->
               <% if(userType === 'seller') { %>
                 <a 
-                  href="/seller/edit/<%= productDetails.id %>" 
+                  href="/shope/seller/edit/<%= productDetails.id %>" 
                   style="margin: 0px 5px 0px 0px;" 
                   class="btn btn-primary px-3">
                     Edit
                 </a>
                 <a 
-                  href="/seller/delete/<%= productDetails.id %>" 
+                  href="/shope/seller/delete/<%= productDetails.id %>" 
                   style="margin: 0px 5px 0px 5px;" 
                   class="btn btn-danger px-3">
                     Delete

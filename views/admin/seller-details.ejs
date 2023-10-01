@@ -18,13 +18,13 @@
                         <div class="collapse navbar-collapse" id="navbarNavDropdown">
                           <ul class="navbar-nav">
                             <li class="nav-item <% if(route === 'details') { %> active <% } %>">
-                              <a class="nav-link" href="/admin/seller/<%= userDetails.id %>">Details <span class="sr-only">(current)</span></a>
+                              <a class="nav-link" href="/shope/admin/seller/<%= userDetails.id %>">Details <span class="sr-only">(current)</span></a>
                             </li>
                             <li class="nav-item <% if(route === 'orders') { %> active <% } %>">
-                              <a class="nav-link" href="/admin/seller/orders/<%= userDetails.id %>">Orders</a>
+                              <a class="nav-link" href="/shope/admin/seller/orders/<%= userDetails.id %>">Orders</a>
                             </li>
                             <li class="nav-item <% if(route === 'products') { %> active <% } %>">
-                              <a class="nav-link" href="/admin/seller/products/<%= userDetails.id %>">Products</a>
+                              <a class="nav-link" href="/shope/admin/seller/products/<%= userDetails.id %>">Products</a>
                             </li>
                           </ul>
                         </div>
@@ -166,7 +166,7 @@
                                       <img 
                                         style="max-width: 130px;"
                                         class="card-img-top" 
-                                        src="/images/<%=product.images[0]%>" 
+                                        src="/shope/images/<%=product.images[0]%>" 
                                         alt="Card image cap"
                                       >
                                     </div>
@@ -178,13 +178,13 @@
                                     <a
                                       class="btn btn-outline-warning btn-square text-dark"
                                       style="width: 50px; margin-bottom: 5px;"
-                                      href="/detail/<%= product.id %>"
+                                      href="/shope/detail/<%= product.id %>"
                                       >info
                                     </a>
                                     <a
                                       class="btn btn-outline-warning btn-square text-dark"
                                       style="width: 50px;"
-                                      href="/detail/<%= product.id %>"
+                                      href="/shope/detail/<%= product.id %>"
                                       >block
                                     </a>
                                   </td>

@@ -57,7 +57,7 @@
                                           <a 
                                             style="background-color: rgb(255, 217, 0);" 
                                             class="btn btn-outline-dark btn-square" 
-                                            href="/admin/user/orders/details/<%= order._id %>?orderId=<%= order.orders._id %>">
+                                            href="/shope/admin/user/orders/details/<%= order._id %>?orderId=<%= order.orders._id %>">
                                             info
                                           </a>
                                         </td>
@@ -79,7 +79,7 @@
         // console.log(`product id: ${productId}`)
         if(orderId && userId && status) {
           $.ajax({
-            url: `/seller/changeOrderStatus`,
+            url: `/shope/seller/changeOrderStatus`,
             method: "post",
             data: {
               userId: userId,

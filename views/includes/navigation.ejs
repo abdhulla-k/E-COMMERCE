@@ -3,10 +3,10 @@
     <div class="row bg-secondary py-1 px-xl-5">
         <div class="col-lg-6 text-center text-lg-right">
             <div class="d-inline-flex align-items-center d-block d-lg-none">
-                <a href="/user/showWishlist" class="btn px-0 ml-2">
+                <a href="/shope/user/showWishlist" class="btn px-0 ml-2">
                     <i class="fas fa-heart text-dark"></i>
                 </a>
-                <a href="/user/cart" class="btn px-0 ml-2">
+                <a href="/shope/user/cart" class="btn px-0 ml-2">
                     <i class="fas fa-shopping-cart text-dark"></i>
                 </a>
             </div>
@@ -67,7 +67,7 @@
                     <div class="navbar-nav w-100">
                         <% for( category of categories ) { %>
                             <form 
-                                action="/filterProducts" 
+                                action="/shope/filterProducts" 
                                 method="post">
                                 <button 
                                     class="btn nav-item nav-link" 
@@ -100,14 +100,14 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
                         <% if(userType !== "seller" && userType !== "admin") { %>
-                            <a href="/" class="nav-item nav-link">Home</a>
-                            <a href="/showProducts" class="nav-item nav-link">Shop</a>
+                            <a href="/shope/" class="nav-item nav-link">Home</a>
+                            <a href="/shope/showProducts" class="nav-item nav-link">Shop</a>
                         <% } %>
                         <% if(userType === "seller") { %>
-                            <a href="/seller/" class="nav-item nav-link">Dashboard</a>
+                            <a href="/shope/seller/" class="nav-item nav-link">Dashboard</a>
                         <% } %>
 
-                        <a href="/contact" class="nav-item nav-link">Contact</a>
+                        <a href="/shope/contact" class="nav-item nav-link">Contact</a>
 
                         <% if( user ) { %>
 
@@ -121,19 +121,19 @@
                                 <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
                                     <% if( userType === "seller" ) { %>
                                         <a 
-                                            href="/seller/showMyProducts" 
+                                            href="/shope/seller/showMyProducts" 
                                             class="dropdown-item">
                                                 My Products
                                         </a>
 
                                         <a 
-                                            href="/seller/addProduct" 
+                                            href="/shope/seller/addProduct" 
                                             class="dropdown-item">
                                                 Add Product
                                         </a>
                                     <% } else { %>
                                         <a 
-                                            href="/user/cart" 
+                                            href="/shope/user/cart" 
                                             class="dropdown-item">
                                                 Shopping Cart
                                         </a>
@@ -143,13 +143,13 @@
                             </div>
 
                             <% if( userType === 'seller' ) { %>
-                                <a href="/seller/myAccount" class="nav-item nav-link">My Account</a>
+                                <a href="/shope/seller/myAccount" class="nav-item nav-link">My Account</a>
                             <% } else { %>
-                                <a href="/user/myAccount" class="nav-item nav-link">My Account</a>
+                                <a href="/shope/user/myAccount" class="nav-item nav-link">My Account</a>
                             <% } %>
 
                             <% if(userType === 'seller') { %>
-                                <a href="/seller/logout" class="nav-item nav-link btn text-white px-0 ml-3">
+                                <a href="/shope/seller/logout" class="nav-item nav-link btn text-white px-0 ml-3">
                                     Logout
                                 </a>
                             <% } %>
@@ -165,8 +165,8 @@
                                         <i class="fa fa-angle-down mt-1"></i>
                                 </a>
                                 <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
-                                    <a href="/user/login" class="dropdown-item">Login</a>
-                                    <a href="/user/signup" class="dropdown-item">Signup</a>
+                                    <a href="/shope/user/login" class="dropdown-item">Login</a>
+                                    <a href="/shope/user/signup" class="dropdown-item">Signup</a>
                                 </div>
                             </div>
                         <% } %>
@@ -180,7 +180,7 @@
                                 </a> -->
                             <% } else { %>
                                 <a 
-                                    href="/user/showWishlist" 
+                                    href="/shope/user/showWishlist" 
                                     class="btn px-0">
                                     <i class="fas fa-heart text-primary"></i>
                                     <!-- <span 
@@ -189,7 +189,7 @@
                                         >0
                                     </span> -->
                                 </a>
-                                <a href="/user/cart" class="btn px-0 ml-3">
+                                <a href="/shope/user/cart" class="btn px-0 ml-3">
                                     <i class="fas fa-shopping-cart text-primary"></i>
                                     <!-- <span 
                                         class="badge text-secondary border border-secondary rounded-circle" 
@@ -197,7 +197,7 @@
                                         >0
                                     </span> -->
                                 </a>
-                                <a href="/user/logout" class="btn text-white px-0 ml-3">
+                                <a href="/shope/user/logout" class="btn text-white px-0 ml-3">
                                     Logout
                                 </a>
                             <% } %>
