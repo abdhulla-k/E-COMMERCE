@@ -160,21 +160,21 @@ exports.postLogin = (req, res, next) => {
                             throw err
                         } else if (!isMatch) {
                             loginErrorMessage = "wrong email or password";
-                            res.redirect("/admin/");
+                            res.redirect("/shope/admin/");
                         } else {
                             req.session.adminLoggedIn = true;
                             // console.log( req.session.userType );
-                            res.redirect("/admin/");
+                            res.redirect("/shope/admin/");
                         }
                     }
                 )
             } else {
                 loginErrorMessage = "admin not exist with this cridentials!";
-                res.redirect("/admin/");
+                res.redirect("/shope/admin/");
             }
         } else {
             loginErrorMessage = "wrong cridentials!";
-            res.redirect("/admin/");
+            res.redirect("/shope/admin/");
         }
     })
 }
@@ -426,13 +426,13 @@ exports.showAllOrders = (req, res, next) => {
                     })
                 })
                 .catch(err => {
-                    res.redirect('/admin/');
+                    res.redirect('/shope/admin/');
                 })
         } catch {
-            res.redirect("/admin/");
+            res.redirect("/shope/admin/");
         }
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -543,7 +543,7 @@ exports.getReport = (req, res, nect) => {
             .then(aggriVal => {
             })
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -552,7 +552,7 @@ exports.salesDownload = (req, res, next) => {
     if (req.session.adminLoggedIn) {
         // res.download("./report.txt")
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -571,10 +571,10 @@ exports.showUsers = (req, res, next) => {
                 });
             })
             .catch(err => {
-                res.redirect('/admin/');
+                res.redirect('/shope/admin/');
             })
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -583,7 +583,7 @@ exports.showUserDetails = (req, res, next) => {
         const userId = req.params.userId;
         User.findById(userId, (err, data) => {
             if (err) {
-                res.redirect('/');
+                res.redirect('/shope/');
             } else {
                 res.render("admin/user-details", {
                     userType: "admin",
@@ -596,7 +596,7 @@ exports.showUserDetails = (req, res, next) => {
         })
 
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -606,7 +606,7 @@ exports.showUserOrders = (req, res, next) => {
         User.findById(userId, (err, data) => {
             if (err) {
                 console.log(err);
-                res.redirect('/');
+                res.redirect('/shope/');
             } else {
                 res.render("admin/user-details", {
                     userType: "admin",
@@ -618,7 +618,7 @@ exports.showUserOrders = (req, res, next) => {
         })
 
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -655,11 +655,11 @@ exports.showUserOrderDetail = (req, res, next) => {
                         })
                 }
             } else {
-                res.redirect("/admin/")
+                res.redirect("/shope/admin/")
             }
         })
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -697,7 +697,7 @@ exports.cancelUserOrder = (req, res, next) => {
                 }
             })
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -716,10 +716,10 @@ exports.showSellers = (req, res, next) => {
                 });
             })
             .catch(err => {
-                res.redirect('/admin/');
+                res.redirect('/shope/admin/');
             })
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -729,7 +729,7 @@ exports.showSerDetails = (req, res, next) => {
         User.findById(userId, (err, data) => {
             if (err) {
                 console.log(err);
-                res.redirect('/');
+                res.redirect('/shope/');
             } else {
                 res.render("admin/seller-details", {
                     userType: "admin",
@@ -742,7 +742,7 @@ exports.showSerDetails = (req, res, next) => {
         })
 
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -756,7 +756,7 @@ exports.showSerOrders = (req, res, next) => {
             User.findById(sellerId, (err, data) => {
                 if (err) {
                     console.log(err);
-                    res.redirect('/');
+                    res.redirect('/shope/');
                 } else {
 
                     // get order details
@@ -784,11 +784,11 @@ exports.showSerOrders = (req, res, next) => {
                 }
             })
         } catch {
-            res.redirect("/admin/");
+            res.redirect("/shope/admin/");
         }
 
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -816,14 +816,14 @@ exports.showSellerProducts = (req, res, next) => {
         // User.findById(userId,(err, data) => {
         //     if (err) {
         //         console.log(err);
-        //         res.redirect('/');
+        //         res.redirect('/shope/');
         //     } else {
         //         console.log(data);
         //         userData = data;
         //         Product.find({user: userId}, (err, data) => {
         //             if (err) {
         //                 console.log(err);
-        //                 res.redirect('/');
+        //                 res.redirect('/shope/');
         //             } else {
         //                 console.log(data)
         //                 res.render("admin/seller-details", {
@@ -839,7 +839,7 @@ exports.showSellerProducts = (req, res, next) => {
         // })
 
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -850,7 +850,7 @@ exports.addCategory = (req, res, next) => {
             user: ""
         });
     } else {
-        res.redirect("/admin/")
+        res.redirect("/shope/admin/")
     }
 }
 
@@ -868,15 +868,15 @@ exports.postSaveCategory = (req, res, next) => {
                 category.save()
                     .then(result => {
                         console.log("category created");
-                        res.redirect("/admin/addCategory");
+                        res.redirect("/shope/admin/addCategory");
                     })
                     .catch(err => {
                         console.log("error while createing new category");
-                        res.redirect("/admin/addCategory");
+                        res.redirect("/shope/admin/addCategory");
                     })
             } else {
                 console.log("category already exist");
-                res.redirect("/admin/addCategory");
+                res.redirect("/shope/admin/addCategory");
             }
         })
     }
@@ -897,11 +897,11 @@ exports.showAllCoupons = (req, res, next) => {
                 }
             } catch {
                 console.log("error found while getting coupons details!");
-                res.redirect("/admin/");
+                res.redirect("/shope/admin/");
             }
         })
     } else {
-        res.redirect("/admin/")
+        res.redirect("/shope/admin/")
     }
 }
 
@@ -914,7 +914,7 @@ exports.showAddCoupon = (req, res, next) => {
         });
         couponMessage = ""
     } else {
-        res.redirect("/admin/")
+        res.redirect("/shope/admin/")
     }
 }
 
@@ -931,7 +931,7 @@ exports.addCoupon = (req, res, next) => {
             try {
                 if (data.length > 0) {
                     couponMessage = "coupon already exist"
-                    res.redirect("/admin/showAddCoupon")
+                    res.redirect("/shope/admin/showAddCoupon")
                 } else {
                     const newCoupon = new Coupon({
                         coupon: coupon,
@@ -943,17 +943,17 @@ exports.addCoupon = (req, res, next) => {
                     newCoupon.save()
                         .then(data => {
                             console.log(data)
-                            res.redirect("/admin/showAllCupons")
+                            res.redirect("/shope/admin/showAllCupons")
                         })
                 }
             } catch {
                 couponMessage = "something wring while adding new category! try again"
-                res.redirect("/admin/showAddCoupon")
+                res.redirect("/shope/admin/showAddCoupon")
             }
 
         })
     } else {
-        res.redirect("/admin/")
+        res.redirect("/shope/admin/")
     }
 }
 
@@ -976,7 +976,7 @@ exports.deleteCoupon = (req, res, next) => {
             res.redirect("/admin/showAddCoupon")
         }
     } else {
-        res.redirect("/admin/")
+        res.redirect("/shope/admin/")
     }
 }
 
@@ -995,11 +995,11 @@ exports.showBanners = (req, res, next) => {
                 }
             } catch {
                 console.log("error found while getting banner details!");
-                res.redirect("/admin/");
+                res.redirect("/shope/admin/");
             }
         })
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -1010,7 +1010,7 @@ exports.showAddBanner = (req, res, next) => {
             user: "",
         });
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
@@ -1026,14 +1026,14 @@ exports.postBanner = (req, res, next) => {
         newBanner.save()
             .then(data => {
                 console.log(data);
-                res.redirect("/admin/showAllBanners");
+                res.redirect("/shope/admin/showAllBanners");
             })
     } else {
-        res.redirect("/admin/");
+        res.redirect("/shope/admin/");
     }
 }
 
 exports.logout = (req, res, next) => {
     req.session.adminLoggedIn = false;
-    res.redirect('/admin/');
+    res.redirect('/shope/admin/');
 }

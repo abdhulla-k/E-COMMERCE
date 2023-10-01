@@ -98,7 +98,7 @@ exports.showAllProducts = (req, res, next) => {
         Category.find({}, (err, data) => {
             if (data) {
                 categories = data;
-                res.redirect('/showProducts')
+                res.redirect('/shope/showProducts')
             }
         })
     }
@@ -136,7 +136,7 @@ exports.productDetails = (req, res, next) => {
             });
         }).catch(err => {
             console.log(err);
-            res.redirect("/");
+            res.redirect("/shope/");
         })
 }
 

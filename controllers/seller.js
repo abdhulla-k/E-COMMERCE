@@ -160,29 +160,29 @@ exports.postLogin = (req, res, next) => {
                         } else if (!isMatch) {
                             console.log("password does not match");
                             loginErrorMessage = "wrong email or password";
-                            res.redirect("/seller/");
+                            res.redirect("/shope/seller/");
                         } else {
                             req.session.sellerLoggedIn = true;
                             // console.log( req.session.userType );
-                            res.redirect("/seller/");
+                            res.redirect("/shope/seller/");
                         }
                     }
                 )
             } else {
                 console.log("seller not exist");
                 loginErrorMessage = "seller not exist!";
-                res.redirect("/seller/");
+                res.redirect("/shope/seller/");
             }
         } else {
             loginErrorMessage = "seller not exist!";
-            res.redirect("/seller/");
+            res.redirect("/shope/seller/");
         }
     })
 }
 
 exports.getSignup = (req, res, next) => {
     if (req.session.sellerLoggedIn) {
-        res.redirect('/');
+        res.redirect('/shope/');
     } else {
         res.render("seller/seller-signup", {
             user: "",
@@ -244,12 +244,12 @@ exports.postSignup = (req, res, next) => {
                                 })
                                 .then(orders => {
                                     console.log("created seller account");
-                                    res.redirect("/seller/");
+                                    res.redirect("/shope/seller/");
                                 })
                                 .catch(err => {
                                     console.log("error in user createion");
                                     console.log(err);
-                                    res.redirect('/');
+                                    res.redirect('/shope/');
                                 })
                         }
                     })
@@ -528,7 +528,7 @@ exports.getAddProduct = (req, res, next) => {
             });
         }
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
@@ -550,11 +550,11 @@ exports.postAddProduct = (req, res, next) => {
     product.save()
         .then(result => {
             console.log(result)
-            res.redirect('/seller/');
+            res.redirect('/shope/seller/');
         })
         .catch(err => {
             console.log(err);
-            res.redirect("/seller/");
+            res.redirect("/shope/seller/");
         })
 }
 
@@ -594,7 +594,7 @@ exports.showMyProducts = (req, res, next) => {
             })
         }
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
@@ -615,10 +615,10 @@ exports.myProductDetails = (req, res, next) => {
                 });
             }).catch(err => {
                 console.log(err);
-                res.redirect("/seller/");
+                res.redirect("/shope/seller/");
             })
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
@@ -651,11 +651,11 @@ exports.filterProducts = (req, res, next) => {
                     }
                 }
             } else {
-                res.redirect("/seller/");
+                res.redirect("/shope/seller/");
             }
         })
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
@@ -671,10 +671,10 @@ exports.editProduct = (req, res, next) => {
             })
             .catch(err => {
                 console.log(err);
-                res.redirect("/seller/");
+                res.redirect("/shope/seller/");
             })
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 
 }
@@ -708,10 +708,10 @@ exports.saveProductEdit = (req, res, next) => {
             })
             .catch(err => {
                 console.log(err);
-                res.redirect("/seller/")
+                res.redirect("/shope/seller/")
             })
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
@@ -728,7 +728,7 @@ exports.deleteProduct = (req, res, next) => {
                 res.redirect("/seller/showMyProducts");
             })
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
@@ -807,7 +807,7 @@ exports.showOrders = (req, res, next) => {
                 })
             })
     } else {
-        res.redirect('/seller/');
+        res.redirect('/shope/seller/');
     }
 }
 
@@ -860,7 +860,7 @@ exports.orderDetails = (req, res, next) => {
                 });
             })
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
@@ -1000,11 +1000,11 @@ exports.salesReport = (req, res, next) => {
                 })
             })
     } else {
-        res.redirect("/seller/");
+        res.redirect("/shope/seller/");
     }
 }
 
 exports.logout = (req, res, next) => {
     req.session.sellerLoggedIn = false;
-    res.redirect("/seller/");
+    res.redirect("/shope/seller/");
 }

@@ -160,7 +160,7 @@
                 addedNotification.innerHTML = "product added to withlist!"
                 addedNotification.classList.add("alert-success")
                 $.ajax({
-                    url: `/user/addToWishlist/${productId}`
+                    url: `/shope/user/addToWishlist/${productId}`
                 })
             } else {
                 addedNotification.innerHTML = "your not logged in!"
