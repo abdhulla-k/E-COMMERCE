@@ -215,7 +215,7 @@
           let zip = document.getElementById('zip').value;
           if(home && street && district && city && state && country && zip) {
             $.ajax({
-                url: `/user/addAddress`,
+                url: `/shope/user/addAddress`,
                 method: "post",
                 data: {
                   home: home,

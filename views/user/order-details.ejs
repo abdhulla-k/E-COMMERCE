@@ -291,7 +291,7 @@
                     <div class="card-body">
                       <h5 class="card-title">Total Price: <%= orderDetails.price %></h5>
                       <a 
-                        href="/user/cancelOrder/<%= orderDetails.id %>" 
+                        href="/shope/user/cancelOrder/<%= orderDetails.id %>" 
                         class="btn btn-primary">
                           Cancel order
                       </a>
@@ -312,8 +312,8 @@
                                   <div class="card-body">
                                     <div class="row">
                                       <div class="col-md-2">
-                                        <a href="/detail/<%= i.id %>">
-                                          <img src="/images/<%=i.images[0]%>"
+                                        <a href="/shope/detail/<%= i.id %>">
+                                          <img src="/shope/images/<%=i.images[0]%>"
                                           class="img-fluid" alt="<%= i.title %>">
                                         </a>
                                       </div>
@@ -424,7 +424,7 @@
                     </table>
                     <div style="color: blue; width: 100%; text-align: right;">
                       <a 
-                        href="/user/downloadInvoice"
+                        href="/shope/user/downloadInvoice"
                         style="color: blue; cursor: pointer;"
                         id="download-invoice">
                           Download Invoice
